@@ -55,307 +55,352 @@ export const [AppProvider, useApp] = createContextHook<AppContextValue>(() => {
   const { data: expenses = [], isLoading: expensesLoading } = useQuery<Expense[]>({
     queryKey: ['expenses'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('expenses')
-        .select('*')
-        .order('date', { ascending: false });
-      
-      if (error) {
-        console.error('Error loading expenses:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('expenses')
+          .select('*')
+          .order('date', { ascending: false });
+        
+        if (error) {
+          console.error('Error loading expenses:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((exp: any): Expense => ({
+          id: exp.id,
+          description: exp.description,
+          date: new Date(exp.date),
+          dueDate: new Date(exp.due_date),
+          competence: new Date(exp.competence),
+          createdAt: new Date(exp.created_at),
+          approvedAt: exp.approved_at ? new Date(exp.approved_at) : undefined,
+          paidAt: exp.paid_at ? new Date(exp.paid_at) : undefined,
+          supplierId: exp.supplier_id || '',
+          operationId: exp.operation_id || '',
+          costCenterId: exp.cost_center_id,
+          category: exp.category,
+          subcategory: exp.subcategory,
+          negotiatedValue: exp.negotiated_value,
+          invoiceValue: exp.invoice_value,
+          actualValue: exp.actual_value,
+          paymentMethod: exp.payment_method as any,
+          installments: exp.installments,
+          currentInstallment: exp.current_installment,
+          serviceConfirmed: exp.service_confirmed,
+          serviceConfirmedBy: exp.service_confirmed_by,
+          serviceConfirmedAt: exp.service_confirmed_at ? new Date(exp.service_confirmed_at) : undefined,
+          createdBy: exp.created_by,
+          approvedBy: exp.approved_by,
+          paidBy: exp.paid_by,
+          notes: exp.notes,
+          tags: exp.tags || [],
+          attachments: [],
+          status: exp.status as any,
+        }));
+      } catch (err) {
+        console.error('Error loading expenses:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((exp: any): Expense => ({
-        id: exp.id,
-        description: exp.description,
-        date: new Date(exp.date),
-        dueDate: new Date(exp.due_date),
-        competence: new Date(exp.competence),
-        createdAt: new Date(exp.created_at),
-        approvedAt: exp.approved_at ? new Date(exp.approved_at) : undefined,
-        paidAt: exp.paid_at ? new Date(exp.paid_at) : undefined,
-        supplierId: exp.supplier_id || '',
-        operationId: exp.operation_id || '',
-        costCenterId: exp.cost_center_id,
-        category: exp.category,
-        subcategory: exp.subcategory,
-        negotiatedValue: exp.negotiated_value,
-        invoiceValue: exp.invoice_value,
-        actualValue: exp.actual_value,
-        paymentMethod: exp.payment_method as any,
-        installments: exp.installments,
-        currentInstallment: exp.current_installment,
-        serviceConfirmed: exp.service_confirmed,
-        serviceConfirmedBy: exp.service_confirmed_by,
-        serviceConfirmedAt: exp.service_confirmed_at ? new Date(exp.service_confirmed_at) : undefined,
-        createdBy: exp.created_by,
-        approvedBy: exp.approved_by,
-        paidBy: exp.paid_by,
-        notes: exp.notes,
-        tags: exp.tags || [],
-        attachments: [],
-        status: exp.status as any,
-      }));
     },
   });
 
   const { data: operations = [] } = useQuery<Operation[]>({
     queryKey: ['operations'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('operations')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error loading operations:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('operations')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error loading operations:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((op: any): Operation => ({
+          id: op.id,
+          name: op.name,
+          type: op.type as any,
+          color: op.color || '#000',
+          icon: op.icon || 'circle',
+          budget: op.budget || 0,
+          spent: op.spent || 0,
+        }));
+      } catch (err) {
+        console.error('Error loading operations:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((op: any): Operation => ({
-        id: op.id,
-        name: op.name,
-        type: op.type as any,
-        color: op.color || '#000',
-        icon: op.icon || 'circle',
-        budget: op.budget || 0,
-        spent: op.spent || 0,
-      }));
     },
   });
 
   const { data: revenues = [] } = useQuery<Revenue[]>({
     queryKey: ['revenues'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('revenues')
-        .select('*')
-        .order('date', { ascending: false });
-      
-      if (error) {
-        console.error('Error loading revenues:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('revenues')
+          .select('*')
+          .order('date', { ascending: false });
+        
+        if (error) {
+          console.error('Error loading revenues:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((rev: any): Revenue => ({
+          id: rev.id,
+          description: rev.description,
+          date: new Date(rev.date),
+          dueDate: new Date(rev.due_date),
+          receivedDate: rev.received_date ? new Date(rev.received_date) : undefined,
+          createdAt: new Date(rev.created_at),
+          clientId: rev.client_id || '',
+          operationId: rev.operation_id || '',
+          category: rev.category,
+          value: rev.value,
+          invoiceNumber: rev.invoice_number,
+          paymentMethod: rev.payment_method as any,
+          contractId: rev.contract_id,
+          createdBy: rev.created_by,
+          notes: rev.notes,
+          status: rev.status as any,
+          attachments: [],
+        }));
+      } catch (err) {
+        console.error('Error loading revenues:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((rev: any): Revenue => ({
-        id: rev.id,
-        description: rev.description,
-        date: new Date(rev.date),
-        dueDate: new Date(rev.due_date),
-        receivedDate: rev.received_date ? new Date(rev.received_date) : undefined,
-        createdAt: new Date(rev.created_at),
-        clientId: rev.client_id || '',
-        operationId: rev.operation_id || '',
-        category: rev.category,
-        value: rev.value,
-        invoiceNumber: rev.invoice_number,
-        paymentMethod: rev.payment_method as any,
-        contractId: rev.contract_id,
-        createdBy: rev.created_by,
-        notes: rev.notes,
-        status: rev.status as any,
-        attachments: [],
-      }));
     },
   });
 
   const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ['clients'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error loading clients:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('clients')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error loading clients:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((c: any): Client => ({
+          id: c.id,
+          name: c.name,
+          cpfCnpj: c.cpf_cnpj,
+          type: c.type as any,
+          email: c.email,
+          phone: c.phone,
+          address: c.address,
+          city: c.city,
+          state: c.state,
+          zipCode: c.zip_code,
+          stateRegistration: c.state_registration,
+          active: c.active,
+          createdAt: new Date(c.created_at),
+        }));
+      } catch (err) {
+        console.error('Error loading clients:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((c: any): Client => ({
-        id: c.id,
-        name: c.name,
-        cpfCnpj: c.cpf_cnpj,
-        type: c.type as any,
-        email: c.email,
-        phone: c.phone,
-        address: c.address,
-        city: c.city,
-        state: c.state,
-        zipCode: c.zip_code,
-        stateRegistration: c.state_registration,
-        active: c.active,
-        createdAt: new Date(c.created_at),
-      }));
     },
   });
 
   const { data: contracts = [] } = useQuery<Contract[]>({
     queryKey: ['contracts'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('contracts')
-        .select('*')
-        .order('start_date', { ascending: false });
-      
-      if (error) {
-        console.error('Error loading contracts:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('contracts')
+          .select('*')
+          .order('start_date', { ascending: false });
+        
+        if (error) {
+          console.error('Error loading contracts:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((c: any): Contract => ({
+          id: c.id,
+          type: c.type as any,
+          partnerId: c.partner_id || '',
+          operationId: c.operation_id || '',
+          product: c.product,
+          quantity: c.quantity,
+          unit: c.unit,
+          unitPrice: c.unit_price,
+          totalValue: c.total_value,
+          startDate: new Date(c.start_date),
+          endDate: new Date(c.end_date),
+          status: c.status as any,
+          paymentTerms: c.payment_terms,
+          deliveryTerms: c.delivery_terms,
+          notes: c.notes,
+          createdAt: new Date(c.created_at),
+        }));
+      } catch (err) {
+        console.error('Error loading contracts:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((c: any): Contract => ({
-        id: c.id,
-        type: c.type as any,
-        partnerId: c.partner_id || '',
-        operationId: c.operation_id || '',
-        product: c.product,
-        quantity: c.quantity,
-        unit: c.unit,
-        unitPrice: c.unit_price,
-        totalValue: c.total_value,
-        startDate: new Date(c.start_date),
-        endDate: new Date(c.end_date),
-        status: c.status as any,
-        paymentTerms: c.payment_terms,
-        deliveryTerms: c.delivery_terms,
-        notes: c.notes,
-        createdAt: new Date(c.created_at),
-      }));
     },
   });
 
   const { data: purchaseOrders = [] } = useQuery<PurchaseOrder[]>({
     queryKey: ['purchaseOrders'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('purchase_orders')
-        .select('*')
-        .order('request_date', { ascending: false });
-      
-      if (error) {
-        console.error('Error loading purchase orders:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('purchase_orders')
+          .select('*')
+          .order('request_date', { ascending: false });
+        
+        if (error) {
+          console.error('Error loading purchase orders:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((po: any): PurchaseOrder => ({
+          id: po.id,
+          supplierId: po.supplier_id || '',
+          operationId: po.operation_id || '',
+          items: [],
+          totalValue: po.total_value,
+          status: po.status as any,
+          requestedBy: po.requested_by,
+          approvedBy: po.approved_by,
+          requestDate: new Date(po.request_date),
+          expectedDeliveryDate: po.expected_delivery_date ? new Date(po.expected_delivery_date) : undefined,
+          actualDeliveryDate: po.actual_delivery_date ? new Date(po.actual_delivery_date) : undefined,
+          notes: po.notes,
+        }));
+      } catch (err) {
+        console.error('Error loading purchase orders:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((po: any): PurchaseOrder => ({
-        id: po.id,
-        supplierId: po.supplier_id || '',
-        operationId: po.operation_id || '',
-        items: [],
-        totalValue: po.total_value,
-        status: po.status as any,
-        requestedBy: po.requested_by,
-        approvedBy: po.approved_by,
-        requestDate: new Date(po.request_date),
-        expectedDeliveryDate: po.expected_delivery_date ? new Date(po.expected_delivery_date) : undefined,
-        actualDeliveryDate: po.actual_delivery_date ? new Date(po.actual_delivery_date) : undefined,
-        notes: po.notes,
-      }));
     },
   });
 
   const { data: teamMembers = [] } = useQuery<TeamMember[]>({
     queryKey: ['teamMembers'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('team_members')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error loading team members:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('team_members')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error loading team members:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((m: any): TeamMember => ({
+          id: m.id,
+          name: m.name,
+          email: m.email,
+          cpf: m.cpf,
+          phone: m.phone,
+          role: m.role as any,
+          permissions: (m.permissions || []) as any,
+          farmIds: m.farm_ids || [],
+          operationIds: m.operation_ids || [],
+          active: m.active,
+          createdAt: new Date(m.created_at),
+        }));
+      } catch (err) {
+        console.error('Error loading team members:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((m: any): TeamMember => ({
-        id: m.id,
-        name: m.name,
-        email: m.email,
-        cpf: m.cpf,
-        phone: m.phone,
-        role: m.role as any,
-        permissions: (m.permissions || []) as any,
-        farmIds: m.farm_ids || [],
-        operationIds: m.operation_ids || [],
-        active: m.active,
-        createdAt: new Date(m.created_at),
-      }));
     },
   });
 
   const { data: farms = [] } = useQuery<Farm[]>({
     queryKey: ['farms'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('farms')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error loading farms:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('farms')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error loading farms:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((f: any): Farm => ({
+          id: f.id,
+          name: f.name,
+          cpfCnpj: f.cpf_cnpj,
+          stateRegistration: f.state_registration,
+          area: f.area || 0,
+          city: f.city,
+          state: f.state,
+          active: f.active,
+          operations: [],
+        }));
+      } catch (err) {
+        console.error('Error loading farms:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((f: any): Farm => ({
-        id: f.id,
-        name: f.name,
-        cpfCnpj: f.cpf_cnpj,
-        stateRegistration: f.state_registration,
-        area: f.area || 0,
-        city: f.city,
-        state: f.state,
-        active: f.active,
-        operations: [],
-      }));
     },
   });
 
   const { data: assets = [] } = useQuery<Asset[]>({
     queryKey: ['assets'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('assets')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error loading assets:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('assets')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error('Error loading assets:', error.message || error);
+          return [];
+        }
+        
+        if (!data) return [];
+        
+        return data.map((a: any): Asset => ({
+          id: a.id,
+          name: a.name,
+          type: a.type as any,
+          operationId: a.operation_id,
+          purchaseDate: new Date(a.purchase_date),
+          purchaseValue: a.purchase_value,
+          currentValue: a.current_value,
+          depreciationRate: a.depreciation_rate,
+          brand: a.brand,
+          model: a.model,
+          serialNumber: a.serial_number,
+          status: a.status as any,
+          notes: a.notes,
+        }));
+      } catch (err) {
+        console.error('Error loading assets:', err);
+        return [];
       }
-      
-      if (!data) return [];
-      
-      return data.map((a: any): Asset => ({
-        id: a.id,
-        name: a.name,
-        type: a.type as any,
-        operationId: a.operation_id,
-        purchaseDate: new Date(a.purchase_date),
-        purchaseValue: a.purchase_value,
-        currentValue: a.current_value,
-        depreciationRate: a.depreciation_rate,
-        brand: a.brand,
-        model: a.model,
-        serialNumber: a.serial_number,
-        status: a.status as any,
-        notes: a.notes,
-      }));
     },
   });
 
