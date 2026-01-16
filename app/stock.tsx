@@ -5,6 +5,17 @@ import { Plus, Search, Package, AlertTriangle } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { useState } from "react";
 
+interface StockBatch {
+  id: string;
+  lotNumber: string;
+  quantity: number;
+  unitCost: number;
+  manufacturingDate?: Date;
+  expiryDate?: Date;
+  supplier?: string;
+  status: 'active' | 'expired' | 'near_expiry';
+}
+
 interface StockItem {
   id: string;
   name: string;
@@ -14,11 +25,39 @@ interface StockItem {
   minStock: number;
   unit: string;
   avgCost: number;
+  batches?: StockBatch[];
 }
 
 const mockStock: StockItem[] = [
-  { id: '1', name: 'Ração Premium Gado', type: 'input', category: 'Alimentação', currentStock: 15000, minStock: 10000, unit: 'kg', avgCost: 1.85 },
-  { id: '2', name: 'Fertilizante NPK 20-05-20', type: 'input', category: 'Fertilizantes', currentStock: 2500, minStock: 3000, unit: 'kg', avgCost: 3.20 },
+  { 
+    id: '1', 
+    name: 'Ração Premium Gado', 
+    type: 'input', 
+    category: 'Alimentação', 
+    currentStock: 15000, 
+    minStock: 10000, 
+    unit: 'kg', 
+    avgCost: 1.85,
+    batches: [
+      { id: 'L001', lotNumber: 'L001-2025', quantity: 8000, unitCost: 1.82, manufacturingDate: new Date('2025-01-10'), expiryDate: new Date('2025-07-10'), supplier: 'Nutrifort', status: 'active' },
+      { id: 'L002', lotNumber: 'L002-2024', quantity: 5000, unitCost: 1.88, manufacturingDate: new Date('2024-12-15'), expiryDate: new Date('2025-03-15'), supplier: 'Nutrifort', status: 'near_expiry' },
+      { id: 'L003', lotNumber: 'L003-2025', quantity: 2000, unitCost: 1.85, manufacturingDate: new Date('2025-01-05'), expiryDate: new Date('2025-06-05'), supplier: 'Nutrifort', status: 'active' },
+    ]
+  },
+  { 
+    id: '2', 
+    name: 'Fertilizante NPK 20-05-20', 
+    type: 'input', 
+    category: 'Fertilizantes', 
+    currentStock: 2500, 
+    minStock: 3000, 
+    unit: 'kg', 
+    avgCost: 3.20,
+    batches: [
+      { id: 'F001', lotNumber: 'F001-2024', quantity: 1500, unitCost: 3.15, manufacturingDate: new Date('2024-11-20'), expiryDate: new Date('2026-11-20'), supplier: 'AgroFert', status: 'active' },
+      { id: 'F002', lotNumber: 'F002-2025', quantity: 1000, unitCost: 3.25, manufacturingDate: new Date('2025-01-08'), expiryDate: new Date('2027-01-08'), supplier: 'AgroFert', status: 'active' },
+    ]
+  },
   { id: '3', name: 'Diesel S10', type: 'input', category: 'Combustível', currentStock: 8500, minStock: 5000, unit: 'L', avgCost: 4.85 },
   { id: '4', name: 'Boi Gordo', type: 'production', category: 'Produção Animal', currentStock: 450, minStock: 0, unit: 'cab', avgCost: 7800 },
   { id: '5', name: 'Cana-de-açúcar', type: 'production', category: 'Produção Vegetal', currentStock: 125000, minStock: 0, unit: 'ton', avgCost: 85 },
