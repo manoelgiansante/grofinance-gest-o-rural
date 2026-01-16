@@ -1,163 +1,245 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, FileText, CheckCircle2, XCircle, Send, Calendar } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
+import { Stack, router } from "expo-router";
+import { ArrowLeft, Search, Plus, Package, Clock, CheckCircle, XCircle, Truck } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+interface PurchaseOrder {
+  id: string;
+  supplierId: string;
+  operationId: string;
+  totalValue: number;
+  status: 'draft' | 'sent' | 'confirmed' | 'received' | 'cancelled';
+  requestedBy: string;
+  approvedBy?: string;
+  requestDate: Date;
+  expectedDeliveryDate?: Date;
+  actualDeliveryDate?: Date;
+  notes?: string;
+}
+
+const STATUS_CONFIG = {
+  draft: { label: 'Rascunho', icon: Clock, color: Colors.textTertiary },
+  sent: { label: 'Enviado', icon: Package, color: Colors.info },
+  confirmed: { label: 'Confirmado', icon: CheckCircle, color: Colors.primary },
+  received: { label: 'Recebido', icon: Truck, color: Colors.success },
+  cancelled: { label: 'Cancelado', icon: XCircle, color: Colors.error },
+};
+
 export default function PurchaseOrdersScreen() {
-  const { purchaseOrders, operations } = useApp();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'draft' | 'sent' | 'confirmed' | 'received'>('all');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<PurchaseOrder['status'] | 'all'>('all');
 
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return { label: 'Rascunho', color: Colors.textSecondary, icon: FileText };
-      case 'sent':
-        return { label: 'Enviado', color: Colors.info, icon: Send };
-      case 'confirmed':
-        return { label: 'Confirmado', color: Colors.warning, icon: CheckCircle2 };
-      case 'received':
-        return { label: 'Recebido', color: Colors.success, icon: CheckCircle2 };
-      case 'cancelled':
-        return { label: 'Cancelado', color: Colors.error, icon: XCircle };
-      default:
-        return { label: status, color: Colors.textSecondary, icon: FileText };
-    }
-  };
-
-  const filteredPOs = purchaseOrders.filter(po => {
-    if (filterStatus !== 'all' && po.status !== filterStatus) return false;
-    if (!searchQuery) return true;
-    const operation = operations.find(o => o.id === po.operationId);
-    return operation?.name.toLowerCase().includes(searchQuery.toLowerCase());
+  const { data: purchaseOrders = [], isLoading } = useQuery<PurchaseOrder[]>({
+    queryKey: ['purchaseOrders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('purchase_orders')
+        .select('*')
+        .order('request_date', { ascending: false });
+      
+      if (error) {
+        console.error('Error loading purchase orders:', error);
+        throw error;
+      }
+      
+      if (!data) return [];
+      
+      return data.map((po: any): PurchaseOrder => ({
+        id: po.id,
+        supplierId: po.supplier_id || '',
+        operationId: po.operation_id || '',
+        totalValue: po.total_value,
+        status: po.status as any,
+        requestedBy: po.requested_by,
+        approvedBy: po.approved_by,
+        requestDate: new Date(po.request_date),
+        expectedDeliveryDate: po.expected_delivery_date ? new Date(po.expected_delivery_date) : undefined,
+        actualDeliveryDate: po.actual_delivery_date ? new Date(po.actual_delivery_date) : undefined,
+        notes: po.notes,
+      }));
+    },
   });
 
-  const totalDraft = purchaseOrders.filter(p => p.status === 'draft').length;
-  const totalPending = purchaseOrders.filter(p => p.status === 'sent' || p.status === 'confirmed').length;
+  const filteredOrders = purchaseOrders.filter(po => {
+    if (statusFilter !== 'all' && po.status !== statusFilter) return false;
+    if (search && !po.id.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const statusCounts = {
+    all: purchaseOrders.length,
+    draft: purchaseOrders.filter(po => po.status === 'draft').length,
+    sent: purchaseOrders.filter(po => po.status === 'sent').length,
+    confirmed: purchaseOrders.filter(po => po.status === 'confirmed').length,
+    received: purchaseOrders.filter(po => po.status === 'received').length,
+    cancelled: purchaseOrders.filter(po => po.status === 'cancelled').length,
+  };
+
+  const totalValue = filteredOrders.reduce((sum, po) => sum + po.totalValue, 0);
 
   const isWeb = Platform.OS === 'web';
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>Pedidos de Compra</Text>
-            <Text style={styles.subtitle}>Gestão de Compras</Text>
-          </View>
-          <TouchableOpacity 
-            style={styles.addButton}
-            activeOpacity={0.7}
-          >
-            <Plus size={24} color={Colors.white} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={[styles.statsRow, isWeb && styles.statsRowWeb]}>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Rascunhos</Text>
-            <Text style={styles.statValue}>{totalDraft}</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Pendentes</Text>
-            <Text style={[styles.statValue, { color: Colors.warning }]}>{totalPending}</Text>
-          </View>
-        </View>
-
-        <View style={styles.filterRow}>
-          {['all', 'draft', 'sent', 'confirmed', 'received'].map((status) => (
-            <TouchableOpacity
-              key={status}
-              style={[styles.filterChip, filterStatus === status && styles.filterChipActive]}
-              onPress={() => setFilterStatus(status as any)}
-            >
-              <Text style={[styles.filterChipText, filterStatus === status && styles.filterChipTextActive]}>
-                {status === 'all' ? 'Todos' : getStatusInfo(status).label}
-              </Text>
+      <Stack.Screen
+        options={{
+          headerShown: !isWeb,
+          title: "Pedidos de Compra",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
+              <ArrowLeft size={24} color={Colors.textPrimary} />
             </TouchableOpacity>
-          ))}
-        </View>
+          ),
+        }}
+      />
 
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Search size={20} color={Colors.textSecondary} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Buscar pedidos..."
-              placeholderTextColor={Colors.textSecondary}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.list}>
-          {filteredPOs.length === 0 ? (
-            <View style={styles.emptyState}>
-              <FileText size={64} color={Colors.textTertiary} />
-              <Text style={styles.emptyTitle}>Nenhum pedido encontrado</Text>
-              <Text style={styles.emptySubtitle}>Adicione um novo pedido de compra</Text>
+      <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.title}>Pedidos de Compra</Text>
+              <Text style={styles.subtitle}>{purchaseOrders.length} pedidos</Text>
             </View>
-          ) : (
-            filteredPOs.map((po) => {
-              const operation = operations.find(o => o.id === po.operationId);
-              const statusInfo = getStatusInfo(po.status);
-              const StatusIcon = statusInfo.icon;
+            <TouchableOpacity style={styles.addButton} onPress={() => {}} activeOpacity={0.7}>
+              <Plus size={20} color={Colors.white} />
+              <Text style={styles.addButtonText}>Novo Pedido</Text>
+            </TouchableOpacity>
+          </View>
 
-              return (
-                <TouchableOpacity 
-                  key={po.id}
-                  style={styles.poCard}
+          <View style={styles.statsRow}>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Valor Total</Text>
+              <Text style={styles.statValue}>R$ {totalValue.toLocaleString('pt-BR')}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Aguardando</Text>
+              <Text style={[styles.statValue, { color: Colors.info }]}>
+                {statusCounts.sent + statusCounts.confirmed}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.filterRow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+              <TouchableOpacity
+                style={[styles.filterChip, statusFilter === 'all' && styles.filterChipActive]}
+                onPress={() => setStatusFilter('all')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}>
+                  Todos ({statusCounts.all})
+                </Text>
+              </TouchableOpacity>
+              {Object.entries(STATUS_CONFIG).map(([status, config]) => (
+                <TouchableOpacity
+                  key={status}
+                  style={[styles.filterChip, statusFilter === status && styles.filterChipActive]}
+                  onPress={() => setStatusFilter(status as PurchaseOrder['status'])}
                   activeOpacity={0.7}
                 >
-                  <View style={styles.poHeader}>
-                    <Text style={styles.poId}>PO #{po.id.slice(-6)}</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}>
-                      <StatusIcon size={14} color={statusInfo.color} />
-                      <Text style={[styles.statusText, { color: statusInfo.color }]}>
-                        {statusInfo.label}
+                  <Text style={[styles.filterText, statusFilter === status && styles.filterTextActive]}>
+                    {config.label} ({statusCounts[status as keyof typeof statusCounts]})
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
+          <View style={styles.searchBar}>
+            <Search size={20} color={Colors.textTertiary} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar por número do pedido"
+              placeholderTextColor={Colors.textTertiary}
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            {isLoading && <Text style={styles.emptyText}>Carregando...</Text>}
+            
+            {!isLoading && filteredOrders.length === 0 && (
+              <View style={styles.emptyState}>
+                <Package size={48} color={Colors.textTertiary} />
+                <Text style={styles.emptyText}>
+                  {search ? 'Nenhum pedido encontrado' : 'Nenhum pedido cadastrado'}
+                </Text>
+              </View>
+            )}
+
+            {filteredOrders.map((order) => {
+              const config = STATUS_CONFIG[order.status];
+              const Icon = config.icon;
+
+              return (
+                <TouchableOpacity
+                  key={order.id}
+                  style={styles.orderCard}
+                  activeOpacity={0.7}
+                  onPress={() => {}}
+                >
+                  <View style={styles.orderHeader}>
+                    <View style={[styles.statusIcon, { backgroundColor: config.color + '15' }]}>
+                      <Icon size={20} color={config.color} />
+                    </View>
+                    <View style={styles.orderInfo}>
+                      <Text style={styles.orderId}>Pedido #{order.id.substring(0, 8)}</Text>
+                      <Text style={styles.orderDate}>
+                        {format(order.requestDate, "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
                       </Text>
+                    </View>
+                    <View style={[styles.statusBadge, { backgroundColor: config.color + '15' }]}>
+                      <Text style={[styles.statusText, { color: config.color }]}>{config.label}</Text>
                     </View>
                   </View>
 
-                  <View style={styles.poInfo}>
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoLabel}>Itens:</Text>
-                      <Text style={styles.infoValue}>{po.items.length}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                      <Text style={styles.infoLabel}>Valor Total:</Text>
-                      <Text style={[styles.infoValue, { fontWeight: '700', color: Colors.primary }]}>
-                        R$ {po.totalValue.toLocaleString('pt-BR')}
+                  <View style={styles.orderDetails}>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailLabel}>Valor Total</Text>
+                      <Text style={styles.detailValue}>
+                        R$ {order.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </Text>
                     </View>
-                  </View>
-
-                  <View style={styles.poFooter}>
-                    {operation && (
-                      <View style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}>
-                        <Text style={[styles.operationBadgeText, { color: operation.color }]}>
-                          {operation.name}
+                    
+                    {order.expectedDeliveryDate && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailLabel}>Previsão de Entrega</Text>
+                        <Text style={styles.detailValue}>
+                          {format(order.expectedDeliveryDate, "dd/MM/yyyy")}
                         </Text>
                       </View>
                     )}
-                    <View style={styles.dateRow}>
-                      <Calendar size={14} color={Colors.textSecondary} />
-                      <Text style={styles.dateText}>
-                        {format(po.requestDate, 'dd MMM', { locale: ptBR })}
-                      </Text>
-                    </View>
+
+                    {order.actualDeliveryDate && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailLabel}>Data de Recebimento</Text>
+                        <Text style={[styles.detailValue, { color: Colors.success }]}>
+                          {format(order.actualDeliveryDate, "dd/MM/yyyy")}
+                        </Text>
+                      </View>
+                    )}
+
+                    {order.notes && (
+                      <View style={styles.notesRow}>
+                        <Text style={styles.notesLabel}>Observações:</Text>
+                        <Text style={styles.notesText} numberOfLines={2}>{order.notes}</Text>
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
               );
-            })
-          )}
-          <View style={{ height: 20 }} />
-        </ScrollView>
+            })}
+
+            <View style={{ height: 40 }} />
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -171,76 +253,82 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  headerButton: {
+    padding: 8,
+  },
   header: {
+    paddingTop: 24,
+    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 16,
+    alignItems: 'flex-start',
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700' as const,
     color: Colors.textPrimary,
+    marginBottom: 4,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
     color: Colors.textSecondary,
-    marginTop: 2,
+    letterSpacing: 0.2,
   },
   addButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: Colors.primary,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    shadowColor: Colors.shadowMedium,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 6,
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: Colors.white,
   },
   statsRow: {
     flexDirection: 'row',
     gap: 12,
-    paddingHorizontal: 24,
     marginBottom: 20,
-  },
-  statsRowWeb: {
-    flexWrap: 'wrap',
   },
   statCard: {
     flex: 1,
     backgroundColor: Colors.surface,
-    borderRadius: 14,
+    borderRadius: 12,
     padding: 16,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: Colors.textSecondary,
-    marginBottom: 6,
     fontWeight: '500' as const,
+    marginBottom: 4,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700' as const,
     color: Colors.textPrimary,
-    letterSpacing: -0.5,
   },
   filterRow: {
-    flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 24,
     marginBottom: 16,
-    flexWrap: 'wrap',
+  },
+  filterScroll: {
+    gap: 8,
+    paddingRight: 24,
   },
   filterChip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.surface,
@@ -251,138 +339,123 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
   },
-  filterChipText: {
-    fontSize: 12,
+  filterText: {
+    fontSize: 13,
     fontWeight: '600' as const,
     color: Colors.textSecondary,
   },
-  filterChipTextActive: {
+  filterTextActive: {
     color: Colors.white,
-  },
-  searchContainer: {
-    paddingHorizontal: 24,
-    marginBottom: 20,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    paddingVertical: 14,
     gap: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: Colors.border,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
     fontSize: 15,
     color: Colors.textPrimary,
-    letterSpacing: 0.2,
-  },
-  list: {
-    flex: 1,
-    paddingHorizontal: 24,
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 80,
+    paddingVertical: 60,
+    gap: 16,
   },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    color: Colors.textPrimary,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
+  emptyText: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: Colors.textTertiary,
     textAlign: 'center',
   },
-  poCard: {
+  orderCard: {
     backgroundColor: Colors.surface,
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 14,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: Colors.border,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 4,
   },
-  poHeader: {
+  orderHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    gap: 12,
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
-  poId: {
+  statusIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  orderInfo: {
+    flex: 1,
+  },
+  orderId: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '600' as const,
     color: Colors.textPrimary,
+    marginBottom: 4,
     letterSpacing: -0.2,
   },
+  orderDate: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    fontWeight: '500' as const,
+  },
   statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '700' as const,
-    letterSpacing: 0.3,
+    fontWeight: '600' as const,
   },
-  poInfo: {
-    gap: 8,
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+  orderDetails: {
+    gap: 12,
   },
-  infoRow: {
+  detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  infoLabel: {
-    fontSize: 13,
+  detailLabel: {
+    fontSize: 14,
     color: Colors.textSecondary,
+    fontWeight: '500' as const,
   },
-  infoValue: {
+  detailValue: {
     fontSize: 14,
     fontWeight: '600' as const,
     color: Colors.textPrimary,
   },
-  poFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  notesRow: {
+    marginTop: 8,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
   },
-  operationBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-  },
-  operationBadgeText: {
-    fontSize: 12,
-    fontWeight: '700' as const,
-    letterSpacing: 0.3,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  dateText: {
+  notesLabel: {
     fontSize: 12,
     color: Colors.textSecondary,
-    fontWeight: '500' as const,
+    fontWeight: '600' as const,
+    marginBottom: 4,
+  },
+  notesText: {
+    fontSize: 13,
+    color: Colors.textPrimary,
+    lineHeight: 18,
   },
 });

@@ -31,6 +31,7 @@ function RootLayoutNav() {
             <Stack.Screen name="fiscal/nfe-details" />
             <Stack.Screen name="fiscal/mdfe-wizard" />
             <Stack.Screen name="profile" />
+            <Stack.Screen name="purchase-orders" />
           </Stack>
         </View>
       </View>
@@ -85,6 +86,10 @@ function RootLayoutNav() {
       <Stack.Screen 
         name="profile" 
         options={{ title: "Perfil" }} 
+      />
+      <Stack.Screen 
+        name="purchase-orders" 
+        options={{ title: "Pedidos de Compra" }} 
       />
     </Stack>
   );

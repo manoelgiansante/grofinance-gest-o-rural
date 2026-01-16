@@ -37,7 +37,7 @@ const menuSections: {
     items: [
       { icon: FileText, label: "Fiscal", route: "/fiscal" },
       { icon: Package, label: "Estoque", route: "/stock" },
-      { icon: ShoppingCart, label: "Compras", route: "/purchases" },
+      { icon: ShoppingCart, label: "Compras", route: "/purchase-orders" },
       { icon: Briefcase, label: "Contratos", route: "/contracts" },
     ]
   },
