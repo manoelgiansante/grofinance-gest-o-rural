@@ -518,3 +518,168 @@ export interface TeamPermission {
   actions: ('view' | 'create' | 'edit' | 'delete' | 'approve' | 'pay')[];
   valueLimit?: number;
 }
+
+export interface Field {
+  id: string;
+  name: string;
+  farmId: string;
+  area: number;
+  unit: 'ha' | 'alqueire' | 'acre';
+  latitude?: number;
+  longitude?: number;
+  soilType?: string;
+  currentCrop?: string;
+  active: boolean;
+  notes?: string;
+}
+
+export interface Season {
+  id: string;
+  name: string;
+  fieldId: string;
+  crop: string;
+  plantingDate: Date;
+  expectedHarvestDate: Date;
+  actualHarvestDate?: Date;
+  area: number;
+  expectedYield: number;
+  actualYield?: number;
+  yieldUnit: string;
+  budgetedCost: number;
+  actualCost: number;
+  budgetedRevenue: number;
+  actualRevenue: number;
+  status: 'planning' | 'active' | 'completed' | 'cancelled';
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface SeasonCost {
+  id: string;
+  seasonId: string;
+  category: string;
+  description: string;
+  budgeted: number;
+  actual: number;
+  date?: Date;
+}
+
+export interface FieldProfitability {
+  fieldId: string;
+  seasonId: string;
+  totalRevenue: number;
+  totalCost: number;
+  grossMargin: number;
+  grossMarginPerHa: number;
+  grossMarginPerUnit: number;
+  roi: number;
+}
+
+export interface BarterContract {
+  id: string;
+  type: 'input_for_product' | 'product_for_input';
+  supplierId?: string;
+  clientId?: string;
+  operationId: string;
+  inputProduct: string;
+  inputQuantity: number;
+  inputUnit: string;
+  inputUnitValue: number;
+  outputProduct: string;
+  outputQuantity: number;
+  outputUnit: string;
+  outputUnitValue: number;
+  exchangeRate: number;
+  startDate: Date;
+  settlementDate: Date;
+  status: 'active' | 'partially_settled' | 'settled' | 'cancelled';
+  settledInputQuantity: number;
+  settledOutputQuantity: number;
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface LeaseContract {
+  id: string;
+  lessorName: string;
+  lessorCpfCnpj: string;
+  fieldId: string;
+  area: number;
+  startDate: Date;
+  endDate: Date;
+  paymentType: 'fixed_cash' | 'fixed_product' | 'percentage' | 'partnership';
+  fixedCashValue?: number;
+  fixedProductQuantity?: number;
+  fixedProductUnit?: string;
+  percentageValue?: number;
+  partnershipShare?: number;
+  paymentFrequency: 'monthly' | 'quarterly' | 'annual' | 'harvest';
+  status: 'active' | 'completed' | 'cancelled';
+  notes?: string;
+  createdAt: Date;
+}
+
+export interface LeasePayment {
+  id: string;
+  leaseId: string;
+  dueDate: Date;
+  paidDate?: Date;
+  value: number;
+  status: 'pending' | 'paid' | 'overdue';
+  notes?: string;
+}
+
+export interface Forecast {
+  id: string;
+  name: string;
+  type: 'optimistic' | 'realistic' | 'pessimistic';
+  startDate: Date;
+  endDate: Date;
+  projectedRevenue: number;
+  projectedExpenses: number;
+  projectedCashFlow: ForecastCashFlowItem[];
+  assumptions: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ForecastCashFlowItem {
+  date: Date;
+  description: string;
+  type: 'in' | 'out';
+  category: string;
+  value: number;
+  accumulated: number;
+}
+
+export interface FinancialStatement {
+  id: string;
+  type: 'dre' | 'balance_sheet' | 'cash_flow';
+  startDate: Date;
+  endDate: Date;
+  operationId?: string;
+  data: any;
+  createdAt: Date;
+}
+
+export interface DRELine {
+  code: string;
+  description: string;
+  value: number;
+  type: 'revenue' | 'expense' | 'result';
+  level: number;
+  parent?: string;
+}
+
+export interface AssetDepreciation {
+  id: string;
+  assetId: string;
+  method: 'linear' | 'declining_balance' | 'units_of_production';
+  usefulLife: number;
+  residualValue: number;
+  depreciationRate: number;
+  monthlyDepreciation: number;
+  accumulatedDepreciation: number;
+  currentBookValue: number;
+  lastCalculationDate: Date;
+}

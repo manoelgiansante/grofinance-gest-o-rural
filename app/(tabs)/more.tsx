@@ -3,7 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { 
   User, Users, Package, ShoppingCart, TrendingUp, Briefcase, 
   FileText, Settings, HelpCircle, Building2, DollarSign,
-  Archive, TrendingDown, Calendar
+  Archive, TrendingDown, Calendar, MapPin, Sprout, Repeat, Home,
+  LineChart, FileBarChart
 } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { router } from "expo-router";
@@ -11,6 +12,15 @@ import { router } from "expo-router";
 export default function MoreScreen() {
 
   const menuSections = [
+    {
+      title: "Produção & Rentabilidade",
+      items: [
+        { icon: MapPin, label: "Talhões", route: "/fields", color: "#10B981" },
+        { icon: Sprout, label: "Safras", route: "/seasons", color: "#059669" },
+        { icon: Repeat, label: "Barter/Troca", route: "/barter", color: "#F59E0B" },
+        { icon: Home, label: "Arrendamento", route: "/leases", color: "#8B5CF6" },
+      ]
+    },
     {
       title: "Cadastros",
       items: [
@@ -32,6 +42,8 @@ export default function MoreScreen() {
       items: [
         { icon: TrendingUp, label: "Receitas", route: "/revenues", color: "#27AE60" },
         { icon: TrendingDown, label: "Fluxo de Caixa", route: "/cash-flow", color: "#9B59B6" },
+        { icon: LineChart, label: "Forecast", route: "/forecast", color: "#06B6D4" },
+        { icon: FileBarChart, label: "DRE Gerencial", route: "/dre", color: "#EC4899" },
         { icon: Archive, label: "Patrimônio", route: "/assets", color: "#34495E" },
         { icon: DollarSign, label: "Orçamento", route: "/budget", color: "#F39C12" },
         { icon: Calendar, label: "Fechamento Mensal", route: "/closing", color: "#16A085" },

@@ -718,3 +718,259 @@ CREATE TRIGGER update_fiscal_products_updated_at BEFORE UPDATE ON fiscal_product
 CREATE TRIGGER update_nfes_updated_at BEFORE UPDATE ON nfes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_mdfes_updated_at BEFORE UPDATE ON mdfes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_month_closings_updated_at BEFORE UPDATE ON month_closings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- 27. FIELDS (Talhões/Campos)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS fields (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  farm_id UUID REFERENCES farms(id) ON DELETE CASCADE,
+  area DECIMAL(15, 2) NOT NULL,
+  unit TEXT NOT NULL DEFAULT 'ha',
+  latitude DECIMAL(10, 8),
+  longitude DECIMAL(11, 8),
+  soil_type TEXT,
+  current_crop TEXT,
+  active BOOLEAN DEFAULT true,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 28. SEASONS (Safras/Temporadas)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS seasons (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  field_id UUID REFERENCES fields(id) ON DELETE CASCADE,
+  crop TEXT NOT NULL,
+  planting_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  expected_harvest_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  actual_harvest_date TIMESTAMP WITH TIME ZONE,
+  area DECIMAL(15, 2) NOT NULL,
+  expected_yield DECIMAL(15, 2) NOT NULL,
+  actual_yield DECIMAL(15, 2),
+  yield_unit TEXT NOT NULL,
+  budgeted_cost DECIMAL(15, 2) DEFAULT 0,
+  actual_cost DECIMAL(15, 2) DEFAULT 0,
+  budgeted_revenue DECIMAL(15, 2) DEFAULT 0,
+  actual_revenue DECIMAL(15, 2) DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'planning',
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 29. SEASON COSTS (Custos por Safra)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS season_costs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  season_id UUID REFERENCES seasons(id) ON DELETE CASCADE,
+  category TEXT NOT NULL,
+  description TEXT NOT NULL,
+  budgeted DECIMAL(15, 2) DEFAULT 0,
+  actual DECIMAL(15, 2) DEFAULT 0,
+  date TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 30. BARTER CONTRACTS (Contratos de Troca)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS barter_contracts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type TEXT NOT NULL,
+  supplier_id UUID REFERENCES suppliers(id),
+  client_id UUID REFERENCES clients(id),
+  operation_id UUID REFERENCES operations(id),
+  input_product TEXT NOT NULL,
+  input_quantity DECIMAL(15, 2) NOT NULL,
+  input_unit TEXT NOT NULL,
+  input_unit_value DECIMAL(15, 2) NOT NULL,
+  output_product TEXT NOT NULL,
+  output_quantity DECIMAL(15, 2) NOT NULL,
+  output_unit TEXT NOT NULL,
+  output_unit_value DECIMAL(15, 2) NOT NULL,
+  exchange_rate DECIMAL(15, 6) NOT NULL,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  settlement_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  settled_input_quantity DECIMAL(15, 2) DEFAULT 0,
+  settled_output_quantity DECIMAL(15, 2) DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 31. LEASE CONTRACTS (Contratos de Arrendamento)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS lease_contracts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  lessor_name TEXT NOT NULL,
+  lessor_cpf_cnpj TEXT NOT NULL,
+  field_id UUID REFERENCES fields(id),
+  area DECIMAL(15, 2) NOT NULL,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  payment_type TEXT NOT NULL,
+  fixed_cash_value DECIMAL(15, 2),
+  fixed_product_quantity DECIMAL(15, 2),
+  fixed_product_unit TEXT,
+  percentage_value DECIMAL(5, 2),
+  partnership_share DECIMAL(5, 2),
+  payment_frequency TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'active',
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 32. LEASE PAYMENTS (Pagamentos de Arrendamento)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS lease_payments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  lease_id UUID REFERENCES lease_contracts(id) ON DELETE CASCADE,
+  due_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  paid_date TIMESTAMP WITH TIME ZONE,
+  value DECIMAL(15, 2) NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 33. FORECASTS (Projeções Financeiras)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS forecasts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  projected_revenue DECIMAL(15, 2) DEFAULT 0,
+  projected_expenses DECIMAL(15, 2) DEFAULT 0,
+  projected_cash_flow JSONB,
+  assumptions TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 34. FINANCIAL STATEMENTS (Demonstrativos Financeiros)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS financial_statements (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type TEXT NOT NULL,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  operation_id UUID REFERENCES operations(id),
+  data JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 35. ASSET DEPRECIATIONS (Depreciação de Ativos)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS asset_depreciations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  asset_id UUID REFERENCES assets(id) ON DELETE CASCADE,
+  method TEXT NOT NULL,
+  useful_life INTEGER NOT NULL,
+  residual_value DECIMAL(15, 2) DEFAULT 0,
+  depreciation_rate DECIMAL(5, 2) NOT NULL,
+  monthly_depreciation DECIMAL(15, 2) NOT NULL,
+  accumulated_depreciation DECIMAL(15, 2) DEFAULT 0,
+  current_book_value DECIMAL(15, 2) NOT NULL,
+  last_calculation_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- ENABLE ROW LEVEL SECURITY (NOVAS TABELAS)
+-- =====================================================
+ALTER TABLE fields ENABLE ROW LEVEL SECURITY;
+ALTER TABLE seasons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE season_costs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE barter_contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lease_contracts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lease_payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE forecasts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE financial_statements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE asset_depreciations ENABLE ROW LEVEL SECURITY;
+
+-- =====================================================
+-- POLÍTICAS DE SEGURANÇA (NOVAS TABELAS)
+-- =====================================================
+CREATE POLICY "Allow public read access" ON fields FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON fields FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON fields FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON fields FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON seasons FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON seasons FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON seasons FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON seasons FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON season_costs FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON season_costs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON season_costs FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON season_costs FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON barter_contracts FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON barter_contracts FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON barter_contracts FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON barter_contracts FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON lease_contracts FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON lease_contracts FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON lease_contracts FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON lease_contracts FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON lease_payments FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON lease_payments FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON lease_payments FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON lease_payments FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON forecasts FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON forecasts FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON forecasts FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON forecasts FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON financial_statements FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON financial_statements FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON financial_statements FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON financial_statements FOR DELETE USING (true);
+
+CREATE POLICY "Allow public read access" ON asset_depreciations FOR SELECT USING (true);
+CREATE POLICY "Allow public insert access" ON asset_depreciations FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update access" ON asset_depreciations FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete access" ON asset_depreciations FOR DELETE USING (true);
+
+-- =====================================================
+-- ÍNDICES PARA PERFORMANCE (NOVAS TABELAS)
+-- =====================================================
+CREATE INDEX idx_fields_farm_id ON fields(farm_id);
+CREATE INDEX idx_seasons_field_id ON seasons(field_id);
+CREATE INDEX idx_seasons_status ON seasons(status);
+CREATE INDEX idx_season_costs_season_id ON season_costs(season_id);
+CREATE INDEX idx_barter_contracts_status ON barter_contracts(status);
+CREATE INDEX idx_lease_contracts_field_id ON lease_contracts(field_id);
+CREATE INDEX idx_lease_contracts_status ON lease_contracts(status);
+CREATE INDEX idx_lease_payments_lease_id ON lease_payments(lease_id);
+CREATE INDEX idx_asset_depreciations_asset_id ON asset_depreciations(asset_id);
+
+-- =====================================================
+-- TRIGGERS PARA UPDATED_AT (NOVAS TABELAS)
+-- =====================================================
+CREATE TRIGGER update_fields_updated_at BEFORE UPDATE ON fields FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_seasons_updated_at BEFORE UPDATE ON seasons FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_barter_contracts_updated_at BEFORE UPDATE ON barter_contracts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_lease_contracts_updated_at BEFORE UPDATE ON lease_contracts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_forecasts_updated_at BEFORE UPDATE ON forecasts FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_asset_depreciations_updated_at BEFORE UPDATE ON asset_depreciations FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
