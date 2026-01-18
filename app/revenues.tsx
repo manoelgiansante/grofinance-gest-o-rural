@@ -1,16 +1,20 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, Filter, DollarSign, Clock, CheckCircle2, AlertCircle, Calendar } from "lucide-react-native";
+import { Plus, Search, Filter, DollarSign, Clock, CheckCircle2, AlertCircle, Calendar, Upload } from "lucide-react-native";
 import { useApp } from "@/providers/AppProvider";
+import { useAuth } from "@/contexts/AuthContext";
 import Colors from "@/constants/colors";
 import { router } from "expo-router";
 import { useState } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import ExcelImporter from "@/components/ExcelImporter";
 
 export default function RevenuesScreen() {
-  const { revenues, clients, operations } = useApp();
+  const { revenues, clients, operations, refetch } = useApp();
+  const { isPremium } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showImporter, setShowImporter] = useState(false);
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -46,19 +50,47 @@ export default function RevenuesScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Excel Importer Modal */}
+      <Modal
+        visible={showImporter}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowImporter(false)}
+      >
+        <ExcelImporter
+          targetTable="revenues"
+          onImportComplete={() => {
+            setShowImporter(false);
+            refetch();
+          }}
+          onClose={() => setShowImporter(false)}
+        />
+      </Modal>
+
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
         <View style={styles.header}>
           <View>
             <Text style={styles.title}>Receitas</Text>
             <Text style={styles.subtitle}>Contas a Receber</Text>
           </View>
-          <TouchableOpacity 
-            style={styles.addButton}
-            onPress={() => router.push('/add-revenue')}
-            activeOpacity={0.7}
-          >
-            <Plus size={24} color={Colors.white} />
-          </TouchableOpacity>
+          <View style={styles.headerButtons}>
+            {isPremium && (
+              <TouchableOpacity 
+                style={styles.importButton}
+                onPress={() => setShowImporter(true)}
+                activeOpacity={0.7}
+              >
+                <Upload size={20} color={Colors.primary} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              style={styles.addButton}
+              onPress={() => router.push('/add-revenue')}
+              activeOpacity={0.7}
+            >
+              <Plus size={24} color={Colors.white} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={[styles.statsRow, isWeb && styles.statsRowWeb]}>
@@ -192,6 +224,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  importButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.primary + '15',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   addButton: {
     width: 52,

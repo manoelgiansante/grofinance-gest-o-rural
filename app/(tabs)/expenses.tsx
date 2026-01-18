@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, Filter, FileText, AlertCircle, Clock, CheckCircle2 } from "lucide-react-native";
+import { Plus, Search, Filter, FileText, AlertCircle, Clock, CheckCircle2, Upload } from "lucide-react-native";
 import { useApp } from "@/providers/AppProvider";
+import { useAuth } from "@/contexts/AuthContext";
 import { suppliers } from "@/mocks/data";
 import Colors from "@/constants/colors";
 import { router } from "expo-router";
@@ -9,10 +10,13 @@ import { useState } from "react";
 import { Expense } from "@/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import ExcelImporter from "@/components/ExcelImporter";
 
 export default function ExpensesScreen() {
-  const { expenses, operations } = useApp();
+  const { expenses, operations, refetch } = useApp();
+  const { isPremium } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showImporter, setShowImporter] = useState(false);
 
   const getStatusInfo = (status: Expense['status']) => {
     switch (status) {
@@ -50,15 +54,43 @@ export default function ExpensesScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Excel Importer Modal */}
+      <Modal
+        visible={showImporter}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowImporter(false)}
+      >
+        <ExcelImporter
+          targetTable="expenses"
+          onImportComplete={() => {
+            setShowImporter(false);
+            refetch();
+          }}
+          onClose={() => setShowImporter(false)}
+        />
+      </Modal>
+
       <View style={styles.header}>
         <Text style={styles.title}>Despesas</Text>
-        <TouchableOpacity 
-          style={styles.addButton}
-          onPress={() => router.push('/add-expense')}
-          activeOpacity={0.7}
-        >
-          <Plus size={24} color={Colors.white} />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          {isPremium && (
+            <TouchableOpacity 
+              style={styles.importButton}
+              onPress={() => setShowImporter(true)}
+              activeOpacity={0.7}
+            >
+              <Upload size={20} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => router.push('/add-expense')}
+            activeOpacity={0.7}
+          >
+            <Plus size={24} color={Colors.white} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.searchContainer}>
@@ -155,11 +187,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 18,
   },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   title: {
     fontSize: 32,
     fontWeight: '700' as const,
     color: Colors.textPrimary,
     letterSpacing: -0.5,
+  },
+  importButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.primary + '15',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   addButton: {
     width: 52,
