@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import createContextHook from '@nkzw/create-context-hook';
 import { supabase } from '@/lib/supabase';
+import { ssoService } from '@/lib/supabase-sync';
 import { Session, User } from '@supabase/supabase-js';
 
 // =====================================================
@@ -235,24 +236,29 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   }, [user, subscription, loadSubscription]);
 
   // =====================================================
-  // AUTH ACTIONS
+  // AUTH ACTIONS - INTEGRADO COM SSO
   // =====================================================
-  const signUp = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    return data;
+  const signUp = useCallback(async (email: string, password: string, fullName?: string) => {
+    // Usar SSO Service para registro sincronizado
+    const result = await ssoService.signUpWithSSO(email, password, fullName);
+    if (!result.success) {
+      throw new Error(result.error || 'Erro ao criar conta');
+    }
+    return { user: result.user, session: result.session };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    // Profile e subscription carregam automaticamente via listener
-    return data;
+    // Usar SSO Service para login sincronizado
+    const result = await ssoService.signInWithSSO(email, password);
+    if (!result.success) {
+      throw new Error(result.error || 'Erro ao fazer login');
+    }
+    return { user: result.user, session: result.session };
   }, []);
 
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    // Logout de todos os sistemas SSO
+    await ssoService.signOutAll();
     setProfile(null);
     setSubscription(null);
   }, []);
@@ -267,12 +273,33 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     try {
       await supabase.from('profiles').update(updates).eq('id', user.id);
       setProfile(prev => prev ? { ...prev, ...updates } : null);
+      // Sincronizar perfil com outros bancos
+      if (user.email) {
+        ssoService.forceSyncAll(user.id, user.email);
+      }
       return true;
     } catch { return false; }
   }, [user]);
 
   // =====================================================
-  // RETORNO - TUDO INTEGRADO
+  // FUNÇÕES SSO ADICIONAIS
+  // =====================================================
+  const checkAppAccess = useCallback(async (appName: 'operacional' | 'finance' | 'maquinas') => {
+    if (!user) return { hasAccess: false, reason: 'Não autenticado' };
+    return ssoService.checkAppAccess(user.id, appName);
+  }, [user]);
+
+  const forceSyncSSO = useCallback(async () => {
+    if (!user || !user.email) return { success: false, message: 'Não autenticado' };
+    return ssoService.forceSyncAll(user.id, user.email);
+  }, [user]);
+
+  const getSyncStatus = useCallback(() => {
+    return ssoService.getSyncStatus();
+  }, []);
+
+  // =====================================================
+  // RETORNO - TUDO INTEGRADO COM SSO
   // =====================================================
   return {
     // Auth
@@ -288,5 +315,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     hasAccessToApp, hasFeature, needsPayment, trialDaysRemaining,
     // Ações
     signUp, signIn, signOut, resetPassword, upgradeSubscription, loadSubscription,
+    // SSO - Sincronização entre apps
+    checkAppAccess, forceSyncSSO, getSyncStatus,
   };
 });
