@@ -195,7 +195,9 @@ export default function TabLayout() {
             <Tabs.Screen name="expenses" />
             <Tabs.Screen name="validations" />
             <Tabs.Screen name="reports" />
-            <Tabs.Screen name="more" />
+            <Tabs.Screen name="settings" />
+            <Tabs.Screen name="more" options={{ href: null }} />
+            <Tabs.Screen name="profile" options={{ href: null }} />
           </Tabs>
         </View>
       </View>
@@ -260,11 +262,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="more"
+        name="settings"
         options={{
-          title: "Mais",
-          tabBarIcon: ({ color, size }) => <Menu color={color} size={size} />,
+          title: "Config",
+          tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}
+      />
+      <Tabs.Screen
+        name="more"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{ href: null }}
       />
     </Tabs>
   );
