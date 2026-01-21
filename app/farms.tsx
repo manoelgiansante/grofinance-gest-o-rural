@@ -128,7 +128,25 @@ export default function FarmsScreen() {
                   <Text style={styles.farmSize}>{farm.size.toLocaleString('pt-BR')} hectares</Text>
                 </View>
               </View>
-              <TouchableOpacity style={styles.moreButton}>
+              <TouchableOpacity 
+                style={styles.moreButton}
+                onPress={() => {
+                  Alert.alert(
+                    farm.name,
+                    'Escolha uma ação',
+                    [
+                      { text: 'Ver Detalhes', onPress: () => router.push(`/farm-details?id=${farm.id}` as any) },
+                      { text: 'Editar', onPress: () => Alert.alert('Em breve', 'Edição de fazenda será implementada') },
+                      { text: 'Ver Talhões', onPress: () => router.push('/fields') },
+                      { text: 'Excluir', style: 'destructive', onPress: () => Alert.alert('Confirmar', `Deseja excluir "${farm.name}"?`, [
+                        { text: 'Cancelar', style: 'cancel' },
+                        { text: 'Excluir', style: 'destructive', onPress: () => Alert.alert('Sucesso', 'Fazenda excluída') }
+                      ])},
+                      { text: 'Cancelar', style: 'cancel' }
+                    ]
+                  );
+                }}
+              >
                 <MoreVertical size={20} color={Colors.textSecondary} />
               </TouchableOpacity>
             </TouchableOpacity>
