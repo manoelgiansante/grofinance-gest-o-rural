@@ -90,48 +90,84 @@ export default function AddExpenseScreen() {
 
         <View style={styles.field}>
           <Text style={styles.label}>Fornecedor *</Text>
-          <View style={styles.pickerContainer}>
+          {suppliers.length === 0 ? (
             <TouchableOpacity 
-              style={styles.picker}
-              onPress={() => {
-                Alert.alert(
-                  'Selecionar Fornecedor',
-                  '',
-                  suppliers.map(s => ({
-                    text: s.name,
-                    onPress: () => setSupplier(s.id)
-                  }))
-                );
-              }}
+              style={styles.emptyWarning}
+              onPress={() => router.push('/suppliers')}
             >
-              <Text style={supplierId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
-                {supplierId ? suppliers.find(s => s.id === supplierId)?.name : 'Selecione o fornecedor'}
+              <Text style={styles.emptyWarningText}>
+                Nenhum fornecedor cadastrado
+              </Text>
+              <Text style={styles.emptyWarningLink}>
+                Toque aqui para cadastrar →
               </Text>
             </TouchableOpacity>
-          </View>
+          ) : (
+            <View style={styles.pickerContainer}>
+              <TouchableOpacity 
+                style={styles.picker}
+                onPress={() => {
+                  Alert.alert(
+                    'Selecionar Fornecedor',
+                    '',
+                    [
+                      ...suppliers.map(s => ({
+                        text: s.name,
+                        onPress: () => setSupplier(s.id)
+                      })),
+                      { text: '+ Cadastrar novo', onPress: () => router.push('/suppliers') },
+                      { text: 'Cancelar', style: 'cancel' as const }
+                    ]
+                  );
+                }}
+              >
+                <Text style={supplierId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
+                  {supplierId ? suppliers.find(s => s.id === supplierId)?.name : 'Selecione o fornecedor'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.field}>
           <Text style={styles.label}>Operação *</Text>
-          <View style={styles.pickerContainer}>
+          {operations.length === 0 ? (
             <TouchableOpacity 
-              style={styles.picker}
-              onPress={() => {
-                Alert.alert(
-                  'Selecionar Operação',
-                  '',
-                  operations.map(op => ({
-                    text: op.name,
-                    onPress: () => setOperation(op.id)
-                  }))
-                );
-              }}
+              style={styles.emptyWarning}
+              onPress={() => router.push('/operations')}
             >
-              <Text style={operationId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
-                {operationId ? operations.find(o => o.id === operationId)?.name : 'Selecione a operação'}
+              <Text style={styles.emptyWarningText}>
+                Nenhuma operação cadastrada
+              </Text>
+              <Text style={styles.emptyWarningLink}>
+                Toque aqui para cadastrar →
               </Text>
             </TouchableOpacity>
-          </View>
+          ) : (
+            <View style={styles.pickerContainer}>
+              <TouchableOpacity 
+                style={styles.picker}
+                onPress={() => {
+                  Alert.alert(
+                    'Selecionar Operação',
+                    '',
+                    [
+                      ...operations.map(op => ({
+                        text: op.name,
+                        onPress: () => setOperation(op.id)
+                      })),
+                      { text: '+ Cadastrar nova', onPress: () => router.push('/operations') },
+                      { text: 'Cancelar', style: 'cancel' as const }
+                    ]
+                  );
+                }}
+              >
+                <Text style={operationId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
+                  {operationId ? operations.find(o => o.id === operationId)?.name : 'Selecione a operação'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.field}>
@@ -321,5 +357,24 @@ const styles = StyleSheet.create({
     fontWeight: '700' as const,
     color: Colors.white,
     letterSpacing: 0.3,
+  },
+  emptyWarning: {
+    backgroundColor: Colors.warning + '15',
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: Colors.warning + '30',
+    alignItems: 'center',
+  },
+  emptyWarningText: {
+    fontSize: 14,
+    color: Colors.warning,
+    fontWeight: '500' as const,
+    marginBottom: 6,
+  },
+  emptyWarningLink: {
+    fontSize: 14,
+    color: Colors.primary,
+    fontWeight: '600' as const,
   },
 });
