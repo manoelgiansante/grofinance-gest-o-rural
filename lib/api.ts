@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 // =====================================================
-// API SERVICE - Rumo Finance
+// API SERVICE - Agrofinance
 // Serviço centralizado para todas as operações do banco
 // =====================================================
 

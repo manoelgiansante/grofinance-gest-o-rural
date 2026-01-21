@@ -2,13 +2,13 @@ import { supabase } from './supabase';
 
 // =====================================================
 // CROSS-APP SERVICE
-// Serviço para comunicação entre Rumo Finance e Rumo Operacional
+// Serviço para comunicação entre Agrofinance e Agrofinance Operacional
 // =====================================================
 
 export interface CrossAppSubscription {
   email: string;
-  rumoFinancePlan: 'free' | 'basic' | 'intermediate' | 'premium';
-  rumoOperacionalPlan: 'free' | 'basic' | 'intermediate' | 'premium';
+  agrofinancePlan: 'free' | 'basic' | 'intermediate' | 'premium';
+  agrofinanceOperacionalPlan: 'free' | 'basic' | 'intermediate' | 'premium';
   hasBonus: boolean; // Se assinou Finance intermediário+, Operacional é grátis
   expiresAt?: string;
 }
@@ -35,8 +35,8 @@ export const CrossAppService = {
 
       return {
         email: data.email,
-        rumoFinancePlan: data.gestao_rural_plan || 'free',
-        rumoOperacionalPlan: data.custo_operacional_plan || 'free',
+        agrofinancePlan: data.gestao_rural_plan || 'free',
+        agrofinanceOperacionalPlan: data.custo_operacional_plan || 'free',
         hasBonus: data.custo_op_bonus || false,
         expiresAt: data.expires_at,
       };
@@ -47,7 +47,7 @@ export const CrossAppService = {
   },
 
   /**
-   * Ativa assinatura do Rumo Finance (com bônus para Operacional)
+   * Ativa assinatura do Agrofinance (com bônus para Operacional)
    */
   async activateFinanceSubscription(
     email: string, 
@@ -82,18 +82,18 @@ export const CrossAppService = {
   },
 
   /**
-   * Verifica se usuário tem acesso premium no Rumo Finance
+   * Verifica se usuário tem acesso premium no Agrofinance
    */
   async hasFinancePremium(email: string): Promise<boolean> {
     const subscription = await this.getSubscriptionStatus(email);
     if (!subscription) return false;
     
-    return subscription.rumoFinancePlan === 'premium' ||
-           subscription.rumoFinancePlan === 'intermediate';
+    return subscription.agrofinancePlan === 'premium' ||
+           subscription.agrofinancePlan === 'intermediate';
   },
 
   /**
-   * Verifica se usuário tem bônus ativo para Rumo Operacional
+   * Verifica se usuário tem bônus ativo para Agrofinance Operacional
    */
   async hasOperacionalBonus(email: string): Promise<boolean> {
     const subscription = await this.getSubscriptionStatus(email);
@@ -195,15 +195,15 @@ export const CrossAppService = {
   },
 
   /**
-   * Abre Rumo Operacional via deep link
+   * Abre Agrofinance Operacional via deep link
    */
   getOperacionalDeepLink(path?: string): string {
-    const base = 'rumo-operacional://';
+    const base = 'agrofinance-operacional://';
     return path ? `${base}${path}` : base;
   },
 
   /**
-   * Verifica se Rumo Operacional está instalado
+   * Verifica se Agrofinance Operacional está instalado
    */
   async checkOperacionalInstalled(): Promise<boolean> {
     // Essa verificação precisa ser feita no lado nativo

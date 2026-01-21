@@ -131,6 +131,27 @@ const STATUS_CONFIG = {
   processed: { label: 'Processado', color: Colors.primary, icon: CheckCircle2 },
 };
 
+const CATEGORIES = [
+  'Venda Produção',
+  'Insumos',
+  'Mão de Obra',
+  'Utilidades',
+  'Manutenção',
+  'Combustível',
+  'Serviços',
+  'Outros',
+];
+
+const OPERATIONS = [
+  'Confinamento',
+  'Cana',
+  'Soja',
+  'Milho',
+  'Sede',
+  'Compostagem',
+  'Geral',
+];
+
 export default function LivroCaixaScreen() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<EntryType | 'all'>('all');
@@ -138,10 +159,23 @@ export default function LivroCaixaScreen() {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [entries, setEntries] = useState<LivroCaixaEntry[]>(mockEntries);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [showOperationPicker, setShowOperationPicker] = useState(false);
+  const [formData, setFormData] = useState({
+    type: 'receita' as EntryType,
+    document: '',
+    description: '',
+    category: '',
+    operation: '',
+    value: '',
+    observation: '',
+  });
 
   const isWeb = Platform.OS === 'web';
 
-  const filteredEntries = mockEntries.filter(entry => {
+  const filteredEntries = entries.filter(entry => {
     if (typeFilter !== 'all' && entry.type !== typeFilter) return false;
     if (statusFilter !== 'all' && entry.status !== statusFilter) return false;
     if (search && !entry.description.toLowerCase().includes(search.toLowerCase()) && 
@@ -172,6 +206,53 @@ export default function LivroCaixaScreen() {
     // Simular envio para contador
     alert(`${selectedEntries.length} lançamentos enviados para o contador!`);
     setSelectedEntries([]);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      type: 'receita',
+      document: '',
+      description: '',
+      category: '',
+      operation: '',
+      value: '',
+      observation: '',
+    });
+    setShowCategoryPicker(false);
+    setShowOperationPicker(false);
+  };
+
+  const handleSaveEntry = () => {
+    if (!formData.description.trim()) {
+      alert('Informe a descrição do lançamento');
+      return;
+    }
+    if (!formData.category) {
+      alert('Selecione uma categoria');
+      return;
+    }
+    if (!formData.value) {
+      alert('Informe o valor');
+      return;
+    }
+
+    const newEntry: LivroCaixaEntry = {
+      id: Date.now().toString(),
+      date: new Date(),
+      document: formData.document || 'Manual',
+      description: formData.description.trim(),
+      type: formData.type,
+      category: formData.category,
+      value: parseFloat(formData.value.replace(',', '.')) || 0,
+      operation: formData.operation || 'Geral',
+      status: 'draft',
+      observation: formData.observation,
+    };
+
+    setEntries([newEntry, ...entries]);
+    setShowAddModal(false);
+    resetForm();
+    alert('Lançamento adicionado com sucesso!');
   };
 
   return (
@@ -207,7 +288,7 @@ export default function LivroCaixaScreen() {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.addButton} 
-                onPress={() => {}}
+                onPress={() => setShowAddModal(true)}
                 activeOpacity={0.7}
               >
                 <Plus size={20} color={Colors.white} />
@@ -514,6 +595,195 @@ export default function LivroCaixaScreen() {
             >
               <Text style={styles.modalCloseButtonText}>Cancelar</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal Adicionar Lançamento */}
+      <Modal
+        visible={showAddModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setShowAddModal(false);
+          resetForm();
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.addModalContent, isWeb && styles.addModalContentWeb]}>
+            <View style={styles.addModalHeader}>
+              <Text style={styles.addModalTitle}>Novo Lançamento</Text>
+              <TouchableOpacity 
+                onPress={() => {
+                  setShowAddModal(false);
+                  resetForm();
+                }}
+                style={styles.addModalCloseBtn}
+              >
+                <Text style={styles.addModalCloseBtnText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.addModalBody} showsVerticalScrollIndicator={false}>
+              {/* Tipo */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Tipo *</Text>
+                <View style={styles.typeSelector}>
+                  <TouchableOpacity
+                    style={[styles.typeOption, formData.type === 'receita' && styles.typeOptionReceita]}
+                    onPress={() => setFormData({ ...formData, type: 'receita' })}
+                  >
+                    <TrendingUp size={18} color={formData.type === 'receita' ? Colors.white : Colors.success} />
+                    <Text style={[styles.typeOptionText, formData.type === 'receita' && styles.typeOptionTextActive]}>
+                      Receita
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.typeOption, formData.type === 'despesa' && styles.typeOptionDespesa]}
+                    onPress={() => setFormData({ ...formData, type: 'despesa' })}
+                  >
+                    <TrendingDown size={18} color={formData.type === 'despesa' ? Colors.white : Colors.error} />
+                    <Text style={[styles.typeOptionText, formData.type === 'despesa' && styles.typeOptionTextActive]}>
+                      Despesa
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Documento */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Documento</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Ex: NF-e 1234, Recibo 001"
+                  placeholderTextColor={Colors.textTertiary}
+                  value={formData.document}
+                  onChangeText={(text) => setFormData({ ...formData, document: text })}
+                />
+              </View>
+
+              {/* Descrição */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Descrição *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Descreva o lançamento"
+                  placeholderTextColor={Colors.textTertiary}
+                  value={formData.description}
+                  onChangeText={(text) => setFormData({ ...formData, description: text })}
+                />
+              </View>
+
+              {/* Categoria */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Categoria *</Text>
+                <TouchableOpacity
+                  style={styles.selectInput}
+                  onPress={() => setShowCategoryPicker(!showCategoryPicker)}
+                >
+                  <Text style={[styles.selectText, !formData.category && { color: Colors.textTertiary }]}>
+                    {formData.category || 'Selecione uma categoria'}
+                  </Text>
+                  <Filter size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+                {showCategoryPicker && (
+                  <View style={styles.pickerOptions}>
+                    {CATEGORIES.map((cat) => (
+                      <TouchableOpacity
+                        key={cat}
+                        style={[styles.pickerOption, formData.category === cat && styles.pickerOptionActive]}
+                        onPress={() => {
+                          setFormData({ ...formData, category: cat });
+                          setShowCategoryPicker(false);
+                        }}
+                      >
+                        <Text style={[styles.pickerOptionText, formData.category === cat && styles.pickerOptionTextActive]}>
+                          {cat}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+
+              {/* Operação */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Operação/Centro de Custo</Text>
+                <TouchableOpacity
+                  style={styles.selectInput}
+                  onPress={() => setShowOperationPicker(!showOperationPicker)}
+                >
+                  <Text style={[styles.selectText, !formData.operation && { color: Colors.textTertiary }]}>
+                    {formData.operation || 'Selecione uma operação'}
+                  </Text>
+                  <Filter size={18} color={Colors.textSecondary} />
+                </TouchableOpacity>
+                {showOperationPicker && (
+                  <View style={styles.pickerOptions}>
+                    {OPERATIONS.map((op) => (
+                      <TouchableOpacity
+                        key={op}
+                        style={[styles.pickerOption, formData.operation === op && styles.pickerOptionActive]}
+                        onPress={() => {
+                          setFormData({ ...formData, operation: op });
+                          setShowOperationPicker(false);
+                        }}
+                      >
+                        <Text style={[styles.pickerOptionText, formData.operation === op && styles.pickerOptionTextActive]}>
+                          {op}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+
+              {/* Valor */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Valor (R$) *</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="0,00"
+                  placeholderTextColor={Colors.textTertiary}
+                  value={formData.value}
+                  onChangeText={(text) => setFormData({ ...formData, value: text })}
+                  keyboardType="numeric"
+                />
+              </View>
+
+              {/* Observação */}
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Observação</Text>
+                <TextInput
+                  style={[styles.formInput, { minHeight: 80, textAlignVertical: 'top' }]}
+                  placeholder="Observações adicionais..."
+                  placeholderTextColor={Colors.textTertiary}
+                  value={formData.observation}
+                  onChangeText={(text) => setFormData({ ...formData, observation: text })}
+                  multiline
+                />
+              </View>
+
+              <View style={{ height: 20 }} />
+            </ScrollView>
+
+            <View style={styles.addModalFooter}>
+              <TouchableOpacity
+                style={styles.cancelBtn}
+                onPress={() => {
+                  setShowAddModal(false);
+                  resetForm();
+                }}
+              >
+                <Text style={styles.cancelBtnText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveBtn}
+                onPress={handleSaveEntry}
+              >
+                <Text style={styles.saveBtnText}>Salvar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -988,5 +1258,164 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600' as const,
     color: Colors.textSecondary,
+  },
+  // Add Modal Styles
+  addModalContent: {
+    backgroundColor: Colors.background,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '90%',
+  },
+  addModalContentWeb: {
+    maxWidth: 500,
+    alignSelf: 'center',
+    width: '100%',
+    borderRadius: 24,
+    marginBottom: 20,
+    maxHeight: '85%',
+  },
+  addModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  addModalTitle: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    color: Colors.textPrimary,
+  },
+  addModalCloseBtn: {
+    padding: 4,
+  },
+  addModalCloseBtnText: {
+    fontSize: 20,
+    color: Colors.textSecondary,
+  },
+  addModalBody: {
+    padding: 20,
+  },
+  addModalFooter: {
+    flexDirection: 'row',
+    padding: 20,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  formGroup: {
+    marginBottom: 16,
+  },
+  formLabel: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  formInput: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    fontSize: 15,
+    color: Colors.textPrimary,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectInput: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  selectText: {
+    fontSize: 15,
+    color: Colors.textPrimary,
+  },
+  pickerOptions: {
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    maxHeight: 200,
+  },
+  pickerOption: {
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  pickerOptionActive: {
+    backgroundColor: Colors.primary + '18',
+  },
+  pickerOptionText: {
+    fontSize: 15,
+    color: Colors.textPrimary,
+  },
+  pickerOptionTextActive: {
+    color: Colors.primary,
+    fontWeight: '600' as const,
+  },
+  typeSelector: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  typeOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  typeOptionReceita: {
+    backgroundColor: Colors.success,
+    borderColor: Colors.success,
+  },
+  typeOptionDespesa: {
+    backgroundColor: Colors.error,
+    borderColor: Colors.error,
+  },
+  typeOptionText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+    color: Colors.textSecondary,
+  },
+  typeOptionTextActive: {
+    color: Colors.white,
+  },
+  cancelBtn: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  cancelBtnText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: Colors.textSecondary,
+  },
+  saveBtn: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+  },
+  saveBtnText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: Colors.white,
   },
 });

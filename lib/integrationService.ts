@@ -191,10 +191,10 @@ export const IntegrationService = {
     }
   },
 
-  // ============ RUMO OPERACIONAL INTEGRATION ============
+  // ============ AGROFINANCE OPERACIONAL INTEGRATION ============
 
   /**
-   * Fetch operational costs from Rumo Operacional
+   * Fetch operational costs from Agrofinance Operacional
    */
   async getOperationalCosts(): Promise<OperationalCostData[]> {
     try {

@@ -4,7 +4,7 @@ import { Stack, router } from "expo-router";
 import { 
   ArrowLeft, Upload, Download, FileText, CheckCircle2, AlertCircle, 
   RefreshCw, Link2, Link2Off, Calendar, TrendingUp, TrendingDown,
-  Search, Filter, X, Check, HelpCircle, CreditCard
+  Search, Filter, X, Check, HelpCircle, CreditCard, Plus
 } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { useState } from "react";

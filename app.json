@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Rumo Finance",
-    "slug": "rumo-finance",
+    "name": "Agrofinance",
+    "slug": "agrofinance",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rumo-finance",
+    "scheme": "agrofinance",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -15,11 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rumo.finance",
+      "bundleIdentifier": "com.agrofinance.app",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Permite que o Rumo Finance acesse suas fotos para anexar comprovantes",
-        "NSCameraUsageDescription": "Permite que o Rumo Finance use a câmera para escanear documentos",
-        "NSMicrophoneUsageDescription": "Permite que o Rumo Finance use o microfone"
+        "NSPhotoLibraryUsageDescription": "Permite que o Agrofinance acesse suas fotos para anexar comprovantes",
+        "NSCameraUsageDescription": "Permite que o Agrofinance use a câmera para escanear documentos",
+        "NSMicrophoneUsageDescription": "Permite que o Agrofinance use o microfone"
       }
     },
     "android": {
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#2E7D32"
       },
-      "package": "com.rumo.finance",
+      "package": "com.agrofinance.app",
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",

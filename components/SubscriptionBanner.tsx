@@ -30,10 +30,10 @@ export function SubscriptionBanner({ onSubscribe, compact = false }: Subscriptio
       } else {
         // Fallback para web ou app não instalado
         // Aqui poderia abrir a store
-        console.log('Rumo Operacional não instalado');
+        console.log('Agrofinance Operacional não instalado');
       }
     } catch (err) {
-      console.error('Erro ao abrir Rumo Operacional:', err);
+      console.error('Erro ao abrir Agrofinance Operacional:', err);
     }
   };
 
@@ -56,7 +56,7 @@ export function SubscriptionBanner({ onSubscribe, compact = false }: Subscriptio
                 Assinatura Premium Ativa
               </Text>
               <Text style={[styles.subtitle, compact && styles.subtitleCompact]}>
-                Você tem acesso ao Rumo Operacional grátis!
+                Você tem acesso ao Agrofinance Operacional grátis!
               </Text>
             </View>
             <TouchableOpacity 
@@ -90,7 +90,7 @@ export function SubscriptionBanner({ onSubscribe, compact = false }: Subscriptio
               Assine Premium
             </Text>
             <Text style={[styles.subtitle, compact && styles.subtitleCompact]}>
-              Ganhe Rumo Operacional grátis!
+              Ganhe Agrofinance Operacional grátis!
             </Text>
           </View>
           <TouchableOpacity 
