@@ -1,14 +1,33 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, Filter, DollarSign, Clock, CheckCircle2, AlertCircle, Calendar, Upload } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { useAuth } from "@/contexts/AuthContext";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import ExcelImporter from "@/components/ExcelImporter";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Plus,
+  Search,
+  Filter,
+  DollarSign,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Calendar,
+  Upload,
+} from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { useAuth } from '@/contexts/AuthContext';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import ExcelImporter from '@/components/ExcelImporter';
 
 export default function RevenuesScreen() {
   const { revenues, clients, operations, refetch } = useApp();
@@ -31,10 +50,10 @@ export default function RevenuesScreen() {
     }
   };
 
-  const filteredRevenues = revenues.filter(revenue => {
+  const filteredRevenues = revenues.filter((revenue) => {
     if (!searchQuery) return true;
-    const client = clients.find(c => c.id === revenue.clientId);
-    const operation = operations.find(o => o.id === revenue.operationId);
+    const client = clients.find((c) => c.id === revenue.clientId);
+    const operation = operations.find((o) => o.id === revenue.operationId);
     return (
       revenue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -42,9 +61,15 @@ export default function RevenuesScreen() {
     );
   });
 
-  const totalPending = revenues.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.value, 0);
-  const totalReceived = revenues.filter(r => r.status === 'received').reduce((sum, r) => sum + r.value, 0);
-  const totalOverdue = revenues.filter(r => r.status === 'overdue').reduce((sum, r) => sum + r.value, 0);
+  const totalPending = revenues
+    .filter((r) => r.status === 'pending')
+    .reduce((sum, r) => sum + r.value, 0);
+  const totalReceived = revenues
+    .filter((r) => r.status === 'received')
+    .reduce((sum, r) => sum + r.value, 0);
+  const totalOverdue = revenues
+    .filter((r) => r.status === 'overdue')
+    .reduce((sum, r) => sum + r.value, 0);
 
   const isWeb = Platform.OS === 'web';
 
@@ -75,7 +100,7 @@ export default function RevenuesScreen() {
           </View>
           <View style={styles.headerButtons}>
             {isPremium && (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.importButton}
                 onPress={() => setShowImporter(true)}
                 activeOpacity={0.7}
@@ -83,7 +108,7 @@ export default function RevenuesScreen() {
                 <Upload size={20} color={Colors.primary} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.addButton}
               onPress={() => router.push('/add-revenue')}
               activeOpacity={0.7}
@@ -139,17 +164,13 @@ export default function RevenuesScreen() {
             </View>
           ) : (
             filteredRevenues.map((revenue) => {
-              const client = clients.find(c => c.id === revenue.clientId);
-              const operation = operations.find(o => o.id === revenue.operationId);
+              const client = clients.find((c) => c.id === revenue.clientId);
+              const operation = operations.find((o) => o.id === revenue.operationId);
               const statusInfo = getStatusInfo(revenue.status);
               const StatusIcon = statusInfo.icon;
 
               return (
-                <TouchableOpacity 
-                  key={revenue.id}
-                  style={styles.revenueCard}
-                  activeOpacity={0.7}
-                >
+                <TouchableOpacity key={revenue.id} style={styles.revenueCard} activeOpacity={0.7}>
                   <View style={styles.revenueHeader}>
                     <View style={styles.revenueMainInfo}>
                       <Text style={styles.revenueDescription} numberOfLines={1}>
@@ -167,7 +188,12 @@ export default function RevenuesScreen() {
                   <View style={styles.revenueFooter}>
                     <View style={styles.revenueMetaLeft}>
                       {operation && (
-                        <View style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}>
+                        <View
+                          style={[
+                            styles.operationBadge,
+                            { backgroundColor: operation.color + '20' },
+                          ]}
+                        >
                           <Text style={[styles.operationBadgeText, { color: operation.color }]}>
                             {operation.name}
                           </Text>
@@ -180,7 +206,9 @@ export default function RevenuesScreen() {
                         </Text>
                       </View>
                     </View>
-                    <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}>
+                    <View
+                      style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}
+                    >
                       <StatusIcon size={14} color={statusInfo.color} />
                       <Text style={[styles.statusText, { color: statusInfo.color }]}>
                         {statusInfo.label}

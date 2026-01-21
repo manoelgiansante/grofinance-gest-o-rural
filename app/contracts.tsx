@@ -1,11 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, FileText, CheckCircle2, XCircle, Calendar } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Plus, Search, FileText, CheckCircle2, XCircle, Calendar } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function ContractsScreen() {
   const { contracts, operations } = useApp();
@@ -25,18 +33,20 @@ export default function ContractsScreen() {
     }
   };
 
-  const filteredContracts = contracts.filter(contract => {
+  const filteredContracts = contracts.filter((contract) => {
     if (filterType !== 'all' && contract.type !== filterType) return false;
     if (!searchQuery) return true;
-    const operation = operations.find(o => o.id === contract.operationId);
+    const operation = operations.find((o) => o.id === contract.operationId);
     return (
       contract.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
       operation?.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
 
-  const totalActive = contracts.filter(c => c.status === 'active').length;
-  const totalValue = contracts.filter(c => c.status === 'active').reduce((sum, c) => sum + c.totalValue, 0);
+  const totalActive = contracts.filter((c) => c.status === 'active').length;
+  const totalValue = contracts
+    .filter((c) => c.status === 'active')
+    .reduce((sum, c) => sum + c.totalValue, 0);
 
   const isWeb = Platform.OS === 'web';
 
@@ -48,10 +58,7 @@ export default function ContractsScreen() {
             <Text style={styles.title}>Contratos</Text>
             <Text style={styles.subtitle}>Gestão de Contratos</Text>
           </View>
-          <TouchableOpacity 
-            style={styles.addButton}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.addButton} activeOpacity={0.7}>
             <Plus size={24} color={Colors.white} />
           </TouchableOpacity>
         </View>
@@ -74,7 +81,9 @@ export default function ContractsScreen() {
             style={[styles.filterChip, filterType === 'all' && styles.filterChipActive]}
             onPress={() => setFilterType('all')}
           >
-            <Text style={[styles.filterChipText, filterType === 'all' && styles.filterChipTextActive]}>
+            <Text
+              style={[styles.filterChipText, filterType === 'all' && styles.filterChipTextActive]}
+            >
               Todos
             </Text>
           </TouchableOpacity>
@@ -82,7 +91,12 @@ export default function ContractsScreen() {
             style={[styles.filterChip, filterType === 'purchase' && styles.filterChipActive]}
             onPress={() => setFilterType('purchase')}
           >
-            <Text style={[styles.filterChipText, filterType === 'purchase' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                filterType === 'purchase' && styles.filterChipTextActive,
+              ]}
+            >
               Compra
             </Text>
           </TouchableOpacity>
@@ -90,7 +104,9 @@ export default function ContractsScreen() {
             style={[styles.filterChip, filterType === 'sale' && styles.filterChipActive]}
             onPress={() => setFilterType('sale')}
           >
-            <Text style={[styles.filterChipText, filterType === 'sale' && styles.filterChipTextActive]}>
+            <Text
+              style={[styles.filterChipText, filterType === 'sale' && styles.filterChipTextActive]}
+            >
               Venda
             </Text>
           </TouchableOpacity>
@@ -118,23 +134,21 @@ export default function ContractsScreen() {
             </View>
           ) : (
             filteredContracts.map((contract) => {
-              const operation = operations.find(o => o.id === contract.operationId);
+              const operation = operations.find((o) => o.id === contract.operationId);
               const statusInfo = getStatusInfo(contract.status);
               const StatusIcon = statusInfo.icon;
 
               return (
-                <TouchableOpacity 
-                  key={contract.id}
-                  style={styles.contractCard}
-                  activeOpacity={0.7}
-                >
+                <TouchableOpacity key={contract.id} style={styles.contractCard} activeOpacity={0.7}>
                   <View style={styles.contractHeader}>
                     <View style={styles.contractBadge}>
                       <Text style={styles.contractBadgeText}>
                         {contract.type === 'purchase' ? 'COMPRA' : 'VENDA'}
                       </Text>
                     </View>
-                    <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}>
+                    <View
+                      style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}
+                    >
                       <StatusIcon size={14} color={statusInfo.color} />
                       <Text style={[styles.statusText, { color: statusInfo.color }]}>
                         {statusInfo.label}
@@ -143,7 +157,7 @@ export default function ContractsScreen() {
                   </View>
 
                   <Text style={styles.contractProduct}>{contract.product}</Text>
-                  
+
                   <View style={styles.contractInfo}>
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Quantidade:</Text>
@@ -159,7 +173,9 @@ export default function ContractsScreen() {
                     </View>
                     <View style={styles.infoRow}>
                       <Text style={styles.infoLabel}>Valor Total:</Text>
-                      <Text style={[styles.infoValue, { fontWeight: '700', color: Colors.primary }]}>
+                      <Text
+                        style={[styles.infoValue, { fontWeight: '700', color: Colors.primary }]}
+                      >
                         R$ {contract.totalValue.toLocaleString('pt-BR')}
                       </Text>
                     </View>
@@ -167,7 +183,9 @@ export default function ContractsScreen() {
 
                   <View style={styles.contractFooter}>
                     {operation && (
-                      <View style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}>
+                      <View
+                        style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}
+                      >
                         <Text style={[styles.operationBadgeText, { color: operation.color }]}>
                           {operation.name}
                         </Text>
@@ -176,7 +194,8 @@ export default function ContractsScreen() {
                     <View style={styles.dateRow}>
                       <Calendar size={14} color={Colors.textSecondary} />
                       <Text style={styles.dateText}>
-                        {format(contract.startDate, 'dd/MM/yy', { locale: ptBR })} - {format(contract.endDate, 'dd/MM/yy', { locale: ptBR })}
+                        {format(contract.startDate, 'dd/MM/yy', { locale: ptBR })} -{' '}
+                        {format(contract.endDate, 'dd/MM/yy', { locale: ptBR })}
                       </Text>
                     </View>
                   </View>

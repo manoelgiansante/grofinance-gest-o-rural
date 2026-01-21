@@ -1,35 +1,42 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { User, LogOut, Shield } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import Colors from "@/constants/colors";
-import { Stack } from "expo-router";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { User, LogOut, Shield } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import Colors from '@/constants/colors';
+import { Stack } from 'expo-router';
 
 export default function ProfileScreen() {
   const { user } = useApp();
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'field': return 'Campo';
-      case 'approver': return 'Aprovador';
-      case 'financial': return 'Financeiro';
-      case 'accountant': return 'Contador';
-      case 'auditor': return 'Auditor';
-      default: return role;
+      case 'admin':
+        return 'Administrador';
+      case 'field':
+        return 'Campo';
+      case 'approver':
+        return 'Aprovador';
+      case 'financial':
+        return 'Financeiro';
+      case 'accountant':
+        return 'Contador';
+      case 'auditor':
+        return 'Auditor';
+      default:
+        return role;
     }
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Meu Perfil",
+          headerTitle: 'Meu Perfil',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -49,7 +56,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informações</Text>
-          
+
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Nome Completo</Text>

@@ -1,26 +1,26 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { AlertTriangle, Clock, CheckCircle2, FileText } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { suppliers } from "@/mocks/data";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { format } from "date-fns";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AlertTriangle, Clock, CheckCircle2, FileText } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { suppliers } from '@/mocks/data';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { format } from 'date-fns';
 
 export default function ValidationsScreen() {
   const { expenses, operations } = useApp();
 
-  const pendingApproval = expenses.filter(e => e.status === 'pending_approval');
-  const pendingValidation = expenses.filter(e => e.status === 'pending_validation');
-  const disputed = expenses.filter(e => e.status === 'disputed');
-  const approved = expenses.filter(e => e.status === 'approved');
+  const pendingApproval = expenses.filter((e) => e.status === 'pending_approval');
+  const pendingValidation = expenses.filter((e) => e.status === 'pending_validation');
+  const disputed = expenses.filter((e) => e.status === 'disputed');
+  const approved = expenses.filter((e) => e.status === 'approved');
 
-  const renderExpenseItem = (expense: typeof expenses[0]) => {
-    const supplier = suppliers.find(s => s.id === expense.supplierId);
-    const operation = operations.find(o => o.id === expense.operationId);
+  const renderExpenseItem = (expense: (typeof expenses)[0]) => {
+    const supplier = suppliers.find((s) => s.id === expense.supplierId);
+    const operation = operations.find((o) => o.id === expense.operationId);
 
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         key={expense.id}
         style={styles.expenseCard}
         activeOpacity={0.7}
@@ -48,16 +48,14 @@ export default function ValidationsScreen() {
               </Text>
             </View>
           )}
-          <Text style={styles.cardDate}>
-            Venc: {format(expense.dueDate, 'dd/MM/yyyy')}
-          </Text>
+          <Text style={styles.cardDate}>Venc: {format(expense.dueDate, 'dd/MM/yyyy')}</Text>
         </View>
 
         {expense.divergence && (
           <View style={styles.divergenceInfo}>
             <AlertTriangle size={14} color={Colors.error} />
             <Text style={styles.divergenceText}>
-              Valor cobrado: R$ {expense.divergence.chargedValue.toLocaleString('pt-BR')} | 
+              Valor cobrado: R$ {expense.divergence.chargedValue.toLocaleString('pt-BR')} |
               Esperado: R$ {expense.divergence.expectedValue.toLocaleString('pt-BR')}
             </Text>
           </View>
@@ -66,9 +64,7 @@ export default function ValidationsScreen() {
         {!expense.serviceConfirmed && expense.category === 'Manutenção' && (
           <View style={styles.warningInfo}>
             <AlertTriangle size={14} color={Colors.warning} />
-            <Text style={styles.warningText}>
-              Serviço ainda não confirmado
-            </Text>
+            <Text style={styles.warningText}>Serviço ainda não confirmado</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -142,16 +138,16 @@ export default function ValidationsScreen() {
           </View>
         )}
 
-        {disputed.length === 0 && pendingValidation.length === 0 && 
-         pendingApproval.length === 0 && approved.length === 0 && (
-          <View style={styles.emptyState}>
-            <CheckCircle2 size={64} color={Colors.textTertiary} />
-            <Text style={styles.emptyTitle}>Tudo em dia!</Text>
-            <Text style={styles.emptyText}>
-              Não há pendências no momento
-            </Text>
-          </View>
-        )}
+        {disputed.length === 0 &&
+          pendingValidation.length === 0 &&
+          pendingApproval.length === 0 &&
+          approved.length === 0 && (
+            <View style={styles.emptyState}>
+              <CheckCircle2 size={64} color={Colors.textTertiary} />
+              <Text style={styles.emptyTitle}>Tudo em dia!</Text>
+              <Text style={styles.emptyText}>Não há pendências no momento</Text>
+            </View>
+          )}
 
         <View style={{ height: 20 }} />
       </ScrollView>

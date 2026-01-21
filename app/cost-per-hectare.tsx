@@ -1,10 +1,30 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Wheat, MapPin, Calendar, ChevronDown, BarChart3, PieChart, Target } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Dimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Wheat,
+  MapPin,
+  Calendar,
+  ChevronDown,
+  BarChart3,
+  PieChart,
+  Target,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -56,7 +76,7 @@ export default function CostPerHectareScreen() {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      
+
       // Get farms, expenses and revenues
       const [farms, expenses, revenues] = await Promise.all([
         api.getFarms(),
@@ -66,9 +86,10 @@ export default function CostPerHectareScreen() {
 
       // Calculate date filter
       const now = new Date();
-      const startDate = selectedPeriod.months > 0
-        ? new Date(now.getFullYear(), now.getMonth() - selectedPeriod.months, 1)
-        : null;
+      const startDate =
+        selectedPeriod.months > 0
+          ? new Date(now.getFullYear(), now.getMonth() - selectedPeriod.months, 1)
+          : null;
 
       // Filter by period
       const filteredExpenses = startDate
@@ -87,16 +108,18 @@ export default function CostPerHectareScreen() {
         const farmExpenses = filteredExpenses.filter((e: any) => e.farm_id === farm.id);
         const farmRevenues = filteredRevenues.filter((r: any) => r.farm_id === farm.id);
 
-        const totalExpense = farmExpenses.reduce((sum: number, e: any) => 
-          sum + (e.actual_value || e.invoice_value || e.agreed_value || 0), 0);
-        const totalRevenue = farmRevenues.reduce((sum: number, r: any) => 
-          sum + (r.value || 0), 0);
+        const totalExpense = farmExpenses.reduce(
+          (sum: number, e: any) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0),
+          0
+        );
+        const totalRevenue = farmRevenues.reduce((sum: number, r: any) => sum + (r.value || 0), 0);
 
         const area = farm.size || farm.area || 1;
         const revenuePerHectare = totalRevenue / area;
         const expensePerHectare = totalExpense / area;
         const profitPerHectare = revenuePerHectare - expensePerHectare;
-        const profitMargin = totalRevenue > 0 ? ((totalRevenue - totalExpense) / totalRevenue) * 100 : 0;
+        const profitMargin =
+          totalRevenue > 0 ? ((totalRevenue - totalExpense) / totalRevenue) * 100 : 0;
 
         return {
           id: farm.id,
@@ -116,9 +139,14 @@ export default function CostPerHectareScreen() {
       setFarmMetrics(metrics);
 
       // Calculate overall metrics
-      const totalRevenue = filteredRevenues.reduce((sum: number, r: any) => sum + (r.value || 0), 0);
-      const totalExpense = filteredExpenses.reduce((sum: number, e: any) => 
-        sum + (e.actual_value || e.invoice_value || e.agreed_value || 0), 0);
+      const totalRevenue = filteredRevenues.reduce(
+        (sum: number, r: any) => sum + (r.value || 0),
+        0
+      );
+      const totalExpense = filteredExpenses.reduce(
+        (sum: number, e: any) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0),
+        0
+      );
 
       setOverallMetrics({
         totalRevenue,
@@ -127,7 +155,6 @@ export default function CostPerHectareScreen() {
         avgExpensePerHa: total > 0 ? totalExpense / total : 0,
         avgProfitPerHa: total > 0 ? (totalRevenue - totalExpense) / total : 0,
       });
-
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -178,7 +205,7 @@ export default function CostPerHectareScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {/* Period Selector */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.periodSelector}
             onPress={() => setShowPeriodPicker(!showPeriodPicker)}
           >
@@ -194,17 +221,19 @@ export default function CostPerHectareScreen() {
                   key={period.id}
                   style={[
                     styles.periodOption,
-                    selectedPeriod.id === period.id && styles.periodOptionActive
+                    selectedPeriod.id === period.id && styles.periodOptionActive,
                   ]}
                   onPress={() => {
                     setSelectedPeriod(period);
                     setShowPeriodPicker(false);
                   }}
                 >
-                  <Text style={[
-                    styles.periodOptionText,
-                    selectedPeriod.id === period.id && styles.periodOptionTextActive
-                  ]}>
+                  <Text
+                    style={[
+                      styles.periodOptionText,
+                      selectedPeriod.id === period.id && styles.periodOptionTextActive,
+                    ]}
+                  >
                     {period.label}
                   </Text>
                 </TouchableOpacity>
@@ -216,7 +245,10 @@ export default function CostPerHectareScreen() {
           <View style={styles.areaBanner}>
             <MapPin size={20} color={Colors.primary} />
             <Text style={styles.areaBannerText}>
-              Área Total: <Text style={styles.areaBannerValue}>{totalArea.toLocaleString('pt-BR')} hectares</Text>
+              Área Total:{' '}
+              <Text style={styles.areaBannerValue}>
+                {totalArea.toLocaleString('pt-BR')} hectares
+              </Text>
             </Text>
           </View>
 
@@ -247,7 +279,12 @@ export default function CostPerHectareScreen() {
                   <DollarSign size={20} color={Colors.primary} />
                 </View>
                 <Text style={styles.overallLabel}>Lucro/ha</Text>
-                <Text style={[styles.overallValue, { color: overallMetrics.avgProfitPerHa >= 0 ? Colors.primary : Colors.error }]}>
+                <Text
+                  style={[
+                    styles.overallValue,
+                    { color: overallMetrics.avgProfitPerHa >= 0 ? Colors.primary : Colors.error },
+                  ]}
+                >
                   {formatCurrencyPerHa(overallMetrics.avgProfitPerHa)}
                 </Text>
               </View>
@@ -267,7 +304,12 @@ export default function CostPerHectareScreen() {
               <View style={[styles.highlightCard, { backgroundColor: Colors.warning + '15' }]}>
                 <Text style={styles.highlightLabel}>⚠️ Precisa Atenção</Text>
                 <Text style={styles.highlightFarm}>{worstFarm.name}</Text>
-                <Text style={[styles.highlightValue, { color: worstFarm.profitPerHectare >= 0 ? Colors.warning : Colors.error }]}>
+                <Text
+                  style={[
+                    styles.highlightValue,
+                    { color: worstFarm.profitPerHectare >= 0 ? Colors.warning : Colors.error },
+                  ]}
+                >
                   {formatCurrencyPerHa(worstFarm.profitPerHectare)}
                 </Text>
               </View>
@@ -276,12 +318,12 @@ export default function CostPerHectareScreen() {
 
           {/* Farms Ranking */}
           <Text style={styles.sectionTitle}>Ranking por Fazenda</Text>
-          
+
           {farmMetrics.length === 0 ? (
             <View style={styles.emptyState}>
               <Wheat size={48} color={Colors.textSecondary} />
               <Text style={styles.emptyStateText}>Nenhuma fazenda cadastrada</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.emptyStateButton}
                 onPress={() => router.push('/farms')}
               >
@@ -303,7 +345,12 @@ export default function CostPerHectareScreen() {
                       <Text style={styles.farmName}>{farm.name}</Text>
                       <Text style={styles.farmArea}>{farm.area.toLocaleString('pt-BR')} ha</Text>
                     </View>
-                    <View style={[styles.performanceBadge, { backgroundColor: performanceColor + '20' }]}>
+                    <View
+                      style={[
+                        styles.performanceBadge,
+                        { backgroundColor: performanceColor + '20' },
+                      ]}
+                    >
                       <Text style={[styles.performanceBadgeText, { color: performanceColor }]}>
                         {performanceLabel}
                       </Text>
@@ -325,7 +372,12 @@ export default function CostPerHectareScreen() {
                     </View>
                     <View style={styles.farmMetricItem}>
                       <Text style={styles.farmMetricLabel}>Lucro/ha</Text>
-                      <Text style={[styles.farmMetricValue, { color: performanceColor, fontWeight: '700' }]}>
+                      <Text
+                        style={[
+                          styles.farmMetricValue,
+                          { color: performanceColor, fontWeight: '700' },
+                        ]}
+                      >
                         {formatCurrencyPerHa(farm.profitPerHectare)}
                       </Text>
                     </View>
@@ -340,14 +392,14 @@ export default function CostPerHectareScreen() {
                       </Text>
                     </View>
                     <View style={styles.marginBar}>
-                      <View 
+                      <View
                         style={[
-                          styles.marginFill, 
-                          { 
+                          styles.marginFill,
+                          {
                             width: `${Math.max(0, Math.min(100, farm.profitMargin))}%`,
                             backgroundColor: performanceColor,
-                          }
-                        ]} 
+                          },
+                        ]}
                       />
                     </View>
                   </View>
@@ -355,7 +407,8 @@ export default function CostPerHectareScreen() {
                   {/* Totals */}
                   <View style={styles.farmTotals}>
                     <Text style={styles.farmTotalText}>
-                      Total: {formatCurrency(farm.totalRevenue)} receita | {formatCurrency(farm.totalExpense)} custo
+                      Total: {formatCurrency(farm.totalRevenue)} receita |{' '}
+                      {formatCurrency(farm.totalExpense)} custo
                     </Text>
                   </View>
                 </View>
@@ -368,10 +421,10 @@ export default function CostPerHectareScreen() {
             <Target size={20} color={Colors.primary} />
             <Text style={styles.tipsTitle}>Dicas de Análise</Text>
             <Text style={styles.tipsText}>
-              • Compare o custo/ha entre fazendas para identificar ineficiências{'\n'}
-              • Fazendas com margem abaixo de 20% precisam revisão de custos{'\n'}
-              • O lucro/ha ideal para soja é acima de R$ 2.000/ha{'\n'}
-              • Analise tendências ao longo dos meses para decisões estratégicas
+              • Compare o custo/ha entre fazendas para identificar ineficiências{'\n'}• Fazendas com
+              margem abaixo de 20% precisam revisão de custos{'\n'}• O lucro/ha ideal para soja é
+              acima de R$ 2.000/ha{'\n'}• Analise tendências ao longo dos meses para decisões
+              estratégicas
             </Text>
           </View>
         </ScrollView>

@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
-import { Plus, Search, TrendingUp, Clock, CheckCircle2, AlertCircle } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
+import { Plus, Search, TrendingUp, Clock, CheckCircle2, AlertCircle } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
 
 interface Receivable {
   id: string;
@@ -22,13 +22,16 @@ const mockReceivables: Receivable[] = [];
 export default function ReceivablesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredReceivables = mockReceivables.filter(item => 
-    item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredReceivables = mockReceivables.filter(
+    (item) =>
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalPending = mockReceivables.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.value, 0);
-  const overdueCount = mockReceivables.filter(r => r.status === 'overdue').length;
+  const totalPending = mockReceivables
+    .filter((r) => r.status === 'pending')
+    .reduce((sum, r) => sum + r.value, 0);
+  const overdueCount = mockReceivables.filter((r) => r.status === 'overdue').length;
 
   const getStatusInfo = (status: Receivable['status']) => {
     switch (status) {
@@ -43,14 +46,14 @@ export default function ReceivablesScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Contas a Receber",
+          headerTitle: 'Contas a Receber',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <View style={styles.statsRow}>
@@ -66,9 +69,7 @@ export default function ReceivablesScreen() {
             <AlertCircle size={18} color={Colors.error} />
           </View>
           <Text style={styles.statLabel}>Atrasados</Text>
-          <Text style={[styles.statValue, { color: Colors.error }]}>
-            {overdueCount}
-          </Text>
+          <Text style={[styles.statValue, { color: Colors.error }]}>{overdueCount}</Text>
         </View>
       </View>
 
@@ -110,9 +111,7 @@ export default function ReceivablesScreen() {
                       {item.operation}
                     </Text>
                   </View>
-                  <Text style={styles.dueDate}>
-                    Venc: {format(item.dueDate, 'dd/MM/yyyy')}
-                  </Text>
+                  <Text style={styles.dueDate}>Venc: {format(item.dueDate, 'dd/MM/yyyy')}</Text>
                 </View>
                 <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '18' }]}>
                   <StatusIcon size={14} color={statusInfo.color} />

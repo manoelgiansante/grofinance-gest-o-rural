@@ -1,14 +1,8 @@
-import { Tabs } from "expo-router";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  CheckSquare, 
-  BarChart3, 
-  Menu,
-} from "lucide-react-native";
-import React from "react";
-import { Platform } from "react-native";
-import Colors from "@/constants/colors";
+import { Tabs } from 'expo-router';
+import { LayoutDashboard, FileText, CheckSquare, BarChart3, Menu } from 'lucide-react-native';
+import React from 'react';
+import { Platform } from 'react-native';
+import Colors from '@/constants/colors';
 
 export default function TabLayout() {
   const isWeb = Platform.OS === 'web';
@@ -64,21 +58,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
+          title: 'Dashboard',
           tabBarIcon: ({ color, size }) => <LayoutDashboard color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="expenses"
         options={{
-          title: "Despesas",
+          title: 'Despesas',
           tabBarIcon: ({ color, size }) => <FileText color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="validations"
         options={{
-          title: "Validações",
+          title: 'Validações',
           tabBarIcon: ({ color, size }) => <CheckSquare color={color} size={size} />,
           tabBarBadge: 3,
         }}
@@ -86,25 +80,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports"
         options={{
-          title: "Relatórios",
+          title: 'Relatórios',
           tabBarIcon: ({ color, size }) => <BarChart3 color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
-          title: "Mais",
+          title: 'Mais',
           tabBarIcon: ({ color, size }) => <Menu color={color} size={size} />,
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{ href: null }}
-      />
+      <Tabs.Screen name="profile" options={{ href: null }} />
+      <Tabs.Screen name="settings" options={{ href: null }} />
     </Tabs>
   );
 }

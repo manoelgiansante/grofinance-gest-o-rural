@@ -1,13 +1,21 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { X, Camera, FileText } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { suppliers } from "@/mocks/data";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { useState } from "react";
-import * as ImagePicker from "expo-image-picker";
-import { Expense, Attachment } from "@/types";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { X, Camera, FileText } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { suppliers } from '@/mocks/data';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { Expense, Attachment } from '@/types';
 
 export default function AddExpenseScreen() {
   const { operations, addExpense, user } = useApp();
@@ -63,7 +71,7 @@ export default function AddExpenseScreen() {
 
     addExpense(newExpense);
     Alert.alert('Sucesso', 'Despesa criada com sucesso!', [
-      { text: 'OK', onPress: () => router.back() }
+      { text: 'OK', onPress: () => router.back() },
     ]);
   };
 
@@ -91,38 +99,29 @@ export default function AddExpenseScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Fornecedor *</Text>
           {suppliers.length === 0 ? (
-            <TouchableOpacity 
-              style={styles.emptyWarning}
-              onPress={() => router.push('/suppliers')}
-            >
-              <Text style={styles.emptyWarningText}>
-                Nenhum fornecedor cadastrado
-              </Text>
-              <Text style={styles.emptyWarningLink}>
-                Toque aqui para cadastrar →
-              </Text>
+            <TouchableOpacity style={styles.emptyWarning} onPress={() => router.push('/suppliers')}>
+              <Text style={styles.emptyWarningText}>Nenhum fornecedor cadastrado</Text>
+              <Text style={styles.emptyWarningLink}>Toque aqui para cadastrar →</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.pickerContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.picker}
                 onPress={() => {
-                  Alert.alert(
-                    'Selecionar Fornecedor',
-                    '',
-                    [
-                      ...suppliers.map(s => ({
-                        text: s.name,
-                        onPress: () => setSupplier(s.id)
-                      })),
-                      { text: '+ Cadastrar novo', onPress: () => router.push('/suppliers') },
-                      { text: 'Cancelar', style: 'cancel' as const }
-                    ]
-                  );
+                  Alert.alert('Selecionar Fornecedor', '', [
+                    ...suppliers.map((s) => ({
+                      text: s.name,
+                      onPress: () => setSupplier(s.id),
+                    })),
+                    { text: '+ Cadastrar novo', onPress: () => router.push('/suppliers') },
+                    { text: 'Cancelar', style: 'cancel' as const },
+                  ]);
                 }}
               >
                 <Text style={supplierId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
-                  {supplierId ? suppliers.find(s => s.id === supplierId)?.name : 'Selecione o fornecedor'}
+                  {supplierId
+                    ? suppliers.find((s) => s.id === supplierId)?.name
+                    : 'Selecione o fornecedor'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -132,38 +131,34 @@ export default function AddExpenseScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Operação *</Text>
           {operations.length === 0 ? (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.emptyWarning}
               onPress={() => router.push('/operations')}
             >
-              <Text style={styles.emptyWarningText}>
-                Nenhuma operação cadastrada
-              </Text>
-              <Text style={styles.emptyWarningLink}>
-                Toque aqui para cadastrar →
-              </Text>
+              <Text style={styles.emptyWarningText}>Nenhuma operação cadastrada</Text>
+              <Text style={styles.emptyWarningLink}>Toque aqui para cadastrar →</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.pickerContainer}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.picker}
                 onPress={() => {
-                  Alert.alert(
-                    'Selecionar Operação',
-                    '',
-                    [
-                      ...operations.map(op => ({
-                        text: op.name,
-                        onPress: () => setOperation(op.id)
-                      })),
-                      { text: '+ Cadastrar nova', onPress: () => router.push('/operations') },
-                      { text: 'Cancelar', style: 'cancel' as const }
-                    ]
-                  );
+                  Alert.alert('Selecionar Operação', '', [
+                    ...operations.map((op) => ({
+                      text: op.name,
+                      onPress: () => setOperation(op.id),
+                    })),
+                    { text: '+ Cadastrar nova', onPress: () => router.push('/operations') },
+                    { text: 'Cancelar', style: 'cancel' as const },
+                  ]);
                 }}
               >
-                <Text style={operationId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}>
-                  {operationId ? operations.find(o => o.id === operationId)?.name : 'Selecione a operação'}
+                <Text
+                  style={operationId ? styles.pickerTextSelected : styles.pickerTextPlaceholder}
+                >
+                  {operationId
+                    ? operations.find((o) => o.id === operationId)?.name
+                    : 'Selecione a operação'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -173,16 +168,22 @@ export default function AddExpenseScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Categoria *</Text>
           <View style={styles.pickerContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.picker}
               onPress={() => {
-                const categories = ['Insumos', 'Manutenção', 'Combustível', 'Utilidades', 'Mão de obra'];
+                const categories = [
+                  'Insumos',
+                  'Manutenção',
+                  'Combustível',
+                  'Utilidades',
+                  'Mão de obra',
+                ];
                 Alert.alert(
                   'Selecionar Categoria',
                   '',
-                  categories.map(cat => ({
+                  categories.map((cat) => ({
                     text: cat,
-                    onPress: () => setCategory(cat)
+                    onPress: () => setCategory(cat),
                   }))
                 );
               }}

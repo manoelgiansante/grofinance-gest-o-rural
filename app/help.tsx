@@ -1,29 +1,53 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Linking } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, HelpCircle, MessageCircle, Mail, FileText, ExternalLink, ChevronRight, BookOpen, Video, Headphones } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Linking,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  HelpCircle,
+  MessageCircle,
+  Mail,
+  FileText,
+  ExternalLink,
+  ChevronRight,
+  BookOpen,
+  Video,
+  Headphones,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
 
 const faqItems = [
   {
     question: 'Como adicionar uma nova despesa?',
-    answer: 'Vá para a aba Despesas e toque no botão + no canto inferior direito. Preencha os dados da despesa e toque em Salvar.',
+    answer:
+      'Vá para a aba Despesas e toque no botão + no canto inferior direito. Preencha os dados da despesa e toque em Salvar.',
   },
   {
     question: 'Como exportar meus relatórios?',
-    answer: 'Acesse Relatórios, selecione o período desejado e toque em Exportar. Você pode escolher entre PDF ou Excel.',
+    answer:
+      'Acesse Relatórios, selecione o período desejado e toque em Exportar. Você pode escolher entre PDF ou Excel.',
   },
   {
     question: 'Como funciona a assinatura premium?',
-    answer: 'A assinatura premium por R$49,90/mês libera recursos avançados como importação de Excel, previsões financeiras e relatórios ilimitados.',
+    answer:
+      'A assinatura premium por R$49,90/mês libera recursos avançados como importação de Excel, previsões financeiras e relatórios ilimitados.',
   },
   {
     question: 'Como cadastrar minhas fazendas?',
-    answer: 'Acesse o menu Fazendas na tela principal. Toque em + para adicionar uma nova propriedade com nome, área e localização.',
+    answer:
+      'Acesse o menu Fazendas na tela principal. Toque em + para adicionar uma nova propriedade com nome, área e localização.',
   },
   {
     question: 'Posso usar o app offline?',
-    answer: 'Sim! Os dados ficam salvos localmente e sincronizam automaticamente quando você reconectar à internet.',
+    answer:
+      'Sim! Os dados ficam salvos localmente e sincronizam automaticamente quando você reconectar à internet.',
   },
 ];
 

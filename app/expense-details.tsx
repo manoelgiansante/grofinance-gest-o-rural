@@ -1,18 +1,26 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { X, FileText, AlertTriangle, CheckCircle2, Clock, DollarSign } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { suppliers } from "@/mocks/data";
-import Colors from "@/constants/colors";
-import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { X, FileText, AlertTriangle, CheckCircle2, Clock, DollarSign } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { suppliers } from '@/mocks/data';
+import Colors from '@/constants/colors';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function ExpenseDetailsScreen() {
   const { id } = useLocalSearchParams();
   const { expenses, operations, updateExpense, user } = useApp();
-  const expense = expenses.find(e => e.id === id);
+  const expense = expenses.find((e) => e.id === id);
 
   const [divergenceReason, setDivergenceReason] = useState('');
   const [showDivergenceForm, setShowDivergenceForm] = useState(false);
@@ -25,53 +33,45 @@ export default function ExpenseDetailsScreen() {
     );
   }
 
-  const supplier = suppliers.find(s => s.id === expense.supplierId);
-  const operation = operations.find(o => o.id === expense.operationId);
+  const supplier = suppliers.find((s) => s.id === expense.supplierId);
+  const operation = operations.find((o) => o.id === expense.operationId);
 
   const handleApprove = () => {
-    Alert.alert(
-      'Aprovar Despesa',
-      'Confirma a aprovação desta despesa?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Aprovar',
-          onPress: () => {
-            updateExpense(expense.id, {
-              status: 'approved',
-              approvedBy: user.id,
-              approvedAt: new Date(),
-            });
-            Alert.alert('Sucesso', 'Despesa aprovada!', [
-              { text: 'OK', onPress: () => router.back() }
-            ]);
-          }
-        }
-      ]
-    );
+    Alert.alert('Aprovar Despesa', 'Confirma a aprovação desta despesa?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Aprovar',
+        onPress: () => {
+          updateExpense(expense.id, {
+            status: 'approved',
+            approvedBy: user.id,
+            approvedAt: new Date(),
+          });
+          Alert.alert('Sucesso', 'Despesa aprovada!', [
+            { text: 'OK', onPress: () => router.back() },
+          ]);
+        },
+      },
+    ]);
   };
 
   const handleMarkAsPaid = () => {
-    Alert.alert(
-      'Marcar como Pago',
-      'Confirma o pagamento desta despesa?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          onPress: () => {
-            updateExpense(expense.id, {
-              status: 'paid',
-              paidBy: user.id,
-              paidAt: new Date(),
-            });
-            Alert.alert('Sucesso', 'Pagamento registrado!', [
-              { text: 'OK', onPress: () => router.back() }
-            ]);
-          }
-        }
-      ]
-    );
+    Alert.alert('Marcar como Pago', 'Confirma o pagamento desta despesa?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Confirmar',
+        onPress: () => {
+          updateExpense(expense.id, {
+            status: 'paid',
+            paidBy: user.id,
+            paidAt: new Date(),
+          });
+          Alert.alert('Sucesso', 'Pagamento registrado!', [
+            { text: 'OK', onPress: () => router.back() },
+          ]);
+        },
+      },
+    ]);
   };
 
   const handleMarkDivergence = () => {
@@ -93,7 +93,7 @@ export default function ExpenseDetailsScreen() {
     });
 
     Alert.alert('Sucesso', 'Divergência registrada!', [
-      { text: 'OK', onPress: () => router.back() }
+      { text: 'OK', onPress: () => router.back() },
     ]);
   };
 
@@ -166,10 +166,12 @@ export default function ExpenseDetailsScreen() {
             {expense.invoiceValue && (
               <View style={styles.valueItem}>
                 <Text style={styles.valueLabel}>Valor Cobrado</Text>
-                <Text style={[
-                  styles.valueAmount,
-                  expense.invoiceValue !== expense.negotiatedValue && { color: Colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.valueAmount,
+                    expense.invoiceValue !== expense.negotiatedValue && { color: Colors.error },
+                  ]}
+                >
                   R$ {expense.invoiceValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </Text>
               </View>
@@ -179,7 +181,10 @@ export default function ExpenseDetailsScreen() {
             <View style={styles.divergenceWarning}>
               <AlertTriangle size={16} color={Colors.warning} />
               <Text style={styles.divergenceWarningText}>
-                Diferença de R$ {Math.abs(expense.invoiceValue - expense.negotiatedValue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                Diferença de R${' '}
+                {Math.abs(expense.invoiceValue - expense.negotiatedValue).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                })}
               </Text>
             </View>
           )}
@@ -190,7 +195,7 @@ export default function ExpenseDetailsScreen() {
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Vencimento</Text>
             <Text style={styles.infoValue}>
-              {format(expense.dueDate, "dd/MM/yyyy", { locale: ptBR })}
+              {format(expense.dueDate, 'dd/MM/yyyy', { locale: ptBR })}
             </Text>
           </View>
           <View style={styles.infoRow}>
@@ -226,7 +231,7 @@ export default function ExpenseDetailsScreen() {
         )}
 
         {!showDivergenceForm && expense.status === 'pending_approval' && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.divergenceButton}
             onPress={() => setShowDivergenceForm(true)}
           >
@@ -248,16 +253,13 @@ export default function ExpenseDetailsScreen() {
               numberOfLines={4}
             />
             <View style={styles.divergenceFormButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={() => setShowDivergenceForm(false)}
               >
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.confirmButton}
-                onPress={handleMarkDivergence}
-              >
+              <TouchableOpacity style={styles.confirmButton} onPress={handleMarkDivergence}>
                 <Text style={styles.confirmButtonText}>Confirmar</Text>
               </TouchableOpacity>
             </View>

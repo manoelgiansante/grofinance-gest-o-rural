@@ -38,49 +38,57 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     icon: <Tractor size={48} color="#fff" />,
     title: 'Bem-vindo ao Agrofinance!',
-    description: 'Sua plataforma completa de gestão financeira rural. Gerencie fazendas, operações, despesas, receitas e muito mais em um só lugar.',
+    description:
+      'Sua plataforma completa de gestão financeira rural. Gerencie fazendas, operações, despesas, receitas e muito mais em um só lugar.',
     color: '#2E7D32',
   },
   {
     icon: <Package size={48} color="#fff" />,
     title: 'Gestão de Fazendas',
-    description: 'Cadastre suas fazendas, talhões e safras. Organize suas operações agrícolas e acompanhe a produtividade de cada área.',
+    description:
+      'Cadastre suas fazendas, talhões e safras. Organize suas operações agrícolas e acompanhe a produtividade de cada área.',
     color: '#1565C0',
   },
   {
     icon: <DollarSign size={48} color="#fff" />,
     title: 'Controle Financeiro',
-    description: 'Registre todas as despesas e receitas. Acompanhe contas a pagar e receber, fluxo de caixa e conciliação bancária.',
+    description:
+      'Registre todas as despesas e receitas. Acompanhe contas a pagar e receber, fluxo de caixa e conciliação bancária.',
     color: '#D32F2F',
   },
   {
     icon: <Users size={48} color="#fff" />,
     title: 'Fornecedores e Clientes',
-    description: 'Mantenha um cadastro completo de fornecedores e clientes. Gerencie contratos, barter e arrendamentos.',
+    description:
+      'Mantenha um cadastro completo de fornecedores e clientes. Gerencie contratos, barter e arrendamentos.',
     color: '#7B1FA2',
   },
   {
     icon: <FileText size={48} color="#fff" />,
     title: 'Notas Fiscais',
-    description: 'Emita NFe e MDFe diretamente pelo aplicativo. Mantenha sua documentação fiscal organizada e em dia.',
+    description:
+      'Emita NFe e MDFe diretamente pelo aplicativo. Mantenha sua documentação fiscal organizada e em dia.',
     color: '#00796B',
   },
   {
     icon: <BarChart3 size={48} color="#fff" />,
     title: 'Relatórios e DRE',
-    description: 'Visualize relatórios detalhados, DRE por operação, custo por hectare e análises de rentabilidade.',
+    description:
+      'Visualize relatórios detalhados, DRE por operação, custo por hectare e análises de rentabilidade.',
     color: '#E64A19',
   },
   {
     icon: <FileSpreadsheet size={48} color="#fff" />,
     title: 'Importação Inteligente',
-    description: 'Importe dados de planilhas Excel com nossa IA. O sistema identifica automaticamente as colunas e mapeia os dados.',
+    description:
+      'Importe dados de planilhas Excel com nossa IA. O sistema identifica automaticamente as colunas e mapeia os dados.',
     color: '#FF9800',
   },
   {
     icon: <Calculator size={48} color="#fff" />,
     title: 'Custo Operacional Grátis!',
-    description: 'Assinantes do plano Intermediário ou superior ganham acesso gratuito ao app Agrofinance Custo Operacional Rural!',
+    description:
+      'Assinantes do plano Intermediário ou superior ganham acesso gratuito ao app Agrofinance Custo Operacional Rural!',
     color: '#9C27B0',
   },
 ];
@@ -105,7 +113,7 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
 
   const animateTransition = (direction: 'next' | 'prev') => {
     const toValue = direction === 'next' ? -width : width;
-    
+
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -118,9 +126,9 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setCurrentStep(prev => direction === 'next' ? prev + 1 : prev - 1);
+      setCurrentStep((prev) => (direction === 'next' ? prev + 1 : prev - 1));
       slideAnim.setValue(direction === 'next' ? width : -width);
-      
+
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -172,12 +180,7 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
   const isLastStep = currentStep === TUTORIAL_STEPS.length - 1;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={false}
-      onRequestClose={handleSkip}
-    >
+    <Modal visible={visible} animationType="fade" transparent={false} onRequestClose={handleSkip}>
       <View style={[styles.container, { backgroundColor: step.color }]}>
         {/* Skip Button */}
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
@@ -185,7 +188,7 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
         </TouchableOpacity>
 
         {/* Content */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.content,
             {
@@ -196,9 +199,7 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
         >
           {/* Icon */}
           <View style={styles.iconContainer}>
-            <View style={styles.iconCircle}>
-              {step.icon}
-            </View>
+            <View style={styles.iconCircle}>{step.icon}</View>
             {currentStep === 6 && (
               <View style={styles.aiSparkle}>
                 <Sparkles size={24} color="#FFD700" />
@@ -214,13 +215,7 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
         {/* Progress Dots */}
         <View style={styles.dotsContainer}>
           {TUTORIAL_STEPS.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                index === currentStep && styles.dotActive,
-              ]}
-            />
+            <View key={index} style={[styles.dot, index === currentStep && styles.dotActive]} />
           ))}
         </View>
 
@@ -235,13 +230,11 @@ export default function OnboardingTutorial({ visible, onComplete }: OnboardingTu
             <View style={styles.navButton} />
           )}
 
-          <TouchableOpacity 
-            style={[styles.navButton, styles.navButtonPrimary]} 
+          <TouchableOpacity
+            style={[styles.navButton, styles.navButtonPrimary]}
             onPress={handleNext}
           >
-            <Text style={styles.navButtonTextPrimary}>
-              {isLastStep ? 'Começar' : 'Próximo'}
-            </Text>
+            <Text style={styles.navButtonTextPrimary}>{isLastStep ? 'Começar' : 'Próximo'}</Text>
             {isLastStep ? (
               <CheckCircle size={20} color={step.color} />
             ) : (

@@ -1,10 +1,20 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Plus, MapPin, DollarSign, Calendar, User, Clock, CheckCircle, XCircle } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format, differenceInDays } from "date-fns";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Plus,
+  MapPin,
+  DollarSign,
+  Calendar,
+  User,
+  Clock,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format, differenceInDays } from 'date-fns';
 
 interface LeaseContract {
   id: string;
@@ -95,12 +105,14 @@ const STATUS_CONFIG = {
 export default function ArrendamentoScreen() {
   const [statusFilter, setStatusFilter] = useState<LeaseContract['status'] | 'all'>('all');
 
-  const filteredLeases = mockLeases.filter(l => 
-    statusFilter === 'all' || l.status === statusFilter
+  const filteredLeases = mockLeases.filter(
+    (l) => statusFilter === 'all' || l.status === statusFilter
   );
 
-  const totalArea = mockLeases.filter(l => l.status === 'active').reduce((sum, l) => sum + l.area, 0);
-  const activeLeases = mockLeases.filter(l => l.status === 'active').length;
+  const totalArea = mockLeases
+    .filter((l) => l.status === 'active')
+    .reduce((sum, l) => sum + l.area, 0);
+  const activeLeases = mockLeases.filter((l) => l.status === 'active').length;
 
   const isWeb = Platform.OS === 'web';
 
@@ -109,7 +121,7 @@ export default function ArrendamentoScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Arrendamentos",
+          title: 'Arrendamentos',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -143,13 +155,19 @@ export default function ArrendamentoScreen() {
           </View>
 
           <View style={styles.filterRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
               <TouchableOpacity
                 style={[styles.filterChip, statusFilter === 'all' && styles.filterChipActive]}
                 onPress={() => setStatusFilter('all')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}>
+                <Text
+                  style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}
+                >
                   Todos
                 </Text>
               </TouchableOpacity>
@@ -160,7 +178,9 @@ export default function ArrendamentoScreen() {
                   onPress={() => setStatusFilter(status as LeaseContract['status'])}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.filterText, statusFilter === status && styles.filterTextActive]}>
+                  <Text
+                    style={[styles.filterText, statusFilter === status && styles.filterTextActive]}
+                  >
                     {config.label}
                   </Text>
                 </TouchableOpacity>
@@ -168,7 +188,10 @@ export default function ArrendamentoScreen() {
             </ScrollView>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {filteredLeases.length === 0 && (
               <View style={styles.emptyState}>
                 <MapPin size={48} color={Colors.textTertiary} />
@@ -199,7 +222,9 @@ export default function ArrendamentoScreen() {
                       <Text style={styles.leaseDoc}>{lease.lessorCpfCnpj}</Text>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: config.color + '15' }]}>
-                      <Text style={[styles.statusText, { color: config.color }]}>{config.label}</Text>
+                      <Text style={[styles.statusText, { color: config.color }]}>
+                        {config.label}
+                      </Text>
                     </View>
                   </View>
 
@@ -246,21 +271,19 @@ export default function ArrendamentoScreen() {
                     <View style={styles.dateItem}>
                       <Calendar size={14} color={Colors.textSecondary} />
                       <Text style={styles.dateLabel}>Início</Text>
-                      <Text style={styles.dateValue}>{format(lease.startDate, "dd/MM/yyyy")}</Text>
+                      <Text style={styles.dateValue}>{format(lease.startDate, 'dd/MM/yyyy')}</Text>
                     </View>
                     <View style={styles.dateItem}>
                       <Calendar size={14} color={Colors.textSecondary} />
                       <Text style={styles.dateLabel}>Término</Text>
-                      <Text style={styles.dateValue}>{format(lease.endDate, "dd/MM/yyyy")}</Text>
+                      <Text style={styles.dateValue}>{format(lease.endDate, 'dd/MM/yyyy')}</Text>
                     </View>
                   </View>
 
                   {lease.status === 'active' && isNearEnd && (
                     <View style={styles.alertBanner}>
                       <Clock size={16} color={Colors.warning} />
-                      <Text style={styles.alertText}>
-                        Vence em {daysRemaining} dias
-                      </Text>
+                      <Text style={styles.alertText}>Vence em {daysRemaining} dias</Text>
                     </View>
                   )}
 

@@ -10,7 +10,16 @@ import {
   Alert,
 } from 'react-native';
 import { Stack } from 'expo-router';
-import { Mail, Phone, MessageCircle, FileText, ChevronDown, ChevronUp, Clock, Send } from 'lucide-react-native';
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  FileText,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Send,
+} from 'lucide-react-native';
 import Colors from '@/constants/colors';
 
 interface FAQItem {
@@ -30,43 +39,53 @@ export default function SuporteScreen() {
   const faqs: FAQItem[] = [
     {
       question: 'Como cadastro uma nova despesa?',
-      answer: 'Na tela inicial, toque no botão "+" ou acesse a aba Despesas e toque em "Nova Despesa". Preencha os campos obrigatórios como valor, categoria, data e descrição.',
+      answer:
+        'Na tela inicial, toque no botão "+" ou acesse a aba Despesas e toque em "Nova Despesa". Preencha os campos obrigatórios como valor, categoria, data e descrição.',
     },
     {
       question: 'Como emito uma Nota Fiscal Eletrônica (NF-e)?',
-      answer: 'Acesse o menu Fiscal > NF-e > "Emitir NF-e". Preencha os dados do destinatário, produtos/serviços, valores e informações fiscais. O sistema enviará automaticamente para a SEFAZ.',
+      answer:
+        'Acesse o menu Fiscal > NF-e > "Emitir NF-e". Preencha os dados do destinatário, produtos/serviços, valores e informações fiscais. O sistema enviará automaticamente para a SEFAZ.',
     },
     {
       question: 'Posso importar extratos bancários?',
-      answer: 'Sim! Acesse Fluxo de Caixa > Importar Extrato. Você pode importar arquivos OFX ou conectar sua conta via Open Finance para sincronização automática.',
+      answer:
+        'Sim! Acesse Fluxo de Caixa > Importar Extrato. Você pode importar arquivos OFX ou conectar sua conta via Open Finance para sincronização automática.',
     },
     {
       question: 'Como funciona o controle de estoque?',
-      answer: 'O estoque é atualizado automaticamente quando você registra compras (entrada) ou vendas (saída). Você pode visualizar o estoque atual em Estoque e definir quantidades mínimas para alertas.',
+      answer:
+        'O estoque é atualizado automaticamente quando você registra compras (entrada) ou vendas (saída). Você pode visualizar o estoque atual em Estoque e definir quantidades mínimas para alertas.',
     },
     {
       question: 'Como acompanho a rentabilidade dos meus talhões?',
-      answer: 'Acesse Mais > Talhões & Rentabilidade. Lá você verá a margem bruta, ROI e custos por hectare de cada talhão, comparando orçamento vs. realizado.',
+      answer:
+        'Acesse Mais > Talhões & Rentabilidade. Lá você verá a margem bruta, ROI e custos por hectare de cada talhão, comparando orçamento vs. realizado.',
     },
     {
       question: 'Posso usar em múltiplas fazendas?',
-      answer: 'Sim! Cadastre suas fazendas em Mais > Fazendas e alterne entre elas. Cada fazenda terá seu próprio controle financeiro, estoque e operações.',
+      answer:
+        'Sim! Cadastre suas fazendas em Mais > Fazendas e alterne entre elas. Cada fazenda terá seu próprio controle financeiro, estoque e operações.',
     },
     {
       question: 'Como gero o DRE (Demonstrativo de Resultados)?',
-      answer: 'Acesse Relatórios > DRE. O sistema gera automaticamente o demonstrativo com base nas receitas e despesas cadastradas, organizadas por categoria.',
+      answer:
+        'Acesse Relatórios > DRE. O sistema gera automaticamente o demonstrativo com base nas receitas e despesas cadastradas, organizadas por categoria.',
     },
     {
       question: 'Os dados são sincronizados entre dispositivos?',
-      answer: 'Sim! Todos os dados são salvos na nuvem e sincronizados automaticamente entre todos os seus dispositivos (celular, tablet, computador).',
+      answer:
+        'Sim! Todos os dados são salvos na nuvem e sincronizados automaticamente entre todos os seus dispositivos (celular, tablet, computador).',
     },
     {
       question: 'Como funciona o plano de assinatura?',
-      answer: 'Oferecemos plano gratuito com recursos básicos e planos pagos com funcionalidades avançadas. Acesse Perfil > Assinatura para ver os detalhes e fazer upgrade.',
+      answer:
+        'Oferecemos plano gratuito com recursos básicos e planos pagos com funcionalidades avançadas. Acesse Perfil > Assinatura para ver os detalhes e fazer upgrade.',
     },
     {
       question: 'Meus dados estão seguros?',
-      answer: 'Sim! Utilizamos criptografia de ponta a ponta, servidores seguros e fazemos backup automático diário. Seus dados nunca são compartilhados com terceiros.',
+      answer:
+        'Sim! Utilizamos criptografia de ponta a ponta, servidores seguros e fazemos backup automático diário. Seus dados nunca são compartilhados com terceiros.',
     },
   ];
 
@@ -93,8 +112,10 @@ export default function SuporteScreen() {
     }
 
     const emailBody = `Nome: ${formData.name}\nEmail: ${formData.email}\n\nAssunto: ${formData.subject}\n\nMensagem:\n${formData.message}`;
-    Linking.openURL(`mailto:suporte@agrofinance.app?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(emailBody)}`);
-    
+    Linking.openURL(
+      `mailto:suporte@agrofinance.app?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(emailBody)}`
+    );
+
     Alert.alert('Solicitação enviada', 'Entraremos em contato em breve!');
     setFormData({ name: '', email: '', subject: '', message: '' });
   };
@@ -112,7 +133,8 @@ export default function SuporteScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>Como podemos ajudar?</Text>
           <Text style={styles.subtitle}>
-            Estamos aqui para resolver suas dúvidas e garantir a melhor experiência com o Agrofinance.
+            Estamos aqui para resolver suas dúvidas e garantir a melhor experiência com o
+            Agrofinance.
           </Text>
         </View>
 
@@ -176,9 +198,7 @@ export default function SuporteScreen() {
                   <ChevronDown size={20} color={Colors.textPrimary} />
                 )}
               </View>
-              {expandedFAQ === index && (
-                <Text style={styles.faqAnswer}>{faq.answer}</Text>
-              )}
+              {expandedFAQ === index && <Text style={styles.faqAnswer}>{faq.answer}</Text>}
             </TouchableOpacity>
           ))}
         </View>
@@ -227,9 +247,7 @@ export default function SuporteScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Agrofinance © 2024 - Gestão Agrícola Inteligente
-          </Text>
+          <Text style={styles.footerText}>Agrofinance © 2024 - Gestão Agrícola Inteligente</Text>
           <Text style={styles.footerText}>Versão 1.0.0</Text>
         </View>
       </ScrollView>

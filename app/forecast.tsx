@@ -1,10 +1,32 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, TextInput, Modal, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Plus, TrendingUp, TrendingDown, Calendar, DollarSign, ChevronRight, Edit2, Trash2, X, BarChart3 } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+  Modal,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Plus,
+  TrendingUp,
+  TrendingDown,
+  Calendar,
+  DollarSign,
+  ChevronRight,
+  Edit2,
+  Trash2,
+  X,
+  BarChart3,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 type ForecastItem = {
   id: string;
@@ -19,8 +41,18 @@ type ForecastItem = {
 };
 
 const months = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 export default function ForecastScreen() {
@@ -58,23 +90,31 @@ export default function ForecastScreen() {
     }
   };
 
-  const yearForecasts = forecasts.filter(f => f.year === selectedYear);
-  
+  const yearForecasts = forecasts.filter((f) => f.year === selectedYear);
+
   const monthlyData = months.map((month, index) => {
-    const monthForecasts = yearForecasts.filter(f => f.month === index);
-    const revenues = monthForecasts.filter(f => f.type === 'revenue').reduce((sum, f) => sum + f.amount, 0);
-    const expenses = monthForecasts.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+    const monthForecasts = yearForecasts.filter((f) => f.month === index);
+    const revenues = monthForecasts
+      .filter((f) => f.type === 'revenue')
+      .reduce((sum, f) => sum + f.amount, 0);
+    const expenses = monthForecasts
+      .filter((f) => f.type === 'expense')
+      .reduce((sum, f) => sum + f.amount, 0);
     return { month, index, revenues, expenses, balance: revenues - expenses };
   });
 
-  const totalRevenues = yearForecasts.filter(f => f.type === 'revenue').reduce((sum, f) => sum + f.amount, 0);
-  const totalExpenses = yearForecasts.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+  const totalRevenues = yearForecasts
+    .filter((f) => f.type === 'revenue')
+    .reduce((sum, f) => sum + f.amount, 0);
+  const totalExpenses = yearForecasts
+    .filter((f) => f.type === 'expense')
+    .reduce((sum, f) => sum + f.amount, 0);
   const totalBalance = totalRevenues - totalExpenses;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -136,31 +176,26 @@ export default function ForecastScreen() {
   };
 
   const handleDelete = (forecast: ForecastItem) => {
-    Alert.alert(
-      'Confirmar Exclusão',
-      `Deseja realmente excluir "${forecast.description}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await api.deleteForecast(forecast.id);
-              loadForecasts();
-            } catch (error) {
-              console.error('Error deleting forecast:', error);
-              Alert.alert('Erro', 'Não foi possível excluir a previsão');
-            }
-          },
+    Alert.alert('Confirmar Exclusão', `Deseja realmente excluir "${forecast.description}"?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await api.deleteForecast(forecast.id);
+            loadForecasts();
+          } catch (error) {
+            console.error('Error deleting forecast:', error);
+            Alert.alert('Erro', 'Não foi possível excluir a previsão');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
-  const filteredForecasts = selectedMonth !== null
-    ? yearForecasts.filter(f => f.month === selectedMonth)
-    : yearForecasts;
+  const filteredForecasts =
+    selectedMonth !== null ? yearForecasts.filter((f) => f.month === selectedMonth) : yearForecasts;
 
   return (
     <View style={styles.container}>
@@ -198,17 +233,43 @@ export default function ForecastScreen() {
             <View style={[styles.summaryCard, { backgroundColor: Colors.success + '15' }]}>
               <TrendingUp size={20} color={Colors.success} />
               <Text style={[styles.summaryLabel, { color: Colors.success }]}>Receitas</Text>
-              <Text style={[styles.summaryValue, { color: Colors.success }]}>{formatCurrency(totalRevenues)}</Text>
+              <Text style={[styles.summaryValue, { color: Colors.success }]}>
+                {formatCurrency(totalRevenues)}
+              </Text>
             </View>
             <View style={[styles.summaryCard, { backgroundColor: Colors.error + '15' }]}>
               <TrendingDown size={20} color={Colors.error} />
               <Text style={[styles.summaryLabel, { color: Colors.error }]}>Despesas</Text>
-              <Text style={[styles.summaryValue, { color: Colors.error }]}>{formatCurrency(totalExpenses)}</Text>
+              <Text style={[styles.summaryValue, { color: Colors.error }]}>
+                {formatCurrency(totalExpenses)}
+              </Text>
             </View>
-            <View style={[styles.summaryCard, { backgroundColor: totalBalance >= 0 ? Colors.primary + '15' : Colors.warning + '15' }]}>
+            <View
+              style={[
+                styles.summaryCard,
+                {
+                  backgroundColor:
+                    totalBalance >= 0 ? Colors.primary + '15' : Colors.warning + '15',
+                },
+              ]}
+            >
               <BarChart3 size={20} color={totalBalance >= 0 ? Colors.primary : Colors.warning} />
-              <Text style={[styles.summaryLabel, { color: totalBalance >= 0 ? Colors.primary : Colors.warning }]}>Saldo</Text>
-              <Text style={[styles.summaryValue, { color: totalBalance >= 0 ? Colors.primary : Colors.warning }]}>{formatCurrency(totalBalance)}</Text>
+              <Text
+                style={[
+                  styles.summaryLabel,
+                  { color: totalBalance >= 0 ? Colors.primary : Colors.warning },
+                ]}
+              >
+                Saldo
+              </Text>
+              <Text
+                style={[
+                  styles.summaryValue,
+                  { color: totalBalance >= 0 ? Colors.primary : Colors.warning },
+                ]}
+              >
+                {formatCurrency(totalBalance)}
+              </Text>
             </View>
           </View>
 
@@ -218,23 +279,28 @@ export default function ForecastScreen() {
             {monthlyData.map((data) => (
               <TouchableOpacity
                 key={data.index}
-                style={[
-                  styles.monthCard,
-                  selectedMonth === data.index && styles.monthCardActive
-                ]}
+                style={[styles.monthCard, selectedMonth === data.index && styles.monthCardActive]}
                 onPress={() => setSelectedMonth(selectedMonth === data.index ? null : data.index)}
               >
-                <Text style={[styles.monthName, selectedMonth === data.index && styles.monthNameActive]}>
+                <Text
+                  style={[styles.monthName, selectedMonth === data.index && styles.monthNameActive]}
+                >
                   {data.month.slice(0, 3)}
                 </Text>
                 <View style={styles.monthValues}>
-                  <Text style={[styles.monthRevenue, { fontSize: 11 }]}>+{formatCurrency(data.revenues)}</Text>
-                  <Text style={[styles.monthExpense, { fontSize: 11 }]}>-{formatCurrency(data.expenses)}</Text>
+                  <Text style={[styles.monthRevenue, { fontSize: 11 }]}>
+                    +{formatCurrency(data.revenues)}
+                  </Text>
+                  <Text style={[styles.monthExpense, { fontSize: 11 }]}>
+                    -{formatCurrency(data.expenses)}
+                  </Text>
                 </View>
-                <Text style={[
-                  styles.monthBalance,
-                  { color: data.balance >= 0 ? Colors.success : Colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.monthBalance,
+                    { color: data.balance >= 0 ? Colors.success : Colors.error },
+                  ]}
+                >
                   {formatCurrency(data.balance)}
                 </Text>
               </TouchableOpacity>
@@ -244,7 +310,9 @@ export default function ForecastScreen() {
           {/* Forecast List */}
           <View style={styles.forecastsHeader}>
             <Text style={styles.sectionTitle}>
-              {selectedMonth !== null ? `Previsões - ${months[selectedMonth]}` : 'Todas as Previsões'}
+              {selectedMonth !== null
+                ? `Previsões - ${months[selectedMonth]}`
+                : 'Todas as Previsões'}
             </Text>
             {selectedMonth !== null && (
               <TouchableOpacity onPress={() => setSelectedMonth(null)}>
@@ -268,28 +336,38 @@ export default function ForecastScreen() {
                 key={forecast.id}
                 style={[
                   styles.forecastCard,
-                  { borderLeftColor: forecast.type === 'revenue' ? Colors.success : Colors.error }
+                  { borderLeftColor: forecast.type === 'revenue' ? Colors.success : Colors.error },
                 ]}
               >
                 <View style={styles.forecastMain}>
                   <View style={styles.forecastInfo}>
                     <Text style={styles.forecastDescription}>{forecast.description}</Text>
                     <Text style={styles.forecastMeta}>
-                      {months[forecast.month]} {forecast.year} • {forecast.probability}% probabilidade
+                      {months[forecast.month]} {forecast.year} • {forecast.probability}%
+                      probabilidade
                     </Text>
                   </View>
-                  <Text style={[
-                    styles.forecastAmount,
-                    { color: forecast.type === 'revenue' ? Colors.success : Colors.error }
-                  ]}>
-                    {forecast.type === 'revenue' ? '+' : '-'}{formatCurrency(forecast.amount)}
+                  <Text
+                    style={[
+                      styles.forecastAmount,
+                      { color: forecast.type === 'revenue' ? Colors.success : Colors.error },
+                    ]}
+                  >
+                    {forecast.type === 'revenue' ? '+' : '-'}
+                    {formatCurrency(forecast.amount)}
                   </Text>
                 </View>
                 <View style={styles.forecastActions}>
-                  <TouchableOpacity onPress={() => openEditModal(forecast)} style={styles.actionButton}>
+                  <TouchableOpacity
+                    onPress={() => openEditModal(forecast)}
+                    style={styles.actionButton}
+                  >
                     <Edit2 size={16} color={Colors.textSecondary} />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(forecast)} style={styles.actionButton}>
+                  <TouchableOpacity
+                    onPress={() => handleDelete(forecast)}
+                    style={styles.actionButton}
+                  >
                     <Trash2 size={16} color={Colors.error} />
                   </TouchableOpacity>
                 </View>
@@ -316,20 +394,42 @@ export default function ForecastScreen() {
                   <Text style={styles.formLabel}>Tipo</Text>
                   <View style={styles.typeOptions}>
                     <TouchableOpacity
-                      style={[styles.typeOption, formType === 'revenue' && styles.typeOptionRevenue]}
+                      style={[
+                        styles.typeOption,
+                        formType === 'revenue' && styles.typeOptionRevenue,
+                      ]}
                       onPress={() => setFormType('revenue')}
                     >
-                      <TrendingUp size={20} color={formType === 'revenue' ? '#fff' : Colors.success} />
-                      <Text style={[styles.typeOptionText, formType === 'revenue' && styles.typeOptionTextActive]}>
+                      <TrendingUp
+                        size={20}
+                        color={formType === 'revenue' ? '#fff' : Colors.success}
+                      />
+                      <Text
+                        style={[
+                          styles.typeOptionText,
+                          formType === 'revenue' && styles.typeOptionTextActive,
+                        ]}
+                      >
                         Receita
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.typeOption, formType === 'expense' && styles.typeOptionExpense]}
+                      style={[
+                        styles.typeOption,
+                        formType === 'expense' && styles.typeOptionExpense,
+                      ]}
                       onPress={() => setFormType('expense')}
                     >
-                      <TrendingDown size={20} color={formType === 'expense' ? '#fff' : Colors.error} />
-                      <Text style={[styles.typeOptionText, formType === 'expense' && styles.typeOptionTextActive]}>
+                      <TrendingDown
+                        size={20}
+                        color={formType === 'expense' ? '#fff' : Colors.error}
+                      />
+                      <Text
+                        style={[
+                          styles.typeOptionText,
+                          formType === 'expense' && styles.typeOptionTextActive,
+                        ]}
+                      >
                         Despesa
                       </Text>
                     </TouchableOpacity>

@@ -1,60 +1,87 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Platform, Image } from "react-native";
-import { 
-  LayoutDashboard, FileText, TrendingUp, TrendingDown, 
-  Building2, Users, Package, ShoppingCart, DollarSign,
-  BarChart3, Calendar, Settings, HelpCircle, Briefcase,
-  Tractor, CheckSquare, MapPin, Sprout, CreditCard,
-  BookOpen, Home, FileBarChart, Archive, Repeat,
-  ChevronRight
-} from "lucide-react-native";
-import { router, usePathname } from "expo-router";
-import Colors from "@/constants/colors";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+  Image,
+} from 'react-native';
+import {
+  LayoutDashboard,
+  FileText,
+  TrendingUp,
+  TrendingDown,
+  Building2,
+  Users,
+  Package,
+  ShoppingCart,
+  DollarSign,
+  BarChart3,
+  Calendar,
+  Settings,
+  HelpCircle,
+  Briefcase,
+  Tractor,
+  CheckSquare,
+  MapPin,
+  Sprout,
+  CreditCard,
+  BookOpen,
+  Home,
+  FileBarChart,
+  Archive,
+  Repeat,
+  ChevronRight,
+} from 'lucide-react-native';
+import { router, usePathname } from 'expo-router';
+import Colors from '@/constants/colors';
 
 const menuSections = [
   {
-    title: "PRINCIPAL",
+    title: 'PRINCIPAL',
     items: [
-      { icon: LayoutDashboard, label: "Dashboard", route: "/" },
-      { icon: FileText, label: "Despesas", route: "/expenses" },
-      { icon: CheckSquare, label: "Validações", route: "/validations", badge: 3 },
-      { icon: BarChart3, label: "Relatórios", route: "/reports" },
-    ]
+      { icon: LayoutDashboard, label: 'Dashboard', route: '/' },
+      { icon: FileText, label: 'Despesas', route: '/expenses' },
+      { icon: CheckSquare, label: 'Validações', route: '/validations', badge: 3 },
+      { icon: BarChart3, label: 'Relatórios', route: '/reports' },
+    ],
   },
   {
-    title: "CADASTROS",
+    title: 'CADASTROS',
     items: [
-      { icon: Tractor, label: "Fazendas", route: "/farms" },
-      { icon: Users, label: "Fornecedores", route: "/suppliers" },
-      { icon: Users, label: "Clientes", route: "/clients" },
-      { icon: Package, label: "Estoque", route: "/stock" },
-    ]
+      { icon: Tractor, label: 'Fazendas', route: '/farms' },
+      { icon: Users, label: 'Fornecedores', route: '/suppliers' },
+      { icon: Users, label: 'Clientes', route: '/clients' },
+      { icon: Package, label: 'Estoque', route: '/stock' },
+    ],
   },
   {
-    title: "FINANCEIRO",
+    title: 'FINANCEIRO',
     items: [
-      { icon: TrendingUp, label: "Receitas", route: "/revenues" },
-      { icon: DollarSign, label: "Fluxo de Caixa", route: "/cash-flow" },
-      { icon: CreditCard, label: "Conciliação Bancária", route: "/bank-reconciliation" },
-      { icon: BookOpen, label: "Livro Caixa", route: "/livro-caixa" },
-      { icon: FileBarChart, label: "DRE", route: "/dre" },
-    ]
+      { icon: TrendingUp, label: 'Receitas', route: '/revenues' },
+      { icon: DollarSign, label: 'Fluxo de Caixa', route: '/cash-flow' },
+      { icon: CreditCard, label: 'Conciliação Bancária', route: '/bank-reconciliation' },
+      { icon: BookOpen, label: 'Livro Caixa', route: '/livro-caixa' },
+      { icon: FileBarChart, label: 'DRE', route: '/dre' },
+    ],
   },
   {
-    title: "OPERACIONAL",
+    title: 'OPERACIONAL',
     items: [
-      { icon: FileText, label: "Fiscal", route: "/fiscal" },
-      { icon: ShoppingCart, label: "Compras", route: "/purchase-orders" },
-      { icon: Briefcase, label: "Contratos", route: "/contracts" },
-    ]
+      { icon: FileText, label: 'Fiscal', route: '/fiscal' },
+      { icon: ShoppingCart, label: 'Compras', route: '/purchase-orders' },
+      { icon: Briefcase, label: 'Contratos', route: '/contracts' },
+    ],
   },
   {
-    title: "PRODUÇÃO",
+    title: 'PRODUÇÃO',
     items: [
-      { icon: MapPin, label: "Talhões", route: "/fields" },
-      { icon: Sprout, label: "Safras", route: "/seasons" },
-      { icon: Repeat, label: "Barter", route: "/barter" },
-      { icon: Home, label: "Arrendamento", route: "/arrendamento" },
-    ]
+      { icon: MapPin, label: 'Talhões', route: '/fields' },
+      { icon: Sprout, label: 'Safras', route: '/seasons' },
+      { icon: Repeat, label: 'Barter', route: '/barter' },
+      { icon: Home, label: 'Arrendamento', route: '/arrendamento' },
+    ],
   },
 ];
 
@@ -64,7 +91,8 @@ export default function WebSidebar() {
   if (Platform.OS !== 'web') return null;
 
   const isActive = (route: string) => {
-    if (route === '/') return pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/index';
+    if (route === '/')
+      return pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/index';
     if (route === '/expenses') return pathname.includes('expenses');
     if (route === '/validations') return pathname.includes('validations');
     if (route === '/reports') return pathname.includes('reports');
@@ -75,8 +103,8 @@ export default function WebSidebar() {
     <View style={styles.sidebar}>
       <View style={styles.header}>
         <View style={styles.logoContainer}>
-          <Image 
-            source={require('@/assets/images/logo.png')} 
+          <Image
+            source={require('@/assets/images/logo.png')}
             style={styles.logoImage}
             resizeMode="contain"
           />
@@ -94,7 +122,7 @@ export default function WebSidebar() {
             {section.items.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.route);
-              
+
               return (
                 <TouchableOpacity
                   key={item.route}
@@ -102,10 +130,7 @@ export default function WebSidebar() {
                   onPress={() => router.push(item.route as any)}
                   activeOpacity={0.7}
                 >
-                  <Icon 
-                    size={20} 
-                    color={active ? '#fff' : '#94a3b8'} 
-                  />
+                  <Icon size={20} color={active ? '#fff' : '#94a3b8'} />
                   <Text style={[styles.menuLabel, active && styles.menuLabelActive]}>
                     {item.label}
                   </Text>
@@ -122,7 +147,7 @@ export default function WebSidebar() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.footerItem}
           onPress={() => router.push('/profile')}
           activeOpacity={0.7}
@@ -130,8 +155,8 @@ export default function WebSidebar() {
           <Settings size={18} color="#94a3b8" />
           <Text style={styles.footerText}>Configurações</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.footerItem} 
+        <TouchableOpacity
+          style={styles.footerItem}
           activeOpacity={0.7}
           onPress={() => router.push('/suporte')}
         >

@@ -1,20 +1,20 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
-import { Download, Share2, XCircle, FileText } from "lucide-react-native";
-import Colors from "@/constants/colors";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
+import { Download, Share2, XCircle, FileText } from 'lucide-react-native';
+import Colors from '@/constants/colors';
 
 export default function NFeDetailsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Detalhes da NF-e",
+          headerTitle: 'Detalhes da NF-e',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -60,7 +60,10 @@ export default function NFeDetailsScreen() {
             <Share2 size={20} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Compartilhar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, styles.actionButtonDanger]} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.actionButtonDanger]}
+            activeOpacity={0.7}
+          >
             <XCircle size={20} color={Colors.error} />
             <Text style={[styles.actionButtonText, { color: Colors.error }]}>Cancelar</Text>
           </TouchableOpacity>

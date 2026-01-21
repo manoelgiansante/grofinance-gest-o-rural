@@ -1,10 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Plus, ArrowRightLeft, Package, Wheat, Clock, CheckCircle, XCircle } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Plus,
+  ArrowRightLeft,
+  Package,
+  Wheat,
+  Clock,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
 
 interface BarterContract {
   id: string;
@@ -42,7 +51,7 @@ const mockContracts: BarterContract[] = [
     inputProduct: 'Fertilizante NPK 20-05-20',
     inputQuantity: 10000,
     inputUnit: 'kg',
-    inputUnitValue: 3.20,
+    inputUnitValue: 3.2,
     outputProduct: 'Soja em grão',
     outputQuantity: 533,
     outputUnit: 'sc 60kg',
@@ -84,7 +93,11 @@ const mockContracts: BarterContract[] = [
 
 const STATUS_CONFIG = {
   active: { label: 'Ativo', icon: Clock, color: Colors.primary },
-  partially_settled: { label: 'Parcialmente Liquidado', icon: ArrowRightLeft, color: Colors.warning },
+  partially_settled: {
+    label: 'Parcialmente Liquidado',
+    icon: ArrowRightLeft,
+    color: Colors.warning,
+  },
   settled: { label: 'Liquidado', icon: CheckCircle, color: Colors.success },
   cancelled: { label: 'Cancelado', icon: XCircle, color: Colors.error },
 };
@@ -92,14 +105,12 @@ const STATUS_CONFIG = {
 export default function BarterScreen() {
   const [statusFilter, setStatusFilter] = useState<BarterContract['status'] | 'all'>('all');
 
-  const filteredContracts = mockContracts.filter(c => 
-    statusFilter === 'all' || c.status === statusFilter
+  const filteredContracts = mockContracts.filter(
+    (c) => statusFilter === 'all' || c.status === statusFilter
   );
 
-  const totalActive = mockContracts.filter(c => c.status === 'active').length;
-  const totalValue = mockContracts.reduce((sum, c) => 
-    sum + (c.inputQuantity * c.inputUnitValue), 0
-  );
+  const totalActive = mockContracts.filter((c) => c.status === 'active').length;
+  const totalValue = mockContracts.reduce((sum, c) => sum + c.inputQuantity * c.inputUnitValue, 0);
 
   const isWeb = Platform.OS === 'web';
 
@@ -108,7 +119,7 @@ export default function BarterScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Barter/Troca",
+          title: 'Barter/Troca',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -142,13 +153,19 @@ export default function BarterScreen() {
           </View>
 
           <View style={styles.filterRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
               <TouchableOpacity
                 style={[styles.filterChip, statusFilter === 'all' && styles.filterChipActive]}
                 onPress={() => setStatusFilter('all')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}>
+                <Text
+                  style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}
+                >
                   Todos
                 </Text>
               </TouchableOpacity>
@@ -159,7 +176,9 @@ export default function BarterScreen() {
                   onPress={() => setStatusFilter(status as BarterContract['status'])}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.filterText, statusFilter === status && styles.filterTextActive]}>
+                  <Text
+                    style={[styles.filterText, statusFilter === status && styles.filterTextActive]}
+                  >
                     {config.label}
                   </Text>
                 </TouchableOpacity>
@@ -167,7 +186,10 @@ export default function BarterScreen() {
             </ScrollView>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {filteredContracts.length === 0 && (
               <View style={styles.emptyState}>
                 <ArrowRightLeft size={48} color={Colors.textTertiary} />
@@ -180,8 +202,10 @@ export default function BarterScreen() {
               const Icon = config.icon;
               const inputTotal = contract.inputQuantity * contract.inputUnitValue;
               const outputTotal = contract.outputQuantity * contract.outputUnitValue;
-              const settledPercentage = contract.status === 'active' ? 0 : 
-                (contract.settledOutputQuantity / contract.outputQuantity) * 100;
+              const settledPercentage =
+                contract.status === 'active'
+                  ? 0
+                  : (contract.settledOutputQuantity / contract.outputQuantity) * 100;
 
               return (
                 <TouchableOpacity
@@ -199,13 +223,17 @@ export default function BarterScreen() {
                       <Text style={styles.contractOperation}>{contract.operationName}</Text>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: config.color + '15' }]}>
-                      <Text style={[styles.statusText, { color: config.color }]}>{config.label}</Text>
+                      <Text style={[styles.statusText, { color: config.color }]}>
+                        {config.label}
+                      </Text>
                     </View>
                   </View>
 
                   <View style={styles.exchangeSection}>
                     <View style={styles.exchangeItem}>
-                      <View style={[styles.exchangeIcon, { backgroundColor: Colors.primary + '15' }]}>
+                      <View
+                        style={[styles.exchangeIcon, { backgroundColor: Colors.primary + '15' }]}
+                      >
                         <Package size={18} color={Colors.primary} />
                       </View>
                       <View style={styles.exchangeDetails}>
@@ -225,7 +253,9 @@ export default function BarterScreen() {
                     </View>
 
                     <View style={styles.exchangeItem}>
-                      <View style={[styles.exchangeIcon, { backgroundColor: Colors.success + '15' }]}>
+                      <View
+                        style={[styles.exchangeIcon, { backgroundColor: Colors.success + '15' }]}
+                      >
                         <Wheat size={18} color={Colors.success} />
                       </View>
                       <View style={styles.exchangeDetails}>
@@ -245,13 +275,13 @@ export default function BarterScreen() {
                     <View style={styles.dateItem}>
                       <Text style={styles.dateLabel}>Início</Text>
                       <Text style={styles.dateValue}>
-                        {format(contract.startDate, "dd/MM/yyyy")}
+                        {format(contract.startDate, 'dd/MM/yyyy')}
                       </Text>
                     </View>
                     <View style={styles.dateItem}>
                       <Text style={styles.dateLabel}>Liquidação</Text>
                       <Text style={styles.dateValue}>
-                        {format(contract.settlementDate, "dd/MM/yyyy")}
+                        {format(contract.settlementDate, 'dd/MM/yyyy')}
                       </Text>
                     </View>
                   </View>
@@ -259,18 +289,19 @@ export default function BarterScreen() {
                   {contract.status === 'partially_settled' && (
                     <View style={styles.progressSection}>
                       <View style={styles.progressBar}>
-                        <View 
+                        <View
                           style={[
-                            styles.progressFill, 
-                            { 
+                            styles.progressFill,
+                            {
                               width: `${settledPercentage}%`,
-                              backgroundColor: Colors.success
-                            }
-                          ]} 
+                              backgroundColor: Colors.success,
+                            },
+                          ]}
                         />
                       </View>
                       <Text style={styles.progressText}>
-                        {settledPercentage.toFixed(0)}% liquidado ({contract.settledOutputQuantity}/{contract.outputQuantity} {contract.outputUnit})
+                        {settledPercentage.toFixed(0)}% liquidado ({contract.settledOutputQuantity}/
+                        {contract.outputQuantity} {contract.outputUnit})
                       </Text>
                     </View>
                   )}

@@ -40,13 +40,23 @@ interface ImportPreviewRow {
 }
 
 interface ExcelImporterProps {
-  targetTable: 'farms' | 'suppliers' | 'clients' | 'expenses' | 'revenues' | 'assets' | 'stock_items';
+  targetTable:
+    | 'farms'
+    | 'suppliers'
+    | 'clients'
+    | 'expenses'
+    | 'revenues'
+    | 'assets'
+    | 'stock_items';
   onImportComplete: (importedCount: number) => void;
   onClose: () => void;
 }
 
 // Mapeamento de campos por tabela
-const TABLE_FIELDS: Record<string, { field: string; label: string; required: boolean; type: string }[]> = {
+const TABLE_FIELDS: Record<
+  string,
+  { field: string; label: string; required: boolean; type: string }[]
+> = {
   farms: [
     { field: 'name', label: 'Nome da Fazenda', required: true, type: 'text' },
     { field: 'cpf_cnpj', label: 'CPF/CNPJ', required: false, type: 'text' },
@@ -111,7 +121,17 @@ const TABLE_FIELDS: Record<string, { field: string; label: string; required: boo
 
 // Sinônimos para mapeamento automático com IA
 const FIELD_SYNONYMS: Record<string, string[]> = {
-  name: ['nome', 'razão social', 'razao social', 'denominação', 'denominacao', 'descrição', 'descricao', 'titulo', 'título'],
+  name: [
+    'nome',
+    'razão social',
+    'razao social',
+    'denominação',
+    'denominacao',
+    'descrição',
+    'descricao',
+    'titulo',
+    'título',
+  ],
   cpf_cnpj: ['cpf', 'cnpj', 'cpf/cnpj', 'documento', 'doc', 'identificação', 'identificacao'],
   email: ['e-mail', 'email', 'correio', 'mail'],
   phone: ['telefone', 'tel', 'fone', 'celular', 'whatsapp', 'contato'],
@@ -121,7 +141,14 @@ const FIELD_SYNONYMS: Record<string, string[]> = {
   category: ['categoria', 'tipo', 'classificação', 'classificacao', 'grupo'],
   value: ['valor', 'preço', 'preco', 'custo', 'total', 'montante', 'quantia'],
   agreed_value: ['valor acordado', 'valor negociado', 'valor combinado', 'valor', 'preço', 'preco'],
-  purchase_value: ['valor de compra', 'valor aquisição', 'valor aquisicao', 'custo', 'preço', 'preco'],
+  purchase_value: [
+    'valor de compra',
+    'valor aquisição',
+    'valor aquisicao',
+    'custo',
+    'preço',
+    'preco',
+  ],
   date: ['data', 'dt', 'quando', 'emissão', 'emissao'],
   due_date: ['vencimento', 'data vencimento', 'dt vencimento', 'prazo', 'data limite'],
   purchase_date: ['data compra', 'data aquisição', 'data aquisicao', 'dt compra'],
@@ -139,15 +166,25 @@ const FIELD_SYNONYMS: Record<string, string[]> = {
   state_registration: ['inscrição estadual', 'inscricao estadual', 'ie', 'insc. estadual'],
 };
 
-export default function ExcelImporter({ targetTable, onImportComplete, onClose }: ExcelImporterProps) {
-  const [step, setStep] = useState<'upload' | 'mapping' | 'preview' | 'importing' | 'complete'>('upload');
+export default function ExcelImporter({
+  targetTable,
+  onImportComplete,
+  onClose,
+}: ExcelImporterProps) {
+  const [step, setStep] = useState<'upload' | 'mapping' | 'preview' | 'importing' | 'complete'>(
+    'upload'
+  );
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
   const [rawData, setRawData] = useState<Record<string, string>[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
   const [mapping, setMapping] = useState<ColumnMapping[]>([]);
   const [previewRows, setPreviewRows] = useState<ImportPreviewRow[]>([]);
-  const [importResult, setImportResult] = useState({ success: 0, failed: 0, errors: [] as string[] });
+  const [importResult, setImportResult] = useState({
+    success: 0,
+    failed: 0,
+    errors: [] as string[],
+  });
 
   const tableFields = TABLE_FIELDS[targetTable] || [];
   const tableLabel = {
@@ -161,87 +198,96 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
   }[targetTable];
 
   // Função de IA para mapear colunas automaticamente
-  const aiMapColumns = useCallback((cols: string[], sampleData: Record<string, string>[]): ColumnMapping[] => {
-    return cols.map(col => {
-      const normalizedCol = col.toLowerCase().trim();
-      let bestMatch = '';
-      let bestConfidence = 0;
+  const aiMapColumns = useCallback(
+    (cols: string[], sampleData: Record<string, string>[]): ColumnMapping[] => {
+      return cols.map((col) => {
+        const normalizedCol = col.toLowerCase().trim();
+        let bestMatch = '';
+        let bestConfidence = 0;
 
-      // Buscar correspondência nos sinônimos
-      for (const field of tableFields) {
-        const synonyms = FIELD_SYNONYMS[field.field] || [field.field, field.label.toLowerCase()];
-        
-        for (const synonym of synonyms) {
-          const normalizedSynonym = synonym.toLowerCase();
-          
-          // Correspondência exata
-          if (normalizedCol === normalizedSynonym) {
-            bestMatch = field.field;
-            bestConfidence = 100;
-            break;
-          }
-          
-          // Correspondência parcial
-          if (normalizedCol.includes(normalizedSynonym) || normalizedSynonym.includes(normalizedCol)) {
-            const similarity = Math.max(
-              normalizedCol.length / normalizedSynonym.length,
-              normalizedSynonym.length / normalizedCol.length
-            ) * 80;
-            
-            if (similarity > bestConfidence) {
+        // Buscar correspondência nos sinônimos
+        for (const field of tableFields) {
+          const synonyms = FIELD_SYNONYMS[field.field] || [field.field, field.label.toLowerCase()];
+
+          for (const synonym of synonyms) {
+            const normalizedSynonym = synonym.toLowerCase();
+
+            // Correspondência exata
+            if (normalizedCol === normalizedSynonym) {
               bestMatch = field.field;
-              bestConfidence = Math.round(similarity);
+              bestConfidence = 100;
+              break;
+            }
+
+            // Correspondência parcial
+            if (
+              normalizedCol.includes(normalizedSynonym) ||
+              normalizedSynonym.includes(normalizedCol)
+            ) {
+              const similarity =
+                Math.max(
+                  normalizedCol.length / normalizedSynonym.length,
+                  normalizedSynonym.length / normalizedCol.length
+                ) * 80;
+
+              if (similarity > bestConfidence) {
+                bestMatch = field.field;
+                bestConfidence = Math.round(similarity);
+              }
+            }
+          }
+
+          if (bestConfidence === 100) break;
+        }
+
+        // Análise do conteúdo para melhorar a confiança
+        const samples = sampleData.slice(0, 5).map((row) => row[col] || '');
+
+        if (!bestMatch && samples.some((s) => s)) {
+          // Tentar identificar pelo formato dos dados
+          const allNumeric = samples.every((s) => !s || /^[\d.,]+$/.test(s));
+          const allDates = samples.every((s) => !s || /^\d{2}[\/\-]\d{2}[\/\-]\d{2,4}$/.test(s));
+          const allEmails = samples.every((s) => !s || /@/.test(s));
+
+          if (allEmails) {
+            bestMatch = 'email';
+            bestConfidence = 70;
+          } else if (allDates) {
+            const dateFields = tableFields.filter((f) => f.type === 'date');
+            if (dateFields.length > 0) {
+              bestMatch = dateFields[0].field;
+              bestConfidence = 60;
+            }
+          } else if (allNumeric) {
+            const numericFields = tableFields.filter(
+              (f) => f.type === 'number' || f.type === 'currency'
+            );
+            if (numericFields.length > 0) {
+              bestMatch = numericFields[0].field;
+              bestConfidence = 50;
             }
           }
         }
-        
-        if (bestConfidence === 100) break;
-      }
 
-      // Análise do conteúdo para melhorar a confiança
-      const samples = sampleData.slice(0, 5).map(row => row[col] || '');
-      
-      if (!bestMatch && samples.some(s => s)) {
-        // Tentar identificar pelo formato dos dados
-        const allNumeric = samples.every(s => !s || /^[\d.,]+$/.test(s));
-        const allDates = samples.every(s => !s || /^\d{2}[\/\-]\d{2}[\/\-]\d{2,4}$/.test(s));
-        const allEmails = samples.every(s => !s || /@/.test(s));
-        
-        if (allEmails) {
-          bestMatch = 'email';
-          bestConfidence = 70;
-        } else if (allDates) {
-          const dateFields = tableFields.filter(f => f.type === 'date');
-          if (dateFields.length > 0) {
-            bestMatch = dateFields[0].field;
-            bestConfidence = 60;
-          }
-        } else if (allNumeric) {
-          const numericFields = tableFields.filter(f => f.type === 'number' || f.type === 'currency');
-          if (numericFields.length > 0) {
-            bestMatch = numericFields[0].field;
-            bestConfidence = 50;
-          }
-        }
-      }
-
-      return {
-        originalColumn: col,
-        mappedField: bestMatch,
-        confidence: bestConfidence,
-        sampleData: samples,
-      };
-    });
-  }, [tableFields]);
+        return {
+          originalColumn: col,
+          mappedField: bestMatch,
+          confidence: bestConfidence,
+          sampleData: samples,
+        };
+      });
+    },
+    [tableFields]
+  );
 
   // Processar arquivo Excel/CSV
   const processFile = async (uri: string, name: string) => {
     setLoading(true);
     try {
       const content = await FileSystem.readAsStringAsync(uri);
-      
+
       // Parse CSV simples (para Excel completo, precisaria de biblioteca como xlsx)
-      const lines = content.split('\n').filter(line => line.trim());
+      const lines = content.split('\n').filter((line) => line.trim());
       if (lines.length < 2) {
         throw new Error('Arquivo vazio ou sem dados');
       }
@@ -249,12 +295,12 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
       // Detectar separador
       const firstLine = lines[0];
       const separator = firstLine.includes(';') ? ';' : ',';
-      
-      const headers = firstLine.split(separator).map(h => h.trim().replace(/^["']|["']$/g, ''));
+
+      const headers = firstLine.split(separator).map((h) => h.trim().replace(/^["']|["']$/g, ''));
       const data: Record<string, string>[] = [];
 
       for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(separator).map(v => v.trim().replace(/^["']|["']$/g, ''));
+        const values = lines[i].split(separator).map((v) => v.trim().replace(/^["']|["']$/g, ''));
         const row: Record<string, string> = {};
         headers.forEach((header, idx) => {
           row[header] = values[idx] || '';
@@ -282,7 +328,11 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
   const pickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        type: [
+          'text/csv',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ],
         copyToCacheDirectory: true,
       });
 
@@ -297,11 +347,13 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
 
   // Atualizar mapeamento manual
   const updateMapping = (originalColumn: string, newField: string) => {
-    setMapping(prev => prev.map(m => 
-      m.originalColumn === originalColumn 
-        ? { ...m, mappedField: newField, confidence: newField ? 100 : 0 }
-        : m
-    ));
+    setMapping((prev) =>
+      prev.map((m) =>
+        m.originalColumn === originalColumn
+          ? { ...m, mappedField: newField, confidence: newField ? 100 : 0 }
+          : m
+      )
+    );
   };
 
   // Gerar preview
@@ -310,9 +362,9 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
       const mappedData: Record<string, any> = {};
       const errors: string[] = [];
 
-      mapping.forEach(m => {
+      mapping.forEach((m) => {
         if (m.mappedField && row[m.originalColumn]) {
-          const field = tableFields.find(f => f.field === m.mappedField);
+          const field = tableFields.find((f) => f.field === m.mappedField);
           let value: any = row[m.originalColumn];
 
           // Conversão de tipos
@@ -332,18 +384,20 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
       });
 
       // Validar campos obrigatórios
-      tableFields.filter(f => f.required).forEach(f => {
-        if (!mappedData[f.field]) {
-          errors.push(`Campo obrigatório "${f.label}" está vazio`);
-        }
-      });
+      tableFields
+        .filter((f) => f.required)
+        .forEach((f) => {
+          if (!mappedData[f.field]) {
+            errors.push(`Campo obrigatório "${f.label}" está vazio`);
+          }
+        });
 
       return {
         rowNumber: idx + 1,
         originalData: row,
         mappedData,
         errors,
-        status: errors.length > 0 ? 'error' : 'valid' as const,
+        status: errors.length > 0 ? 'error' : ('valid' as const),
       };
     });
 
@@ -364,10 +418,10 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
     for (const row of rawData) {
       try {
         const mappedData: Record<string, any> = {};
-        
-        mapping.forEach(m => {
+
+        mapping.forEach((m) => {
           if (m.mappedField && row[m.originalColumn]) {
-            const field = tableFields.find(f => f.field === m.mappedField);
+            const field = tableFields.find((f) => f.field === m.mappedField);
             let value: any = row[m.originalColumn];
 
             if (field?.type === 'number' || field?.type === 'currency') {
@@ -385,16 +439,18 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
         });
 
         // Verificar campos obrigatórios
-        const requiredFields = tableFields.filter(f => f.required);
-        const missingRequired = requiredFields.filter(f => !mappedData[f.field]);
-        
+        const requiredFields = tableFields.filter((f) => f.required);
+        const missingRequired = requiredFields.filter((f) => !mappedData[f.field]);
+
         if (missingRequired.length > 0) {
-          throw new Error(`Campos obrigatórios faltando: ${missingRequired.map(f => f.label).join(', ')}`);
+          throw new Error(
+            `Campos obrigatórios faltando: ${missingRequired.map((f) => f.label).join(', ')}`
+          );
         }
 
         // Aqui você faria o INSERT no Supabase
         // await supabase.from(targetTable).insert(mappedData);
-        
+
         success++;
       } catch (error: any) {
         failed++;
@@ -418,10 +474,10 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
             </View>
             <Text style={styles.uploadTitle}>Importar {tableLabel}</Text>
             <Text style={styles.uploadDescription}>
-              Selecione um arquivo Excel (.xlsx) ou CSV para importar seus dados.
-              Nossa IA irá identificar automaticamente as colunas e mapear para o sistema.
+              Selecione um arquivo Excel (.xlsx) ou CSV para importar seus dados. Nossa IA irá
+              identificar automaticamente as colunas e mapear para o sistema.
             </Text>
-            
+
             <View style={styles.aiFeature}>
               <Sparkles size={20} color="#FF9800" />
               <Text style={styles.aiFeatureText}>
@@ -429,11 +485,7 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
               </Text>
             </View>
 
-            <TouchableOpacity 
-              style={styles.uploadButton}
-              onPress={pickDocument}
-              disabled={loading}
-            >
+            <TouchableOpacity style={styles.uploadButton} onPress={pickDocument} disabled={loading}>
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
@@ -469,7 +521,11 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
                     <Text style={styles.mappingSourceLabel}>Coluna no arquivo:</Text>
                     <Text style={styles.mappingSourceValue}>{m.originalColumn}</Text>
                     <Text style={styles.mappingSample}>
-                      Ex: {m.sampleData.filter(s => s).slice(0, 2).join(', ') || '(vazio)'}
+                      Ex:{' '}
+                      {m.sampleData
+                        .filter((s) => s)
+                        .slice(0, 2)
+                        .join(', ') || '(vazio)'}
                     </Text>
                   </View>
 
@@ -482,24 +538,36 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
                         <TouchableOpacity
                           style={[
                             styles.mappingOption,
-                            !m.mappedField && styles.mappingOptionSelected
+                            !m.mappedField && styles.mappingOptionSelected,
                           ]}
                           onPress={() => updateMapping(m.originalColumn, '')}
                         >
-                          <Text style={!m.mappedField ? styles.mappingOptionTextSelected : styles.mappingOptionText}>
+                          <Text
+                            style={
+                              !m.mappedField
+                                ? styles.mappingOptionTextSelected
+                                : styles.mappingOptionText
+                            }
+                          >
                             Ignorar
                           </Text>
                         </TouchableOpacity>
-                        {tableFields.map(field => (
+                        {tableFields.map((field) => (
                           <TouchableOpacity
                             key={field.field}
                             style={[
                               styles.mappingOption,
-                              m.mappedField === field.field && styles.mappingOptionSelected
+                              m.mappedField === field.field && styles.mappingOptionSelected,
                             ]}
                             onPress={() => updateMapping(m.originalColumn, field.field)}
                           >
-                            <Text style={m.mappedField === field.field ? styles.mappingOptionTextSelected : styles.mappingOptionText}>
+                            <Text
+                              style={
+                                m.mappedField === field.field
+                                  ? styles.mappingOptionTextSelected
+                                  : styles.mappingOptionText
+                              }
+                            >
                               {field.label}
                               {field.required && ' *'}
                             </Text>
@@ -508,14 +576,17 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
                       </ScrollView>
                     </View>
                     {m.confidence > 0 && (
-                      <View style={[
-                        styles.confidenceBadge,
-                        m.confidence >= 80 ? styles.confidenceHigh :
-                        m.confidence >= 50 ? styles.confidenceMedium : styles.confidenceLow
-                      ]}>
-                        <Text style={styles.confidenceText}>
-                          {m.confidence}% confiança
-                        </Text>
+                      <View
+                        style={[
+                          styles.confidenceBadge,
+                          m.confidence >= 80
+                            ? styles.confidenceHigh
+                            : m.confidence >= 50
+                              ? styles.confidenceMedium
+                              : styles.confidenceLow,
+                        ]}
+                      >
+                        <Text style={styles.confidenceText}>{m.confidence}% confiança</Text>
                       </View>
                     )}
                   </View>
@@ -524,16 +595,10 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
             </ScrollView>
 
             <View style={styles.stepActions}>
-              <TouchableOpacity 
-                style={styles.secondaryButton}
-                onPress={() => setStep('upload')}
-              >
+              <TouchableOpacity style={styles.secondaryButton} onPress={() => setStep('upload')}>
                 <Text style={styles.secondaryButtonText}>Voltar</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.primaryButton}
-                onPress={generatePreview}
-              >
+              <TouchableOpacity style={styles.primaryButton} onPress={generatePreview}>
                 <Eye size={20} color="#fff" />
                 <Text style={styles.primaryButtonText}>Visualizar</Text>
               </TouchableOpacity>
@@ -542,8 +607,8 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
         );
 
       case 'preview':
-        const validCount = previewRows.filter(r => r.status === 'valid').length;
-        const errorCount = previewRows.filter(r => r.status === 'error').length;
+        const validCount = previewRows.filter((r) => r.status === 'valid').length;
+        const errorCount = previewRows.filter((r) => r.status === 'error').length;
 
         return (
           <View style={styles.stepContent}>
@@ -571,10 +636,10 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
 
             <ScrollView style={styles.previewList}>
               {previewRows.map((row, idx) => (
-                <View key={idx} style={[
-                  styles.previewRow,
-                  row.status === 'error' && styles.previewRowError
-                ]}>
+                <View
+                  key={idx}
+                  style={[styles.previewRow, row.status === 'error' && styles.previewRowError]}
+                >
                   <View style={styles.previewRowHeader}>
                     <Text style={styles.previewRowNumber}>Linha {row.rowNumber}</Text>
                     {row.status === 'valid' ? (
@@ -584,14 +649,16 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
                     )}
                   </View>
                   <View style={styles.previewRowData}>
-                    {Object.entries(row.mappedData).slice(0, 3).map(([key, value]) => (
-                      <Text key={key} style={styles.previewRowField} numberOfLines={1}>
-                        <Text style={styles.previewRowFieldLabel}>
-                          {tableFields.find(f => f.field === key)?.label || key}:
-                        </Text>{' '}
-                        {String(value)}
-                      </Text>
-                    ))}
+                    {Object.entries(row.mappedData)
+                      .slice(0, 3)
+                      .map(([key, value]) => (
+                        <Text key={key} style={styles.previewRowField} numberOfLines={1}>
+                          <Text style={styles.previewRowFieldLabel}>
+                            {tableFields.find((f) => f.field === key)?.label || key}:
+                          </Text>{' '}
+                          {String(value)}
+                        </Text>
+                      ))}
                   </View>
                   {row.errors.length > 0 && (
                     <View style={styles.previewRowErrors}>
@@ -607,16 +674,10 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
             </ScrollView>
 
             <View style={styles.stepActions}>
-              <TouchableOpacity 
-                style={styles.secondaryButton}
-                onPress={() => setStep('mapping')}
-              >
+              <TouchableOpacity style={styles.secondaryButton} onPress={() => setStep('mapping')}>
                 <Text style={styles.secondaryButtonText}>Ajustar</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.primaryButton}
-                onPress={executeImport}
-              >
+              <TouchableOpacity style={styles.primaryButton} onPress={executeImport}>
                 <Download size={20} color="#fff" />
                 <Text style={styles.primaryButtonText}>Importar Tudo</Text>
               </TouchableOpacity>
@@ -636,10 +697,12 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
       case 'complete':
         return (
           <View style={styles.stepContent}>
-            <View style={[
-              styles.resultIcon,
-              importResult.failed === 0 ? styles.resultIconSuccess : styles.resultIconWarning
-            ]}>
+            <View
+              style={[
+                styles.resultIcon,
+                importResult.failed === 0 ? styles.resultIconSuccess : styles.resultIconWarning,
+              ]}
+            >
               {importResult.failed === 0 ? (
                 <CheckCircle size={64} color="#2E7D32" />
               ) : (
@@ -672,13 +735,15 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
               <View style={styles.resultErrors}>
                 <Text style={styles.resultErrorsTitle}>Erros encontrados:</Text>
                 {importResult.errors.map((error, idx) => (
-                  <Text key={idx} style={styles.resultError}>• {error}</Text>
+                  <Text key={idx} style={styles.resultError}>
+                    • {error}
+                  </Text>
                 ))}
               </View>
             )}
 
             <View style={styles.stepActions}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.secondaryButton}
                 onPress={() => {
                   setStep('upload');
@@ -690,7 +755,7 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
                 <RefreshCw size={20} color="#2E7D32" />
                 <Text style={styles.secondaryButtonText}>Nova Importação</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.primaryButton}
                 onPress={() => {
                   onImportComplete(importResult.success);
@@ -731,30 +796,37 @@ export default function ExcelImporter({ targetTable, onImportComplete, onClose }
         <View style={styles.progressBar}>
           {['upload', 'mapping', 'preview', 'complete'].map((s, idx) => (
             <React.Fragment key={s}>
-              <View style={[
-                styles.progressStep,
-                ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) >= idx && styles.progressStepActive
-              ]}>
-                <Text style={[
-                  styles.progressStepText,
-                  ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) >= idx && styles.progressStepTextActive
-                ]}>
+              <View
+                style={[
+                  styles.progressStep,
+                  ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) >= idx &&
+                    styles.progressStepActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.progressStepText,
+                    ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) >=
+                      idx && styles.progressStepTextActive,
+                  ]}
+                >
                   {idx + 1}
                 </Text>
               </View>
               {idx < 3 && (
-                <View style={[
-                  styles.progressLine,
-                  ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) > idx && styles.progressLineActive
-                ]} />
+                <View
+                  style={[
+                    styles.progressLine,
+                    ['upload', 'mapping', 'preview', 'importing', 'complete'].indexOf(step) > idx &&
+                      styles.progressLineActive,
+                  ]}
+                />
               )}
             </React.Fragment>
           ))}
         </View>
 
-        <ScrollView style={styles.content}>
-          {renderStep()}
-        </ScrollView>
+        <ScrollView style={styles.content}>{renderStep()}</ScrollView>
       </View>
     </Modal>
   );

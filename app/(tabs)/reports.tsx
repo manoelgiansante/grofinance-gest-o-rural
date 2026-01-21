@@ -1,11 +1,9 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { TrendingUp, TrendingDown } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { monthlyResults } from "@/mocks/data";
-import Colors from "@/constants/colors";
-
-
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { TrendingUp, TrendingDown } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { monthlyResults } from '@/mocks/data';
+import Colors from '@/constants/colors';
 
 export default function ReportsScreen() {
   const { operations } = useApp();
@@ -24,7 +22,7 @@ export default function ReportsScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Consolidado do Mês</Text>
-          
+
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Receitas</Text>
             <Text style={[styles.summaryValue, { color: Colors.success }]}>
@@ -49,11 +47,13 @@ export default function ReportsScreen() {
               ) : (
                 <TrendingDown size={20} color={Colors.error} />
               )}
-              <Text style={[
-                styles.summaryValue, 
-                styles.summaryValueBold,
-                { color: totalResult > 0 ? Colors.success : Colors.error }
-              ]}>
+              <Text
+                style={[
+                  styles.summaryValue,
+                  styles.summaryValueBold,
+                  { color: totalResult > 0 ? Colors.success : Colors.error },
+                ]}
+              >
                 R$ {totalResult.toLocaleString('pt-BR')}
               </Text>
             </View>
@@ -63,7 +63,7 @@ export default function ReportsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Por Operação</Text>
           {monthlyResults.map((result) => {
-            const operation = operations.find(o => o.id === result.operationId);
+            const operation = operations.find((o) => o.id === result.operationId);
             if (!operation) return null;
 
             const isPositive = result.result > 0;
@@ -81,10 +81,12 @@ export default function ReportsScreen() {
                     ) : (
                       <TrendingDown size={16} color={Colors.error} />
                     )}
-                    <Text style={[
-                      styles.resultValue,
-                      { color: isPositive ? Colors.success : Colors.error }
-                    ]}>
+                    <Text
+                      style={[
+                        styles.resultValue,
+                        { color: isPositive ? Colors.success : Colors.error },
+                      ]}
+                    >
                       R$ {Math.abs(result.result).toLocaleString('pt-BR')}
                     </Text>
                   </View>

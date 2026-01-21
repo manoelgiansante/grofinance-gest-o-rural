@@ -1,11 +1,21 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { TrendingUp, TrendingDown, Calendar, Upload, Download, FileText, CreditCard, Plus, FileSpreadsheet } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  TrendingUp,
+  TrendingDown,
+  Calendar,
+  Upload,
+  Download,
+  FileText,
+  CreditCard,
+  Plus,
+  FileSpreadsheet,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface CashFlowItem {
   date: Date;
@@ -23,10 +33,19 @@ export default function CashFlowScreen() {
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('month');
   const [showImportModal, setShowImportModal] = useState(false);
   const [showNewModal, setShowNewModal] = useState(false);
-  const [newMovement, setNewMovement] = useState({ description: '', type: 'in' as 'in' | 'out', value: '', category: '' });
+  const [newMovement, setNewMovement] = useState({
+    description: '',
+    type: 'in' as 'in' | 'out',
+    value: '',
+    category: '',
+  });
   const currentBalance = 0;
-  const projectedInflows = mockCashFlow.filter(i => i.type === 'in' && i.status === 'projected').reduce((sum, i) => sum + i.value, 0);
-  const projectedOutflows = mockCashFlow.filter(i => i.type === 'out' && i.status === 'projected').reduce((sum, i) => sum + i.value, 0);
+  const projectedInflows = mockCashFlow
+    .filter((i) => i.type === 'in' && i.status === 'projected')
+    .reduce((sum, i) => sum + i.value, 0);
+  const projectedOutflows = mockCashFlow
+    .filter((i) => i.type === 'out' && i.status === 'projected')
+    .reduce((sum, i) => sum + i.value, 0);
   const projectedBalance = currentBalance + projectedInflows - projectedOutflows;
 
   const handleImportData = (type: string) => {
@@ -37,20 +56,20 @@ export default function CashFlowScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Fluxo de Caixa",
+          headerTitle: 'Fluxo de Caixa',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Action Buttons */}
         <View style={styles.actionRow}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.actionButton}
             onPress={() => setShowImportModal(true)}
             activeOpacity={0.7}
@@ -58,7 +77,7 @@ export default function CashFlowScreen() {
             <Upload size={18} color={Colors.primary} />
             <Text style={styles.actionButtonText}>Importar</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.actionButton}
             onPress={() => router.push('/bank-reconciliation')}
             activeOpacity={0.7}
@@ -66,7 +85,7 @@ export default function CashFlowScreen() {
             <CreditCard size={18} color={Colors.info} />
             <Text style={styles.actionButtonText}>Conciliar OFX</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionButton, styles.actionButtonPrimary]}
             onPress={() => setShowNewModal(true)}
             activeOpacity={0.7}
@@ -104,31 +123,43 @@ export default function CashFlowScreen() {
           <View style={styles.balanceDivider} />
           <View style={styles.projectedBalanceRow}>
             <Text style={styles.projectedBalanceLabel}>Saldo Projetado</Text>
-            <Text style={[
-              styles.projectedBalanceValue,
-              { color: projectedBalance > currentBalance ? Colors.success : Colors.error }
-            ]}>
+            <Text
+              style={[
+                styles.projectedBalanceValue,
+                { color: projectedBalance > currentBalance ? Colors.success : Colors.error },
+              ]}
+            >
               R$ {projectedBalance.toLocaleString('pt-BR')}
             </Text>
           </View>
         </View>
 
         <View style={styles.filterRow}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.filterChip, selectedPeriod === 'week' && styles.filterChipActive]}
             onPress={() => setSelectedPeriod('week')}
             activeOpacity={0.7}
           >
-            <Text style={[styles.filterChipText, selectedPeriod === 'week' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                selectedPeriod === 'week' && styles.filterChipTextActive,
+              ]}
+            >
               Próximos 7 dias
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.filterChip, selectedPeriod === 'month' && styles.filterChipActive]}
             onPress={() => setSelectedPeriod('month')}
             activeOpacity={0.7}
           >
-            <Text style={[styles.filterChipText, selectedPeriod === 'month' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                selectedPeriod === 'month' && styles.filterChipTextActive,
+              ]}
+            >
               Este mês
             </Text>
           </TouchableOpacity>
@@ -149,14 +180,20 @@ export default function CashFlowScreen() {
                       {format(item.date, 'dd MMM', { locale: ptBR })}
                     </Text>
                   </View>
-                  <View style={[
-                    styles.statusBadge, 
-                    { backgroundColor: isRealized ? Colors.success + '18' : Colors.warning + '18' }
-                  ]}>
-                    <Text style={[
-                      styles.statusText,
-                      { color: isRealized ? Colors.success : Colors.warning }
-                    ]}>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      {
+                        backgroundColor: isRealized ? Colors.success + '18' : Colors.warning + '18',
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.statusText,
+                        { color: isRealized ? Colors.success : Colors.warning },
+                      ]}
+                    >
                       {isRealized ? 'Realizado' : 'Projetado'}
                     </Text>
                   </View>
@@ -171,20 +208,24 @@ export default function CashFlowScreen() {
                     </View>
                   </View>
                   <View style={styles.flowValueContainer}>
-                    <View style={[
-                      styles.flowIcon,
-                      { backgroundColor: isInflow ? Colors.success + '18' : Colors.error + '18' }
-                    ]}>
+                    <View
+                      style={[
+                        styles.flowIcon,
+                        { backgroundColor: isInflow ? Colors.success + '18' : Colors.error + '18' },
+                      ]}
+                    >
                       {isInflow ? (
                         <TrendingUp size={18} color={Colors.success} />
                       ) : (
                         <TrendingDown size={18} color={Colors.error} />
                       )}
                     </View>
-                    <Text style={[
-                      styles.flowValue,
-                      { color: isInflow ? Colors.success : Colors.error }
-                    ]}>
+                    <Text
+                      style={[
+                        styles.flowValue,
+                        { color: isInflow ? Colors.success : Colors.error },
+                      ]}
+                    >
                       {isInflow ? '+' : '-'} R$ {item.value.toLocaleString('pt-BR')}
                     </Text>
                   </View>
@@ -211,7 +252,7 @@ export default function CashFlowScreen() {
               Importe contas a pagar e receber de planilhas ou outros sistemas
             </Text>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.importOption}
               onPress={() => handleImportData('Planilha Excel')}
               activeOpacity={0.7}
@@ -227,7 +268,7 @@ export default function CashFlowScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.importOption}
               onPress={() => handleImportData('CSV')}
               activeOpacity={0.7}
@@ -243,7 +284,7 @@ export default function CashFlowScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.importOption}
               onPress={() => router.push('/bank-reconciliation')}
               activeOpacity={0.7}
@@ -259,7 +300,7 @@ export default function CashFlowScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.importOption}
               onPress={() => handleImportData('Sistema Contábil')}
               activeOpacity={0.7}
@@ -275,7 +316,7 @@ export default function CashFlowScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setShowImportModal(false)}
               activeOpacity={0.7}
@@ -305,15 +346,35 @@ export default function CashFlowScreen() {
                 style={[styles.typeOption, newMovement.type === 'in' && styles.typeOptionIn]}
                 onPress={() => setNewMovement({ ...newMovement, type: 'in' })}
               >
-                <TrendingUp size={20} color={newMovement.type === 'in' ? Colors.white : Colors.success} />
-                <Text style={[styles.typeOptionText, newMovement.type === 'in' && { color: Colors.white }]}>Entrada</Text>
+                <TrendingUp
+                  size={20}
+                  color={newMovement.type === 'in' ? Colors.white : Colors.success}
+                />
+                <Text
+                  style={[
+                    styles.typeOptionText,
+                    newMovement.type === 'in' && { color: Colors.white },
+                  ]}
+                >
+                  Entrada
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.typeOption, newMovement.type === 'out' && styles.typeOptionOut]}
                 onPress={() => setNewMovement({ ...newMovement, type: 'out' })}
               >
-                <TrendingDown size={20} color={newMovement.type === 'out' ? Colors.white : Colors.error} />
-                <Text style={[styles.typeOptionText, newMovement.type === 'out' && { color: Colors.white }]}>Saída</Text>
+                <TrendingDown
+                  size={20}
+                  color={newMovement.type === 'out' ? Colors.white : Colors.error}
+                />
+                <Text
+                  style={[
+                    styles.typeOptionText,
+                    newMovement.type === 'out' && { color: Colors.white },
+                  ]}
+                >
+                  Saída
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -330,22 +391,28 @@ export default function CashFlowScreen() {
             <View style={styles.formGroup}>
               <Text style={styles.formLabel}>Valor (R$)</Text>
               <View style={styles.formInput}>
-                <Text style={styles.formInputText}>
-                  {newMovement.value || '0,00'}
-                </Text>
+                <Text style={styles.formInputText}>{newMovement.value || '0,00'}</Text>
               </View>
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.formLabel}>Categoria</Text>
               <View style={styles.categoryOptions}>
-                {['Vendas', 'Insumos', 'Utilidades', 'Mão de Obra', 'Outros'].map(cat => (
+                {['Vendas', 'Insumos', 'Utilidades', 'Mão de Obra', 'Outros'].map((cat) => (
                   <TouchableOpacity
                     key={cat}
-                    style={[styles.categoryChip, newMovement.category === cat && styles.categoryChipActive]}
+                    style={[
+                      styles.categoryChip,
+                      newMovement.category === cat && styles.categoryChipActive,
+                    ]}
                     onPress={() => setNewMovement({ ...newMovement, category: cat })}
                   >
-                    <Text style={[styles.categoryChipText, newMovement.category === cat && { color: Colors.white }]}>
+                    <Text
+                      style={[
+                        styles.categoryChipText,
+                        newMovement.category === cat && { color: Colors.white },
+                      ]}
+                    >
                       {cat}
                     </Text>
                   </TouchableOpacity>
@@ -353,7 +420,7 @@ export default function CashFlowScreen() {
               </View>
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
                 alert('Movimentação adicionada com sucesso!');
@@ -365,7 +432,7 @@ export default function CashFlowScreen() {
               <Text style={styles.saveButtonText}>Salvar Movimentação</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setShowNewModal(false)}
               activeOpacity={0.7}

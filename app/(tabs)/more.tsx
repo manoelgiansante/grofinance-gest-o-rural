@@ -1,65 +1,94 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { 
-  User, Users, Package, ShoppingCart, TrendingUp, Briefcase, 
-  FileText, Settings, HelpCircle, Building2, DollarSign,
-  Archive, TrendingDown, Calendar, MapPin, Sprout, Repeat, Home,
-  LineChart, FileBarChart, BookOpen, CreditCard, Download, Upload
-} from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  User,
+  Users,
+  Package,
+  ShoppingCart,
+  TrendingUp,
+  Briefcase,
+  FileText,
+  Settings,
+  HelpCircle,
+  Building2,
+  DollarSign,
+  Archive,
+  TrendingDown,
+  Calendar,
+  MapPin,
+  Sprout,
+  Repeat,
+  Home,
+  LineChart,
+  FileBarChart,
+  BookOpen,
+  CreditCard,
+  Download,
+  Upload,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
 
 export default function MoreScreen() {
-
   const menuSections = [
     {
-      title: "Produção & Rentabilidade",
+      title: 'Produção & Rentabilidade',
       items: [
-        { icon: MapPin, label: "Talhões", route: "/fields", color: "#10B981" },
-        { icon: Sprout, label: "Safras", route: "/seasons", color: "#059669" },
-        { icon: Repeat, label: "Barter/Troca", route: "/barter", color: "#F59E0B" },
-        { icon: Home, label: "Arrendamento", route: "/arrendamento", color: "#8B5CF6" },
-      ]
+        { icon: MapPin, label: 'Talhões', route: '/fields', color: '#10B981' },
+        { icon: Sprout, label: 'Safras', route: '/seasons', color: '#059669' },
+        { icon: Repeat, label: 'Barter/Troca', route: '/barter', color: '#F59E0B' },
+        { icon: Home, label: 'Arrendamento', route: '/arrendamento', color: '#8B5CF6' },
+      ],
     },
     {
-      title: "Cadastros",
+      title: 'Cadastros',
       items: [
-        { icon: User, label: "Clientes", route: "/clients", color: Colors.info },
-        { icon: Users, label: "Fornecedores", route: "/suppliers", color: Colors.primary },
-        { icon: Building2, label: "Fazendas", route: "/farms", color: Colors.success },
-      ]
+        { icon: User, label: 'Clientes', route: '/clients', color: Colors.info },
+        { icon: Users, label: 'Fornecedores', route: '/suppliers', color: Colors.primary },
+        { icon: Building2, label: 'Fazendas', route: '/farms', color: Colors.success },
+      ],
     },
     {
-      title: "Operacional",
+      title: 'Operacional',
       items: [
-        { icon: Package, label: "Estoque", route: "/stock", color: "#8B4513" },
-        { icon: ShoppingCart, label: "Pedidos de Compra", route: "/purchase-orders", color: "#E67E22" },
-        { icon: Briefcase, label: "Contratos", route: "/contracts", color: "#3498DB" },
-      ]
+        { icon: Package, label: 'Estoque', route: '/stock', color: '#8B4513' },
+        {
+          icon: ShoppingCart,
+          label: 'Pedidos de Compra',
+          route: '/purchase-orders',
+          color: '#E67E22',
+        },
+        { icon: Briefcase, label: 'Contratos', route: '/contracts', color: '#3498DB' },
+      ],
     },
     {
-      title: "Financeiro",
+      title: 'Financeiro',
       items: [
-        { icon: TrendingUp, label: "Receitas", route: "/revenues", color: "#27AE60" },
-        { icon: TrendingDown, label: "Fluxo de Caixa", route: "/cash-flow", color: "#9B59B6" },
-        { icon: CreditCard, label: "Conciliação Bancária", route: "/bank-reconciliation", color: "#06B6D4" },
-        { icon: BookOpen, label: "Livro Caixa", route: "/livro-caixa", color: "#8B5CF6" },
-        { icon: LineChart, label: "Forecast", route: "/forecast", color: "#0EA5E9" },
-        { icon: FileBarChart, label: "DRE Gerencial", route: "/dre", color: "#EC4899" },
-        { icon: Archive, label: "Patrimônio", route: "/assets", color: "#34495E" },
-        { icon: DollarSign, label: "Orçamento", route: "/budget", color: "#F39C12" },
-        { icon: Calendar, label: "Fechamento Mensal", route: "/closing", color: "#16A085" },
-        { icon: FileText, label: "Fiscal", route: "/fiscal", color: "#C0392B" },
-      ]
+        { icon: TrendingUp, label: 'Receitas', route: '/revenues', color: '#27AE60' },
+        { icon: TrendingDown, label: 'Fluxo de Caixa', route: '/cash-flow', color: '#9B59B6' },
+        {
+          icon: CreditCard,
+          label: 'Conciliação Bancária',
+          route: '/bank-reconciliation',
+          color: '#06B6D4',
+        },
+        { icon: BookOpen, label: 'Livro Caixa', route: '/livro-caixa', color: '#8B5CF6' },
+        { icon: LineChart, label: 'Forecast', route: '/forecast', color: '#0EA5E9' },
+        { icon: FileBarChart, label: 'DRE Gerencial', route: '/dre', color: '#EC4899' },
+        { icon: Archive, label: 'Patrimônio', route: '/assets', color: '#34495E' },
+        { icon: DollarSign, label: 'Orçamento', route: '/budget', color: '#F39C12' },
+        { icon: Calendar, label: 'Fechamento Mensal', route: '/closing', color: '#16A085' },
+        { icon: FileText, label: 'Fiscal', route: '/fiscal', color: '#C0392B' },
+      ],
     },
     {
-      title: "Configurações",
+      title: 'Configurações',
       items: [
-        { icon: User, label: "Meu Perfil", route: "/profile", color: Colors.textSecondary },
-        { icon: Settings, label: "Preferências", route: "/settings", color: Colors.textSecondary },
-        { icon: HelpCircle, label: "Ajuda e Suporte", route: "/help", color: Colors.textSecondary },
-      ]
-    }
+        { icon: User, label: 'Meu Perfil', route: '/profile', color: Colors.textSecondary },
+        { icon: Settings, label: 'Preferências', route: '/settings', color: Colors.textSecondary },
+        { icon: HelpCircle, label: 'Ajuda e Suporte', route: '/help', color: Colors.textSecondary },
+      ],
+    },
   ];
 
   return (

@@ -1,15 +1,39 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { 
-  ArrowLeft, Search, Plus, Download, Upload, FileText, Calendar, 
-  TrendingUp, TrendingDown, Filter, Share2, Printer, CheckCircle2,
-  Clock, AlertCircle, BookOpen, Send, Eye
-} from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  Download,
+  Upload,
+  FileText,
+  Calendar,
+  TrendingUp,
+  TrendingDown,
+  Filter,
+  Share2,
+  Printer,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  BookOpen,
+  Send,
+  Eye,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 type EntryType = 'receita' | 'despesa';
 type EntryStatus = 'draft' | 'validated' | 'sent_accountant' | 'processed';
@@ -51,15 +75,7 @@ const CATEGORIES = [
   'Outros',
 ];
 
-const OPERATIONS = [
-  'Confinamento',
-  'Cana',
-  'Soja',
-  'Milho',
-  'Sede',
-  'Compostagem',
-  'Geral',
-];
+const OPERATIONS = ['Confinamento', 'Cana', 'Soja', 'Milho', 'Sede', 'Compostagem', 'Geral'];
 
 export default function LivroCaixaScreen() {
   const [search, setSearch] = useState('');
@@ -84,30 +100,34 @@ export default function LivroCaixaScreen() {
 
   const isWeb = Platform.OS === 'web';
 
-  const filteredEntries = entries.filter(entry => {
+  const filteredEntries = entries.filter((entry) => {
     if (typeFilter !== 'all' && entry.type !== typeFilter) return false;
     if (statusFilter !== 'all' && entry.status !== statusFilter) return false;
-    if (search && !entry.description.toLowerCase().includes(search.toLowerCase()) && 
-        !entry.document.toLowerCase().includes(search.toLowerCase())) return false;
+    if (
+      search &&
+      !entry.description.toLowerCase().includes(search.toLowerCase()) &&
+      !entry.document.toLowerCase().includes(search.toLowerCase())
+    )
+      return false;
     return true;
   });
 
   const totalReceitas = filteredEntries
-    .filter(e => e.type === 'receita')
+    .filter((e) => e.type === 'receita')
     .reduce((sum, e) => sum + e.value, 0);
-  
+
   const totalDespesas = filteredEntries
-    .filter(e => e.type === 'despesa')
+    .filter((e) => e.type === 'despesa')
     .reduce((sum, e) => sum + e.value, 0);
 
   const saldoPeriodo = totalReceitas - totalDespesas;
 
-  const pendingCount = filteredEntries.filter(e => e.status === 'draft').length;
-  const validatedCount = filteredEntries.filter(e => e.status === 'validated').length;
+  const pendingCount = filteredEntries.filter((e) => e.status === 'draft').length;
+  const validatedCount = filteredEntries.filter((e) => e.status === 'validated').length;
 
   const toggleEntrySelection = (id: string) => {
-    setSelectedEntries(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    setSelectedEntries((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
@@ -169,7 +189,7 @@ export default function LivroCaixaScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Livro Caixa",
+          title: 'Livro Caixa',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -187,16 +207,16 @@ export default function LivroCaixaScreen() {
               <Text style={styles.subtitle}>Produtor Rural - Fiscal</Text>
             </View>
             <View style={styles.headerActions}>
-              <TouchableOpacity 
-                style={styles.exportButton} 
+              <TouchableOpacity
+                style={styles.exportButton}
                 onPress={() => setShowExportModal(true)}
                 activeOpacity={0.7}
               >
                 <Download size={18} color={Colors.primary} />
                 <Text style={styles.exportButtonText}>Exportar</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.addButton} 
+              <TouchableOpacity
+                style={styles.addButton}
                 onPress={() => setShowAddModal(true)}
                 activeOpacity={0.7}
               >
@@ -250,10 +270,12 @@ export default function LivroCaixaScreen() {
 
             <View style={styles.saldoRow}>
               <Text style={styles.saldoLabel}>Saldo do Período</Text>
-              <Text style={[
-                styles.saldoValue, 
-                { color: saldoPeriodo >= 0 ? Colors.success : Colors.error }
-              ]}>
+              <Text
+                style={[
+                  styles.saldoValue,
+                  { color: saldoPeriodo >= 0 ? Colors.success : Colors.error },
+                ]}
+              >
                 R$ {saldoPeriodo.toLocaleString('pt-BR')}
               </Text>
             </View>
@@ -280,11 +302,9 @@ export default function LivroCaixaScreen() {
           {/* Actions Row */}
           {selectedEntries.length > 0 && (
             <View style={styles.bulkActionsRow}>
-              <Text style={styles.bulkActionsText}>
-                {selectedEntries.length} selecionado(s)
-              </Text>
+              <Text style={styles.bulkActionsText}>{selectedEntries.length} selecionado(s)</Text>
               <View style={styles.bulkActions}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.bulkActionButton}
                   onPress={sendToAccountant}
                   activeOpacity={0.7}
@@ -298,7 +318,11 @@ export default function LivroCaixaScreen() {
 
           {/* Filters */}
           <View style={styles.filterRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
               <TouchableOpacity
                 style={[styles.filterChip, typeFilter === 'all' && styles.filterChipActive]}
                 onPress={() => setTypeFilter('all')}
@@ -313,8 +337,13 @@ export default function LivroCaixaScreen() {
                 onPress={() => setTypeFilter('receita')}
                 activeOpacity={0.7}
               >
-                <TrendingUp size={14} color={typeFilter === 'receita' ? Colors.white : Colors.success} />
-                <Text style={[styles.filterText, typeFilter === 'receita' && styles.filterTextActive]}>
+                <TrendingUp
+                  size={14}
+                  color={typeFilter === 'receita' ? Colors.white : Colors.success}
+                />
+                <Text
+                  style={[styles.filterText, typeFilter === 'receita' && styles.filterTextActive]}
+                >
                   Receitas
                 </Text>
               </TouchableOpacity>
@@ -323,8 +352,13 @@ export default function LivroCaixaScreen() {
                 onPress={() => setTypeFilter('despesa')}
                 activeOpacity={0.7}
               >
-                <TrendingDown size={14} color={typeFilter === 'despesa' ? Colors.white : Colors.error} />
-                <Text style={[styles.filterText, typeFilter === 'despesa' && styles.filterTextActive]}>
+                <TrendingDown
+                  size={14}
+                  color={typeFilter === 'despesa' ? Colors.white : Colors.error}
+                />
+                <Text
+                  style={[styles.filterText, typeFilter === 'despesa' && styles.filterTextActive]}
+                >
                   Despesas
                 </Text>
               </TouchableOpacity>
@@ -344,9 +378,12 @@ export default function LivroCaixaScreen() {
           </View>
 
           {/* Entries List */}
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             <Text style={styles.sectionTitle}>Lançamentos</Text>
-            
+
             {filteredEntries.length === 0 && (
               <View style={styles.emptyState}>
                 <BookOpen size={48} color={Colors.textTertiary} />
@@ -371,11 +408,11 @@ export default function LivroCaixaScreen() {
                   <View style={styles.entryHeader}>
                     <View style={styles.entryDateBadge}>
                       <Calendar size={14} color={Colors.textSecondary} />
-                      <Text style={styles.entryDate}>
-                        {format(entry.date, 'dd/MM/yyyy')}
-                      </Text>
+                      <Text style={styles.entryDate}>{format(entry.date, 'dd/MM/yyyy')}</Text>
                     </View>
-                    <View style={[styles.statusBadge, { backgroundColor: statusConfig.color + '15' }]}>
+                    <View
+                      style={[styles.statusBadge, { backgroundColor: statusConfig.color + '15' }]}
+                    >
                       <StatusIcon size={12} color={statusConfig.color} />
                       <Text style={[styles.statusText, { color: statusConfig.color }]}>
                         {statusConfig.label}
@@ -390,7 +427,9 @@ export default function LivroCaixaScreen() {
                         {entry.description}
                       </Text>
                       <View style={styles.entryMeta}>
-                        <View style={[styles.categoryBadge, { backgroundColor: Colors.primary + '15' }]}>
+                        <View
+                          style={[styles.categoryBadge, { backgroundColor: Colors.primary + '15' }]}
+                        >
                           <Text style={[styles.categoryText, { color: Colors.primary }]}>
                             {entry.category}
                           </Text>
@@ -399,20 +438,28 @@ export default function LivroCaixaScreen() {
                       </View>
                     </View>
                     <View style={styles.entryValueContainer}>
-                      <View style={[
-                        styles.typeIcon,
-                        { backgroundColor: isReceita ? Colors.success + '18' : Colors.error + '18' }
-                      ]}>
+                      <View
+                        style={[
+                          styles.typeIcon,
+                          {
+                            backgroundColor: isReceita
+                              ? Colors.success + '18'
+                              : Colors.error + '18',
+                          },
+                        ]}
+                      >
                         {isReceita ? (
                           <TrendingUp size={18} color={Colors.success} />
                         ) : (
                           <TrendingDown size={18} color={Colors.error} />
                         )}
                       </View>
-                      <Text style={[
-                        styles.entryValue,
-                        { color: isReceita ? Colors.success : Colors.error }
-                      ]}>
+                      <Text
+                        style={[
+                          styles.entryValue,
+                          { color: isReceita ? Colors.success : Colors.error },
+                        ]}
+                      >
                         {isReceita ? '+' : '-'} R$ {entry.value.toLocaleString('pt-BR')}
                       </Text>
                     </View>
@@ -497,7 +544,7 @@ export default function LivroCaixaScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setShowExportModal(false)}
               activeOpacity={0.7}
@@ -522,7 +569,7 @@ export default function LivroCaixaScreen() {
           <View style={[styles.addModalContent, isWeb && styles.addModalContentWeb]}>
             <View style={styles.addModalHeader}>
               <Text style={styles.addModalTitle}>Novo Lançamento</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => {
                   setShowAddModal(false);
                   resetForm();
@@ -539,20 +586,42 @@ export default function LivroCaixaScreen() {
                 <Text style={styles.formLabel}>Tipo *</Text>
                 <View style={styles.typeSelector}>
                   <TouchableOpacity
-                    style={[styles.typeOption, formData.type === 'receita' && styles.typeOptionReceita]}
+                    style={[
+                      styles.typeOption,
+                      formData.type === 'receita' && styles.typeOptionReceita,
+                    ]}
                     onPress={() => setFormData({ ...formData, type: 'receita' })}
                   >
-                    <TrendingUp size={18} color={formData.type === 'receita' ? Colors.white : Colors.success} />
-                    <Text style={[styles.typeOptionText, formData.type === 'receita' && styles.typeOptionTextActive]}>
+                    <TrendingUp
+                      size={18}
+                      color={formData.type === 'receita' ? Colors.white : Colors.success}
+                    />
+                    <Text
+                      style={[
+                        styles.typeOptionText,
+                        formData.type === 'receita' && styles.typeOptionTextActive,
+                      ]}
+                    >
                       Receita
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.typeOption, formData.type === 'despesa' && styles.typeOptionDespesa]}
+                    style={[
+                      styles.typeOption,
+                      formData.type === 'despesa' && styles.typeOptionDespesa,
+                    ]}
                     onPress={() => setFormData({ ...formData, type: 'despesa' })}
                   >
-                    <TrendingDown size={18} color={formData.type === 'despesa' ? Colors.white : Colors.error} />
-                    <Text style={[styles.typeOptionText, formData.type === 'despesa' && styles.typeOptionTextActive]}>
+                    <TrendingDown
+                      size={18}
+                      color={formData.type === 'despesa' ? Colors.white : Colors.error}
+                    />
+                    <Text
+                      style={[
+                        styles.typeOptionText,
+                        formData.type === 'despesa' && styles.typeOptionTextActive,
+                      ]}
+                    >
                       Despesa
                     </Text>
                   </TouchableOpacity>
@@ -590,7 +659,12 @@ export default function LivroCaixaScreen() {
                   style={styles.selectInput}
                   onPress={() => setShowCategoryPicker(!showCategoryPicker)}
                 >
-                  <Text style={[styles.selectText, !formData.category && { color: Colors.textTertiary }]}>
+                  <Text
+                    style={[
+                      styles.selectText,
+                      !formData.category && { color: Colors.textTertiary },
+                    ]}
+                  >
                     {formData.category || 'Selecione uma categoria'}
                   </Text>
                   <Filter size={18} color={Colors.textSecondary} />
@@ -600,13 +674,21 @@ export default function LivroCaixaScreen() {
                     {CATEGORIES.map((cat) => (
                       <TouchableOpacity
                         key={cat}
-                        style={[styles.pickerOption, formData.category === cat && styles.pickerOptionActive]}
+                        style={[
+                          styles.pickerOption,
+                          formData.category === cat && styles.pickerOptionActive,
+                        ]}
                         onPress={() => {
                           setFormData({ ...formData, category: cat });
                           setShowCategoryPicker(false);
                         }}
                       >
-                        <Text style={[styles.pickerOptionText, formData.category === cat && styles.pickerOptionTextActive]}>
+                        <Text
+                          style={[
+                            styles.pickerOptionText,
+                            formData.category === cat && styles.pickerOptionTextActive,
+                          ]}
+                        >
                           {cat}
                         </Text>
                       </TouchableOpacity>
@@ -622,7 +704,12 @@ export default function LivroCaixaScreen() {
                   style={styles.selectInput}
                   onPress={() => setShowOperationPicker(!showOperationPicker)}
                 >
-                  <Text style={[styles.selectText, !formData.operation && { color: Colors.textTertiary }]}>
+                  <Text
+                    style={[
+                      styles.selectText,
+                      !formData.operation && { color: Colors.textTertiary },
+                    ]}
+                  >
                     {formData.operation || 'Selecione uma operação'}
                   </Text>
                   <Filter size={18} color={Colors.textSecondary} />
@@ -632,13 +719,21 @@ export default function LivroCaixaScreen() {
                     {OPERATIONS.map((op) => (
                       <TouchableOpacity
                         key={op}
-                        style={[styles.pickerOption, formData.operation === op && styles.pickerOptionActive]}
+                        style={[
+                          styles.pickerOption,
+                          formData.operation === op && styles.pickerOptionActive,
+                        ]}
                         onPress={() => {
                           setFormData({ ...formData, operation: op });
                           setShowOperationPicker(false);
                         }}
                       >
-                        <Text style={[styles.pickerOptionText, formData.operation === op && styles.pickerOptionTextActive]}>
+                        <Text
+                          style={[
+                            styles.pickerOptionText,
+                            formData.operation === op && styles.pickerOptionTextActive,
+                          ]}
+                        >
                           {op}
                         </Text>
                       </TouchableOpacity>
@@ -686,10 +781,7 @@ export default function LivroCaixaScreen() {
               >
                 <Text style={styles.cancelBtnText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.saveBtn}
-                onPress={handleSaveEntry}
-              >
+              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveEntry}>
                 <Text style={styles.saveBtnText}>Salvar</Text>
               </TouchableOpacity>
             </View>

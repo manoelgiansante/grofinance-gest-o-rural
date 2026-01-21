@@ -1,11 +1,31 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Search, Plus, Building2, User, Mail, Phone, MapPin, Edit2, Trash2 } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  Building2,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Edit2,
+  Trash2,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
 interface Supplier {
   id: string;
@@ -31,41 +51,37 @@ export default function SuppliersScreen() {
   const { data: suppliers = [], isLoading } = useQuery<Supplier[]>({
     queryKey: ['suppliers'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .order('name');
-      
+      const { data, error } = await supabase.from('suppliers').select('*').order('name');
+
       if (error) {
         console.error('Error loading suppliers:', error);
         throw error;
       }
-      
+
       if (!data) return [];
-      
-      return data.map((s: any): Supplier => ({
-        id: s.id,
-        name: s.name,
-        cpfCnpj: s.cpf_cnpj,
-        type: s.type as any,
-        category: s.category,
-        email: s.email,
-        phone: s.phone,
-        address: s.address,
-        city: s.city,
-        state: s.state,
-        active: s.active,
-        createdAt: new Date(s.created_at),
-      }));
+
+      return data.map(
+        (s: any): Supplier => ({
+          id: s.id,
+          name: s.name,
+          cpfCnpj: s.cpf_cnpj,
+          type: s.type as any,
+          category: s.category,
+          email: s.email,
+          phone: s.phone,
+          address: s.address,
+          city: s.city,
+          state: s.state,
+          active: s.active,
+          createdAt: new Date(s.created_at),
+        })
+      );
     },
   });
 
   const deleteSupplierMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('suppliers')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('suppliers').delete().eq('id', id);
 
       if (error) throw error;
     },
@@ -80,18 +96,14 @@ export default function SuppliersScreen() {
         deleteSupplierMutation.mutate(supplier.id);
       }
     } else {
-      Alert.alert(
-        'Excluir Fornecedor',
-        `Deseja excluir ${supplier.name}?`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { 
-            text: 'Excluir', 
-            style: 'destructive',
-            onPress: () => deleteSupplierMutation.mutate(supplier.id)
-          },
-        ]
-      );
+      Alert.alert('Excluir Fornecedor', `Deseja excluir ${supplier.name}?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => deleteSupplierMutation.mutate(supplier.id),
+        },
+      ]);
     }
   };
 
@@ -105,14 +117,15 @@ export default function SuppliersScreen() {
     setShowForm(true);
   };
 
-  const filteredSuppliers = suppliers.filter(s => 
-    s.name.toLowerCase().includes(search.toLowerCase()) ||
-    s.cpfCnpj.includes(search) ||
-    s.category.toLowerCase().includes(search.toLowerCase())
+  const filteredSuppliers = suppliers.filter(
+    (s) =>
+      s.name.toLowerCase().includes(search.toLowerCase()) ||
+      s.cpfCnpj.includes(search) ||
+      s.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const activeCount = suppliers.filter(s => s.active).length;
-  const inactiveCount = suppliers.filter(s => !s.active).length;
+  const activeCount = suppliers.filter((s) => s.active).length;
+  const inactiveCount = suppliers.filter((s) => !s.active).length;
 
   const isWeb = Platform.OS === 'web';
 
@@ -125,7 +138,7 @@ export default function SuppliersScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Fornecedores",
+          title: 'Fornecedores',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -169,9 +182,12 @@ export default function SuppliersScreen() {
             />
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {isLoading && <Text style={styles.emptyText}>Carregando...</Text>}
-            
+
             {!isLoading && filteredSuppliers.length === 0 && (
               <View style={styles.emptyState}>
                 <Building2 size={48} color={Colors.textTertiary} />
@@ -184,11 +200,26 @@ export default function SuppliersScreen() {
             {filteredSuppliers.map((supplier) => (
               <View key={supplier.id} style={styles.supplierCard}>
                 <View style={styles.supplierHeader}>
-                  <View style={[styles.supplierIcon, { backgroundColor: supplier.active ? Colors.primary + '15' : Colors.textTertiary + '15' }]}>
+                  <View
+                    style={[
+                      styles.supplierIcon,
+                      {
+                        backgroundColor: supplier.active
+                          ? Colors.primary + '15'
+                          : Colors.textTertiary + '15',
+                      },
+                    ]}
+                  >
                     {supplier.type === 'legal' ? (
-                      <Building2 size={20} color={supplier.active ? Colors.primary : Colors.textTertiary} />
+                      <Building2
+                        size={20}
+                        color={supplier.active ? Colors.primary : Colors.textTertiary}
+                      />
                     ) : (
-                      <User size={20} color={supplier.active ? Colors.primary : Colors.textTertiary} />
+                      <User
+                        size={20}
+                        color={supplier.active ? Colors.primary : Colors.textTertiary}
+                      />
                     )}
                   </View>
                   <View style={styles.supplierInfo}>
@@ -226,7 +257,9 @@ export default function SuppliersScreen() {
                   {supplier.city && supplier.state && (
                     <View style={styles.detailRow}>
                       <MapPin size={14} color={Colors.textSecondary} />
-                      <Text style={styles.detailText}>{supplier.city} - {supplier.state}</Text>
+                      <Text style={styles.detailText}>
+                        {supplier.city} - {supplier.state}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -265,7 +298,7 @@ function SupplierForm({ supplier, onClose }: { supplier: Supplier | null; onClos
   const [formData, setFormData] = useState({
     name: supplier?.name || '',
     cpfCnpj: supplier?.cpfCnpj || '',
-    type: supplier?.type || 'legal' as 'physical' | 'legal',
+    type: supplier?.type || ('legal' as 'physical' | 'legal'),
     category: supplier?.category || '',
     email: supplier?.email || '',
     phone: supplier?.phone || '',
@@ -323,7 +356,7 @@ function SupplierForm({ supplier, onClose }: { supplier: Supplier | null; onClos
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: supplier ? "Editar Fornecedor" : "Novo Fornecedor",
+          title: supplier ? 'Editar Fornecedor' : 'Novo Fornecedor',
           headerLeft: () => (
             <TouchableOpacity onPress={onClose} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -333,7 +366,10 @@ function SupplierForm({ supplier, onClose }: { supplier: Supplier | null; onClos
       />
 
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formScrollContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.formScrollContent}
+        >
           <View style={styles.formHeader}>
             <Text style={styles.title}>{supplier ? 'Editar Fornecedor' : 'Novo Fornecedor'}</Text>
           </View>
@@ -354,11 +390,19 @@ function SupplierForm({ supplier, onClose }: { supplier: Supplier | null; onClos
               <Text style={styles.formLabel}>Tipo *</Text>
               <View style={styles.typeSelector}>
                 <TouchableOpacity
-                  style={[styles.typeOption, formData.type === 'physical' && styles.typeOptionActive]}
+                  style={[
+                    styles.typeOption,
+                    formData.type === 'physical' && styles.typeOptionActive,
+                  ]}
                   onPress={() => setFormData({ ...formData, type: 'physical' })}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.typeOptionText, formData.type === 'physical' && styles.typeOptionTextActive]}>
+                  <Text
+                    style={[
+                      styles.typeOptionText,
+                      formData.type === 'physical' && styles.typeOptionTextActive,
+                    ]}
+                  >
                     Pessoa Física
                   </Text>
                 </TouchableOpacity>
@@ -367,7 +411,12 @@ function SupplierForm({ supplier, onClose }: { supplier: Supplier | null; onClos
                   onPress={() => setFormData({ ...formData, type: 'legal' })}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.typeOptionText, formData.type === 'legal' && styles.typeOptionTextActive]}>
+                  <Text
+                    style={[
+                      styles.typeOptionText,
+                      formData.type === 'legal' && styles.typeOptionTextActive,
+                    ]}
+                  >
                     Pessoa Jurídica
                   </Text>
                 </TouchableOpacity>

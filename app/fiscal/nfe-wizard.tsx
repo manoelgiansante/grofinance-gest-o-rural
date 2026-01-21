@@ -1,11 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { useState } from "react";
-import { ChevronRight, ChevronLeft, Check } from "lucide-react-native";
-import Colors from "@/constants/colors";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import { useState } from 'react';
+import { ChevronRight, ChevronLeft, Check } from 'lucide-react-native';
+import Colors from '@/constants/colors';
 
-type WizardStep = 'emitente' | 'destinatario' | 'operacao' | 'itens' | 'transporte' | 'valores' | 'funrural' | 'revisao';
+type WizardStep =
+  | 'emitente'
+  | 'destinatario'
+  | 'operacao'
+  | 'itens'
+  | 'transporte'
+  | 'valores'
+  | 'funrural'
+  | 'revisao';
 
 const steps: { id: WizardStep; title: string; number: number }[] = [
   { id: 'emitente', title: 'Emitente', number: 1 },
@@ -21,7 +29,7 @@ const steps: { id: WizardStep; title: string; number: number }[] = [
 export default function NFeWizardScreen() {
   const [currentStep, setCurrentStep] = useState<WizardStep>('emitente');
 
-  const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+  const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === steps.length - 1;
 
@@ -43,14 +51,14 @@ export default function NFeWizardScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Emitir NF-e",
+          headerTitle: 'Emitir NF-e',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <View style={styles.progressContainer}>
@@ -58,7 +66,7 @@ export default function NFeWizardScreen() {
           {steps.map((step, index) => {
             const isActive = step.id === currentStep;
             const isCompleted = index < currentStepIndex;
-            
+
             return (
               <View key={step.id} style={styles.progressStepWrapper}>
                 <TouchableOpacity
@@ -73,18 +81,19 @@ export default function NFeWizardScreen() {
                   {isCompleted ? (
                     <Check size={14} color={Colors.white} />
                   ) : (
-                    <Text style={[
-                      styles.progressStepNumber,
-                      isActive && styles.progressStepNumberActive,
-                    ]}>
+                    <Text
+                      style={[
+                        styles.progressStepNumber,
+                        isActive && styles.progressStepNumberActive,
+                      ]}
+                    >
                       {step.number}
                     </Text>
                   )}
                 </TouchableOpacity>
-                <Text style={[
-                  styles.progressStepLabel,
-                  isActive && styles.progressStepLabelActive,
-                ]}>
+                <Text
+                  style={[styles.progressStepLabel, isActive && styles.progressStepLabelActive]}
+                >
                   {step.title}
                 </Text>
               </View>
@@ -96,7 +105,7 @@ export default function NFeWizardScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.stepContainer}>
           <Text style={styles.stepTitle}>{steps[currentStepIndex].title}</Text>
-          
+
           {currentStep === 'emitente' && (
             <View style={styles.form}>
               <Text style={styles.formDescription}>
@@ -146,9 +155,7 @@ export default function NFeWizardScreen() {
 
           {currentStep === 'operacao' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Selecione ou configure a operação fiscal
-              </Text>
+              <Text style={styles.formDescription}>Selecione ou configure a operação fiscal</Text>
               <TouchableOpacity style={styles.selectCard} activeOpacity={0.7}>
                 <Text style={styles.selectCardLabel}>Selecionar Operação Fiscal</Text>
                 <ChevronRight size={20} color={Colors.textSecondary} />
@@ -194,9 +201,7 @@ export default function NFeWizardScreen() {
 
           {currentStep === 'transporte' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Configure as informações de transporte
-              </Text>
+              <Text style={styles.formDescription}>Configure as informações de transporte</Text>
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Tipo de Frete</Text>
                 <View style={styles.radioGroup}>
@@ -246,9 +251,7 @@ export default function NFeWizardScreen() {
 
           {currentStep === 'funrural' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Configure o recolhimento do Funrural
-              </Text>
+              <Text style={styles.formDescription}>Configure o recolhimento do Funrural</Text>
               <View style={styles.switchRow}>
                 <Text style={styles.switchLabel}>Recolher Funrural</Text>
                 <TouchableOpacity style={styles.switch} activeOpacity={0.7}>
@@ -293,7 +296,11 @@ export default function NFeWizardScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonSecondary, isFirstStep && styles.footerButtonDisabled]}
+          style={[
+            styles.footerButton,
+            styles.footerButtonSecondary,
+            isFirstStep && styles.footerButtonDisabled,
+          ]}
           onPress={handlePrevious}
           disabled={isFirstStep}
           activeOpacity={0.7}

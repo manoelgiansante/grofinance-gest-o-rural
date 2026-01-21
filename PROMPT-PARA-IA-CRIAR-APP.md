@@ -26,6 +26,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - **React Native StyleSheet** (sem bibliotecas de UI)
 
 ### Bibliotecas Expo Necessárias:
+
 - expo-router, expo-image, expo-font, expo-haptics
 - expo-document-picker, expo-image-picker, expo-file-system
 - expo-linear-gradient, expo-blur, expo-status-bar
@@ -37,6 +38,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ### Tabelas Principais:
 
 #### **operations** (Operações/Fazendas)
+
 - id (uuid, PK)
 - name (text) - Nome da operação
 - type (text) - 'confinamento' | 'cana' | 'compostagem' | 'sede' | 'other'
@@ -48,6 +50,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **expenses** (Despesas)
+
 - id (uuid, PK)
 - description (text)
 - supplier_id (uuid, FK suppliers)
@@ -78,6 +81,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - tags (text[])
 
 #### **revenues** (Receitas)
+
 - id (uuid, PK)
 - description (text)
 - client_id (uuid, FK clients)
@@ -96,6 +100,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **clients** (Clientes)
+
 - id (uuid, PK)
 - name (text)
 - cpf_cnpj (text)
@@ -111,6 +116,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **suppliers** (Fornecedores)
+
 - id (uuid, PK)
 - name (text)
 - cpf_cnpj (text)
@@ -124,6 +130,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **contracts** (Contratos)
+
 - id (uuid, PK)
 - type (text) - 'purchase' | 'sale'
 - partner_id (uuid) - ID do cliente ou fornecedor
@@ -142,6 +149,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **purchase_orders** (Pedidos de Compra)
+
 - id (uuid, PK)
 - supplier_id (uuid, FK suppliers)
 - operation_id (uuid, FK operations)
@@ -155,6 +163,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - notes (text)
 
 #### **assets** (Ativos/Patrimônio)
+
 - id (uuid, PK)
 - name (text)
 - type (text) - 'vehicle' | 'equipment' | 'building' | 'land' | 'other'
@@ -170,6 +179,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - notes (text)
 
 #### **team_members** (Equipe)
+
 - id (uuid, PK)
 - name (text)
 - email (text)
@@ -183,6 +193,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **farms** (Fazendas)
+
 - id (uuid, PK)
 - name (text)
 - cpf_cnpj (text)
@@ -193,6 +204,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - active (boolean)
 
 #### **fields** (Talhões)
+
 - id (uuid, PK)
 - name (text)
 - farm_id (uuid, FK farms)
@@ -206,6 +218,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - notes (text)
 
 #### **seasons** (Safras)
+
 - id (uuid, PK)
 - name (text)
 - field_id (uuid, FK fields)
@@ -226,6 +239,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - created_at (timestamp)
 
 #### **stock_items** (Itens de Estoque)
+
 - id (uuid, PK)
 - name (text)
 - type (text) - 'input' | 'production'
@@ -238,6 +252,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - last_purchase_date (date)
 
 #### **nfes** (Notas Fiscais Eletrônicas)
+
 - id (uuid, PK)
 - number (integer)
 - series (integer)
@@ -324,6 +339,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ## 🎨 Design e UX
 
 ### Paleta de Cores
+
 - Primary: #10B981 (verde) - ações principais
 - Secondary: #3B82F6 (azul) - informações
 - Success: #22C55E (verde claro)
@@ -335,6 +351,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - Text Secondary: #6B7280 (cinza)
 
 ### Componentes de UI
+
 - Cards com bordas arredondadas (borderRadius: 12)
 - Sombras sutis para elevação
 - Ícones Lucide React Native
@@ -346,24 +363,28 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ### Telas Principais
 
 #### Dashboard
+
 - Cards de estatísticas (saldo, contas a pagar/receber, lucro)
 - Gráfico de receitas vs despesas do mês
 - Lista de atividades recentes
 - Botões de acesso rápido
 
 #### Lista de Despesas
+
 - Filtros: status, operação, período, fornecedor
 - Cards com: descrição, fornecedor, valor, data, status
 - Badges coloridos por status
 - Swipe actions (aprovar, pagar, deletar)
 
 #### Adicionar Despesa
+
 - Formulário em modal
 - Campos: descrição, fornecedor, operação, categoria, valor, data, vencimento, método de pagamento
 - Upload de anexos (nota fiscal, boleto)
 - Botão salvar e cancelar
 
 #### Detalhes da Despesa
+
 - Todas as informações da despesa
 - Timeline de aprovações
 - Anexos
@@ -372,6 +393,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ## 📊 Funcionalidades Críticas
 
 ### 1. Gestão de Despesas
+
 - CRUD completo de despesas
 - Workflow: draft → pending_validation → pending_approval → approved → paid → reconciled
 - Upload de anexos (NF, boleto, recibo)
@@ -380,40 +402,47 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - Divergências (valor negociado vs valor cobrado)
 
 ### 2. Gestão de Receitas
+
 - CRUD de receitas
 - Vincular com contratos
 - Controle de recebimento
 - Status: pending, received, overdue, cancelled
 
 ### 3. Fluxo de Caixa
+
 - Saldo atual
 - Entradas e saídas previstas
 - Timeline de movimentações
 - Saldo projetado
 
 ### 4. Contratos
+
 - Contratos de compra e venda
 - Status: active, completed, cancelled
 - Vínculo com receitas
 
 ### 5. Estoque
+
 - Inventário de insumos e produção
 - Alertas de estoque mínimo
 - Custo médio
 
 ### 6. Fiscal (NF-e)
+
 - Emissão de NF-e (simulado)
 - Importação de XML
 - Listagem com filtros
 - Status: draft, authorized, cancelled
 
 ### 7. Talhões e Safras
+
 - Gestão de talhões
 - Safras com orçamento vs realizado
 - Rentabilidade por talhão
 - Margem bruta e ROI
 
 ### 8. Relatórios
+
 - DRE
 - Fluxo de caixa projetado
 - Custos por operação
@@ -422,6 +451,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ## 🔐 Dados Coletados do Usuário
 
 ### Dados Obrigatórios:
+
 - **Cadastro básico**: Nome, email (para login)
 - **Dados financeiros**: Despesas, receitas, valores, datas
 - **Dados operacionais**: Operações, fazendas, talhões, safras
@@ -429,17 +459,20 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 - **Documentos**: Anexos de notas fiscais, boletos (armazenados no Supabase Storage)
 
 ### Dados Opcionais:
+
 - Telefone, endereço de clientes/fornecedores
 - Fotos de serviços executados
 - Geolocalização de talhões (latitude/longitude)
 
 ### Uso dos Dados:
+
 - Controle financeiro e operacional da fazenda
 - Geração de relatórios gerenciais
 - Emissão de notas fiscais
 - Sincronização multi-dispositivo via Supabase
 
 ### Privacidade:
+
 - Dados armazenados em Supabase (PostgreSQL seguro)
 - Não compartilhamento com terceiros
 - Row Level Security (RLS) ativado no Supabase
@@ -448,6 +481,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ## 🔒 Permissões Necessárias (iOS)
 
 ### Info.plist:
+
 ```xml
 <key>NSPhotoLibraryUsageDescription</key>
 <string>O Agrofinance precisa acessar suas fotos para anexar comprovantes de despesas e notas fiscais.</string>
@@ -460,6 +494,7 @@ Crie um aplicativo mobile nativo (iOS e Android) de gestão financeira e operaci
 ```
 
 ### Razões das Permissões:
+
 - **Câmera**: Fotografar notas fiscais, boletos e comprovantes
 - **Galeria de Fotos**: Anexar documentos às despesas/receitas
 - **Microfone**: Reservado para futuras funcionalidades (não usado atualmente)
@@ -505,11 +540,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         "backgroundColor": "#ffffff"
       },
       "package": "app.rork.agrofinance_gestao_rural",
-      "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "plugins": [
       "expo-router",
@@ -532,6 +563,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ## 🚀 Requisitos de Implementação
 
 ### Provider Global (AppProvider.tsx)
+
 - Criar context com @nkzw/create-context-hook
 - Integrar React Query
 - Queries para expenses, revenues, clients, contracts, etc.
@@ -539,6 +571,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - Error handling robusto
 
 ### Lib Supabase (lib/supabase.ts)
+
 ```typescript
 import { createClient } from '@supabase/supabase-js';
 
@@ -549,10 +582,12 @@ export const supabase = createClient(
 ```
 
 ### Types (types/index.ts)
+
 - Todos os tipos TypeScript para cada entidade
 - Enums para status, roles, payment methods, etc.
 
 ### Web Compatibility
+
 - SafeAreaView em todas as telas
 - Platform checks quando necessário
 - React Native Web compatible
@@ -560,6 +595,7 @@ export const supabase = createClient(
 ## 📋 Checklist de Aprovação Apple
 
 ### Funcionalidades Essenciais
+
 - [ ] App funciona offline (dados locais com AsyncStorage)
 - [ ] Loading states em todas as queries
 - [ ] Error handling com mensagens amigáveis
@@ -568,11 +604,13 @@ export const supabase = createClient(
 - [ ] Botão voltar/cancelar em todos os modals
 
 ### Privacidade
+
 - [ ] Descrições claras de permissões
 - [ ] Não coletar dados sem consentimento
 - [ ] Política de privacidade implementada
 
 ### Design
+
 - [ ] Suporte a Safe Area em todas as telas
 - [ ] Suporte a modo escuro (se aplicável)
 - [ ] Fontes legíveis
@@ -580,12 +618,14 @@ export const supabase = createClient(
 - [ ] Botões com tamanho mínimo de toque (44x44)
 
 ### Performance
+
 - [ ] App inicia em menos de 3 segundos
 - [ ] Scroll suave em listas longas
 - [ ] Imagens otimizadas
 - [ ] Sem memory leaks
 
 ### Conteúdo
+
 - [ ] Sem conteúdo placeholder/lorem ipsum
 - [ ] Textos em português correto
 - [ ] Screenshots reais nas stores
@@ -594,6 +634,7 @@ export const supabase = createClient(
 ## 🎯 Objetivo Final
 
 Criar um app mobile profissional e completo para gestão financeira rural que:
+
 1. Seja aprovado na Apple Store de primeira
 2. Funcione perfeitamente em iOS e Android
 3. Tenha excelente UX/UI mobile-native

@@ -1,10 +1,42 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, TextInput, Modal, Alert, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Plus, Calendar, MapPin, Cloud, Droplets, Thermometer, Camera, Edit2, Trash2, X, Filter, Search, Leaf, Bug, Pill, Tractor, SunMedium, CloudRain, Wind } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+  Modal,
+  Alert,
+  Image,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Plus,
+  Calendar,
+  MapPin,
+  Cloud,
+  Droplets,
+  Thermometer,
+  Camera,
+  Edit2,
+  Trash2,
+  X,
+  Filter,
+  Search,
+  Leaf,
+  Bug,
+  Pill,
+  Tractor,
+  SunMedium,
+  CloudRain,
+  Wind,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 type FieldEntry = {
   id: string;
@@ -87,19 +119,20 @@ export default function FieldNotebookScreen() {
     }
   };
 
-  const filteredEntries = entries.filter(entry => {
-    const matchesSearch = entry.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredEntries = entries.filter((entry) => {
+    const matchesSearch =
+      entry.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       entry.farm_name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = !selectedType || entry.activity_type === selectedType;
     return matchesSearch && matchesType;
   });
 
   const getActivityConfig = (type: string) => {
-    return activityTypes.find(a => a.id === type) || activityTypes[activityTypes.length - 1];
+    return activityTypes.find((a) => a.id === type) || activityTypes[activityTypes.length - 1];
   };
 
   const getWeatherIcon = (condition: string) => {
-    return weatherConditions.find(w => w.id === condition)?.icon || Cloud;
+    return weatherConditions.find((w) => w.id === condition)?.icon || Cloud;
   };
 
   const formatDate = (dateStr: string) => {
@@ -144,8 +177,8 @@ export default function FieldNotebookScreen() {
       return;
     }
 
-    const selectedFarm = farms.find(f => f.id === formFarmId);
-    
+    const selectedFarm = farms.find((f) => f.id === formFarmId);
+
     const entryData = {
       date: formDate,
       farm_id: formFarmId || null,
@@ -177,35 +210,34 @@ export default function FieldNotebookScreen() {
   };
 
   const handleDelete = (entry: FieldEntry) => {
-    Alert.alert(
-      'Confirmar Exclusão',
-      'Deseja realmente excluir este registro?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await api.deleteFieldNotebookEntry(entry.id);
-              loadData();
-            } catch (error) {
-              console.error('Error deleting entry:', error);
-              Alert.alert('Erro', 'Não foi possível excluir o registro');
-            }
-          },
+    Alert.alert('Confirmar Exclusão', 'Deseja realmente excluir este registro?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await api.deleteFieldNotebookEntry(entry.id);
+            loadData();
+          } catch (error) {
+            console.error('Error deleting entry:', error);
+            Alert.alert('Erro', 'Não foi possível excluir o registro');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   // Group entries by date
-  const groupedEntries = filteredEntries.reduce((groups, entry) => {
-    const date = entry.date;
-    if (!groups[date]) groups[date] = [];
-    groups[date].push(entry);
-    return groups;
-  }, {} as Record<string, FieldEntry[]>);
+  const groupedEntries = filteredEntries.reduce(
+    (groups, entry) => {
+      const date = entry.date;
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(entry);
+      return groups;
+    },
+    {} as Record<string, FieldEntry[]>
+  );
 
   const sortedDates = Object.keys(groupedEntries).sort((a, b) => b.localeCompare(a));
 
@@ -232,12 +264,16 @@ export default function FieldNotebookScreen() {
             </View>
             <View style={[styles.statCard, { backgroundColor: Colors.success + '15' }]}>
               <Leaf size={20} color={Colors.success} />
-              <Text style={styles.statValue}>{entries.filter(e => e.activity_type === 'planting').length}</Text>
+              <Text style={styles.statValue}>
+                {entries.filter((e) => e.activity_type === 'planting').length}
+              </Text>
               <Text style={styles.statLabel}>Plantios</Text>
             </View>
             <View style={[styles.statCard, { backgroundColor: Colors.warning + '15' }]}>
               <Bug size={20} color={Colors.warning} />
-              <Text style={styles.statValue}>{entries.filter(e => e.activity_type === 'spraying').length}</Text>
+              <Text style={styles.statValue}>
+                {entries.filter((e) => e.activity_type === 'spraying').length}
+              </Text>
               <Text style={styles.statLabel}>Pulverizações</Text>
             </View>
           </View>
@@ -255,7 +291,11 @@ export default function FieldNotebookScreen() {
           </View>
 
           {/* Activity Type Filter */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filtersScroll}
+          >
             <TouchableOpacity
               style={[styles.filterChip, !selectedType && styles.filterChipActive]}
               onPress={() => setSelectedType(null)}
@@ -270,10 +310,7 @@ export default function FieldNotebookScreen() {
               return (
                 <TouchableOpacity
                   key={type.id}
-                  style={[
-                    styles.filterChip,
-                    isActive && { backgroundColor: type.color }
-                  ]}
+                  style={[styles.filterChip, isActive && { backgroundColor: type.color }]}
                   onPress={() => setSelectedType(isActive ? null : type.id)}
                 >
                   <Icon size={16} color={isActive ? '#fff' : type.color} />
@@ -321,7 +358,9 @@ export default function FieldNotebookScreen() {
                             <View style={styles.weatherBadge}>
                               <WeatherIcon size={14} color={Colors.textSecondary} />
                               {entry.weather.temperature && (
-                                <Text style={styles.weatherText}>{entry.weather.temperature}°C</Text>
+                                <Text style={styles.weatherText}>
+                                  {entry.weather.temperature}°C
+                                </Text>
                               )}
                             </View>
                           )}
@@ -333,7 +372,8 @@ export default function FieldNotebookScreen() {
                           <View style={styles.entryLocation}>
                             <MapPin size={12} color={Colors.textSecondary} />
                             <Text style={styles.entryLocationText}>
-                              {entry.farm_name}{entry.sector ? ` - ${entry.sector}` : ''}
+                              {entry.farm_name}
+                              {entry.sector ? ` - ${entry.sector}` : ''}
                             </Text>
                           </View>
                         )}
@@ -390,15 +430,14 @@ export default function FieldNotebookScreen() {
                           key={type.id}
                           style={[
                             styles.activityOption,
-                            isSelected && { backgroundColor: type.color, borderColor: type.color }
+                            isSelected && { backgroundColor: type.color, borderColor: type.color },
                           ]}
                           onPress={() => setFormActivityType(type.id)}
                         >
                           <Icon size={20} color={isSelected ? '#fff' : type.color} />
-                          <Text style={[
-                            styles.activityOptionText,
-                            isSelected && { color: '#fff' }
-                          ]}>
+                          <Text
+                            style={[styles.activityOptionText, isSelected && { color: '#fff' }]}
+                          >
                             {type.label}
                           </Text>
                         </TouchableOpacity>
@@ -439,7 +478,12 @@ export default function FieldNotebookScreen() {
                         style={[styles.farmChip, formFarmId === farm.id && styles.farmChipActive]}
                         onPress={() => setFormFarmId(farm.id)}
                       >
-                        <Text style={[styles.farmChipText, formFarmId === farm.id && styles.farmChipTextActive]}>
+                        <Text
+                          style={[
+                            styles.farmChipText,
+                            formFarmId === farm.id && styles.farmChipTextActive,
+                          ]}
+                        >
                           {farm.name}
                         </Text>
                       </TouchableOpacity>
@@ -472,8 +516,16 @@ export default function FieldNotebookScreen() {
                           style={[styles.weatherOption, isSelected && styles.weatherOptionSelected]}
                           onPress={() => setFormWeatherCondition(weather.id)}
                         >
-                          <Icon size={24} color={isSelected ? Colors.primary : Colors.textSecondary} />
-                          <Text style={[styles.weatherOptionText, isSelected && styles.weatherOptionTextSelected]}>
+                          <Icon
+                            size={24}
+                            color={isSelected ? Colors.primary : Colors.textSecondary}
+                          />
+                          <Text
+                            style={[
+                              styles.weatherOptionText,
+                              isSelected && styles.weatherOptionTextSelected,
+                            ]}
+                          >
                             {weather.label}
                           </Text>
                         </TouchableOpacity>

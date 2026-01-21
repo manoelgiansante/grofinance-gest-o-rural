@@ -1,12 +1,23 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { Plus, Search, FileText, Truck, Download, CheckCircle2, XCircle, Clock } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { NFe, MDFe } from "@/types";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  Plus,
+  Search,
+  FileText,
+  Truck,
+  Download,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { NFe, MDFe } from '@/types';
 
-const mockNFes: NFe[] = [];\n\nconst mockMDFes: MDFe[] = [];
+const mockNFes: NFe[] = [];
+
+const mockMDFes: MDFe[] = [];
 
 export default function FiscalScreen() {
   const [activeTab, setActiveTab] = useState<'nfe' | 'mdfe' | 'sefaz'>('nfe');
@@ -29,7 +40,7 @@ export default function FiscalScreen() {
     }
   };
 
-  const filteredNFes = mockNFes.filter(nfe => {
+  const filteredNFes = mockNFes.filter((nfe) => {
     if (!searchQuery) return true;
     return (
       nfe.number?.toString().includes(searchQuery) ||
@@ -40,14 +51,14 @@ export default function FiscalScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Fiscal",
+          headerTitle: 'Fiscal',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <View style={styles.header}>
@@ -70,9 +81,7 @@ export default function FiscalScreen() {
           activeOpacity={0.7}
         >
           <FileText size={18} color={activeTab === 'nfe' ? Colors.primary : Colors.textSecondary} />
-          <Text style={[styles.tabText, activeTab === 'nfe' && styles.tabTextActive]}>
-            NF-e
-          </Text>
+          <Text style={[styles.tabText, activeTab === 'nfe' && styles.tabTextActive]}>NF-e</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'mdfe' && styles.tabActive]}
@@ -80,16 +89,17 @@ export default function FiscalScreen() {
           activeOpacity={0.7}
         >
           <Truck size={18} color={activeTab === 'mdfe' ? Colors.primary : Colors.textSecondary} />
-          <Text style={[styles.tabText, activeTab === 'mdfe' && styles.tabTextActive]}>
-            MDF-e
-          </Text>
+          <Text style={[styles.tabText, activeTab === 'mdfe' && styles.tabTextActive]}>MDF-e</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'sefaz' && styles.tabActive]}
           onPress={() => setActiveTab('sefaz')}
           activeOpacity={0.7}
         >
-          <Download size={18} color={activeTab === 'sefaz' ? Colors.primary : Colors.textSecondary} />
+          <Download
+            size={18}
+            color={activeTab === 'sefaz' ? Colors.primary : Colors.textSecondary}
+          />
           <Text style={[styles.tabText, activeTab === 'sefaz' && styles.tabTextActive]}>
             Importação SEFAZ
           </Text>
@@ -131,7 +141,9 @@ export default function FiscalScreen() {
                         <Text style={styles.nfeNumber}>NF-e {nfe.number}</Text>
                         <Text style={styles.nfeSeries}>Série {nfe.series}</Text>
                       </View>
-                      <View style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}>
+                      <View
+                        style={[styles.statusBadge, { backgroundColor: statusInfo.color + '15' }]}
+                      >
                         <StatusIcon size={14} color={statusInfo.color} />
                         <Text style={[styles.statusText, { color: statusInfo.color }]}>
                           {statusInfo.label}
@@ -139,7 +151,9 @@ export default function FiscalScreen() {
                       </View>
                     </View>
 
-                    <Text style={styles.nfeNature} numberOfLines={1}>{nfe.nature}</Text>
+                    <Text style={styles.nfeNature} numberOfLines={1}>
+                      {nfe.nature}
+                    </Text>
 
                     <View style={styles.nfeDetails}>
                       <View style={styles.nfeDetailItem}>
@@ -199,15 +213,14 @@ export default function FiscalScreen() {
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: Colors.success + '15' }]}>
                       <CheckCircle2 size={14} color={Colors.success} />
-                      <Text style={[styles.statusText, { color: Colors.success }]}>
-                        Autorizado
-                      </Text>
+                      <Text style={[styles.statusText, { color: Colors.success }]}>Autorizado</Text>
                     </View>
                   </View>
 
                   <View style={styles.mdfeRoute}>
                     <Text style={styles.mdfeRouteText}>
-                      {mdfe.originCity}/{mdfe.originState} → {mdfe.destinationCity}/{mdfe.destinationState}
+                      {mdfe.originCity}/{mdfe.originState} → {mdfe.destinationCity}/
+                      {mdfe.destinationState}
                     </Text>
                   </View>
 

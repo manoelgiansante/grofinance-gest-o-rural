@@ -1,8 +1,18 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Settings, Bell, HelpCircle, Shield, FileText, Palette, Globe, ChevronRight } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Settings,
+  Bell,
+  HelpCircle,
+  Shield,
+  FileText,
+  Palette,
+  Globe,
+  ChevronRight,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
 
 export default function SettingsScreen() {
   const isWeb = Platform.OS === 'web';
@@ -11,25 +21,65 @@ export default function SettingsScreen() {
     {
       title: 'Geral',
       items: [
-        { icon: Bell, label: 'Notificações', route: '/settings/notifications', description: 'Alertas e lembretes' },
-        { icon: Palette, label: 'Aparência', route: '/settings/appearance', description: 'Tema e cores' },
-        { icon: Globe, label: 'Idioma e Região', route: '/settings/language', description: 'Português (BR)' },
-      ]
+        {
+          icon: Bell,
+          label: 'Notificações',
+          route: '/settings/notifications',
+          description: 'Alertas e lembretes',
+        },
+        {
+          icon: Palette,
+          label: 'Aparência',
+          route: '/settings/appearance',
+          description: 'Tema e cores',
+        },
+        {
+          icon: Globe,
+          label: 'Idioma e Região',
+          route: '/settings/language',
+          description: 'Português (BR)',
+        },
+      ],
     },
     {
       title: 'Dados',
       items: [
-        { icon: FileText, label: 'Exportar Dados', route: '/settings/export', description: 'Backup em Excel/PDF' },
-        { icon: Settings, label: 'Sincronização', route: '/settings/sync', description: 'Configurar nuvem' },
-      ]
+        {
+          icon: FileText,
+          label: 'Exportar Dados',
+          route: '/settings/export',
+          description: 'Backup em Excel/PDF',
+        },
+        {
+          icon: Settings,
+          label: 'Sincronização',
+          route: '/settings/sync',
+          description: 'Configurar nuvem',
+        },
+      ],
     },
     {
       title: 'Legal',
       items: [
-        { icon: Shield, label: 'Privacidade', route: '/privacidade', description: 'Política de privacidade' },
-        { icon: FileText, label: 'Termos de Uso', route: '/termos', description: 'Termos e condições' },
-        { icon: HelpCircle, label: 'Ajuda e Suporte', route: '/suporte', description: 'Central de ajuda' },
-      ]
+        {
+          icon: Shield,
+          label: 'Privacidade',
+          route: '/privacidade',
+          description: 'Política de privacidade',
+        },
+        {
+          icon: FileText,
+          label: 'Termos de Uso',
+          route: '/termos',
+          description: 'Termos e condições',
+        },
+        {
+          icon: HelpCircle,
+          label: 'Ajuda e Suporte',
+          route: '/suporte',
+          description: 'Central de ajuda',
+        },
+      ],
     },
   ];
 
@@ -56,7 +106,7 @@ export default function SettingsScreen() {
                       key={itemIndex}
                       style={[
                         styles.settingItem,
-                        itemIndex < section.items.length - 1 && styles.settingItemBorder
+                        itemIndex < section.items.length - 1 && styles.settingItemBorder,
                       ]}
                       onPress={() => router.push(item.route as any)}
                       activeOpacity={0.7}

@@ -188,7 +188,9 @@ describe('Formatters', () => {
   describe('formatNFeAccessKey', () => {
     it('deve formatar chave de acesso NF-e', () => {
       const key = '35250112345678000190550010000124501000124501';
-      expect(formatNFeAccessKey(key)).toBe('3525 0112 3456 7800 0190 5500 1000 0124 5010 0012 4501');
+      expect(formatNFeAccessKey(key)).toBe(
+        '3525 0112 3456 7800 0190 5500 1000 0124 5010 0012 4501'
+      );
     });
   });
 

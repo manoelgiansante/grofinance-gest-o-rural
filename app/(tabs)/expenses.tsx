@@ -1,16 +1,33 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Plus, Search, Filter, FileText, AlertCircle, Clock, CheckCircle2, Upload } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { useAuth } from "@/contexts/AuthContext";
-import { suppliers } from "@/mocks/data";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { useState } from "react";
-import { Expense } from "@/types";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import ExcelImporter from "@/components/ExcelImporter";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Plus,
+  Search,
+  Filter,
+  FileText,
+  AlertCircle,
+  Clock,
+  CheckCircle2,
+  Upload,
+} from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { useAuth } from '@/contexts/AuthContext';
+import { suppliers } from '@/mocks/data';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { Expense } from '@/types';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import ExcelImporter from '@/components/ExcelImporter';
 
 export default function ExpensesScreen() {
   const { expenses, operations, refetch } = useApp();
@@ -41,10 +58,10 @@ export default function ExpensesScreen() {
     }
   };
 
-  const filteredExpenses = expenses.filter(expense => {
+  const filteredExpenses = expenses.filter((expense) => {
     if (!searchQuery) return true;
-    const supplier = suppliers.find(s => s.id === expense.supplierId);
-    const operation = operations.find(o => o.id === expense.operationId);
+    const supplier = suppliers.find((s) => s.id === expense.supplierId);
+    const operation = operations.find((o) => o.id === expense.operationId);
     return (
       expense.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       supplier?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -75,7 +92,7 @@ export default function ExpensesScreen() {
         <Text style={styles.title}>Despesas</Text>
         <View style={styles.headerButtons}>
           {isPremium && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.importButton}
               onPress={() => setShowImporter(true)}
               activeOpacity={0.7}
@@ -83,7 +100,7 @@ export default function ExpensesScreen() {
               <Upload size={20} color={Colors.primary} />
             </TouchableOpacity>
           )}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.addButton}
             onPress={() => router.push('/add-expense')}
             activeOpacity={0.7}
@@ -111,13 +128,13 @@ export default function ExpensesScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.list}>
         {filteredExpenses.map((expense) => {
-          const supplier = suppliers.find(s => s.id === expense.supplierId);
-          const operation = operations.find(o => o.id === expense.operationId);
+          const supplier = suppliers.find((s) => s.id === expense.supplierId);
+          const operation = operations.find((o) => o.id === expense.operationId);
           const statusInfo = getStatusInfo(expense.status);
           const StatusIcon = statusInfo.icon;
 
           return (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={expense.id}
               style={styles.expenseCard}
               activeOpacity={0.7}
@@ -140,7 +157,9 @@ export default function ExpensesScreen() {
               <View style={styles.expenseFooter}>
                 <View style={styles.expenseMetaLeft}>
                   {operation && (
-                    <View style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}>
+                    <View
+                      style={[styles.operationBadge, { backgroundColor: operation.color + '20' }]}
+                    >
                       <Text style={[styles.operationBadgeText, { color: operation.color }]}>
                         {operation.name}
                       </Text>
@@ -162,7 +181,10 @@ export default function ExpensesScreen() {
                 <View style={styles.divergenceAlert}>
                   <AlertCircle size={14} color={Colors.error} />
                   <Text style={styles.divergenceText}>
-                    Divergência: R$ {(expense.divergence.chargedValue - expense.divergence.expectedValue).toLocaleString('pt-BR')}
+                    Divergência: R${' '}
+                    {(
+                      expense.divergence.chargedValue - expense.divergence.expectedValue
+                    ).toLocaleString('pt-BR')}
                   </Text>
                 </View>
               )}

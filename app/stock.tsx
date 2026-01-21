@@ -1,9 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal, Alert, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
-import { Plus, Search, Package, AlertTriangle, X, ChevronDown } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  Alert,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
+import { Plus, Search, Package, AlertTriangle, X, ChevronDown } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
 
 interface StockBatch {
   id: string;
@@ -61,14 +71,16 @@ export default function StockScreen() {
     avgCost: '',
   });
 
-  const filteredStock = stockItems.filter(item => {
+  const filteredStock = stockItems.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedType === 'all' || item.type === selectedType;
     return matchesSearch && matchesType;
   });
 
-  const totalValue = stockItems.reduce((sum, item) => sum + (item.currentStock * item.avgCost), 0);
-  const lowStockCount = stockItems.filter(item => item.currentStock < item.minStock && item.minStock > 0).length;
+  const totalValue = stockItems.reduce((sum, item) => sum + item.currentStock * item.avgCost, 0);
+  const lowStockCount = stockItems.filter(
+    (item) => item.currentStock < item.minStock && item.minStock > 0
+  ).length;
 
   const resetForm = () => {
     setFormData({
@@ -117,14 +129,14 @@ export default function StockScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Estoque",
+          headerTitle: 'Estoque',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <View style={styles.statsRow}>
@@ -137,7 +149,9 @@ export default function StockScreen() {
             <AlertTriangle size={18} color={lowStockCount > 0 ? Colors.error : Colors.success} />
             <Text style={styles.statLabel}>Baixo Estoque</Text>
           </View>
-          <Text style={[styles.statValue, { color: lowStockCount > 0 ? Colors.error : Colors.success }]}>
+          <Text
+            style={[styles.statValue, { color: lowStockCount > 0 ? Colors.error : Colors.success }]}
+          >
             {lowStockCount} itens
           </Text>
         </View>
@@ -154,8 +168,8 @@ export default function StockScreen() {
             onChangeText={setSearchQuery}
           />
         </View>
-        <TouchableOpacity 
-          style={styles.addButton} 
+        <TouchableOpacity
+          style={styles.addButton}
           activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
         >
@@ -164,30 +178,39 @@ export default function StockScreen() {
       </View>
 
       <View style={styles.filterRow}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.filterChip, selectedType === 'all' && styles.filterChipActive]}
           onPress={() => setSelectedType('all')}
           activeOpacity={0.7}
         >
-          <Text style={[styles.filterChipText, selectedType === 'all' && styles.filterChipTextActive]}>
+          <Text
+            style={[styles.filterChipText, selectedType === 'all' && styles.filterChipTextActive]}
+          >
             Todos
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.filterChip, selectedType === 'input' && styles.filterChipActive]}
           onPress={() => setSelectedType('input')}
           activeOpacity={0.7}
         >
-          <Text style={[styles.filterChipText, selectedType === 'input' && styles.filterChipTextActive]}>
+          <Text
+            style={[styles.filterChipText, selectedType === 'input' && styles.filterChipTextActive]}
+          >
             Insumos
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.filterChip, selectedType === 'production' && styles.filterChipActive]}
           onPress={() => setSelectedType('production')}
           activeOpacity={0.7}
         >
-          <Text style={[styles.filterChipText, selectedType === 'production' && styles.filterChipTextActive]}>
+          <Text
+            style={[
+              styles.filterChipText,
+              selectedType === 'production' && styles.filterChipTextActive,
+            ]}
+          >
             Produção
           </Text>
         </TouchableOpacity>
@@ -205,13 +228,21 @@ export default function StockScreen() {
         ) : (
           filteredStock.map((item) => {
             const isLowStock = item.minStock > 0 && item.currentStock < item.minStock;
-            const stockPercentage = item.minStock > 0 ? (item.currentStock / item.minStock) * 100 : 100;
+            const stockPercentage =
+              item.minStock > 0 ? (item.currentStock / item.minStock) * 100 : 100;
 
             return (
               <TouchableOpacity key={item.id} style={styles.stockCard} activeOpacity={0.7}>
                 <View style={styles.stockHeader}>
                   <View style={styles.stockTitleRow}>
-                    <View style={[styles.stockIcon, { backgroundColor: isLowStock ? Colors.error + '18' : Colors.primary + '18' }]}>
+                    <View
+                      style={[
+                        styles.stockIcon,
+                        {
+                          backgroundColor: isLowStock ? Colors.error + '18' : Colors.primary + '18',
+                        },
+                      ]}
+                    >
                       <Package size={20} color={isLowStock ? Colors.error : Colors.primary} />
                     </View>
                     <View style={styles.stockInfo}>
@@ -236,9 +267,7 @@ export default function StockScreen() {
                   <View style={styles.stockDivider} />
                   <View style={styles.stockDetailItem}>
                     <Text style={styles.stockDetailLabel}>Valor Médio</Text>
-                    <Text style={styles.stockDetailValue}>
-                      R$ {item.avgCost.toFixed(2)}
-                    </Text>
+                    <Text style={styles.stockDetailValue}>R$ {item.avgCost.toFixed(2)}</Text>
                   </View>
                   <View style={styles.stockDivider} />
                   <View style={styles.stockDetailItem}>
@@ -252,14 +281,14 @@ export default function StockScreen() {
                 {item.minStock > 0 && (
                   <View style={styles.progressSection}>
                     <View style={styles.progressBar}>
-                      <View 
+                      <View
                         style={[
-                          styles.progressFill, 
-                          { 
+                          styles.progressFill,
+                          {
                             width: `${Math.min(stockPercentage, 100)}%`,
-                            backgroundColor: isLowStock ? Colors.error : Colors.success
-                          }
-                        ]} 
+                            backgroundColor: isLowStock ? Colors.error : Colors.success,
+                          },
+                        ]}
                       />
                     </View>
                     <Text style={[styles.progressText, isLowStock && { color: Colors.error }]}>
@@ -288,7 +317,7 @@ export default function StockScreen() {
           <View style={[styles.modalContent, Platform.OS === 'web' && styles.modalContentWeb]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Novo Item de Estoque</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => {
                   setModalVisible(false);
                   resetForm();
@@ -305,18 +334,34 @@ export default function StockScreen() {
                 <Text style={styles.formLabel}>Tipo *</Text>
                 <View style={styles.typeSelector}>
                   <TouchableOpacity
-                    style={[styles.typeOption, formData.type === 'input' && styles.typeOptionActive]}
+                    style={[
+                      styles.typeOption,
+                      formData.type === 'input' && styles.typeOptionActive,
+                    ]}
                     onPress={() => setFormData({ ...formData, type: 'input' })}
                   >
-                    <Text style={[styles.typeOptionText, formData.type === 'input' && styles.typeOptionTextActive]}>
+                    <Text
+                      style={[
+                        styles.typeOptionText,
+                        formData.type === 'input' && styles.typeOptionTextActive,
+                      ]}
+                    >
                       Insumo
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.typeOption, formData.type === 'production' && styles.typeOptionActive]}
+                    style={[
+                      styles.typeOption,
+                      formData.type === 'production' && styles.typeOptionActive,
+                    ]}
                     onPress={() => setFormData({ ...formData, type: 'production' })}
                   >
-                    <Text style={[styles.typeOptionText, formData.type === 'production' && styles.typeOptionTextActive]}>
+                    <Text
+                      style={[
+                        styles.typeOptionText,
+                        formData.type === 'production' && styles.typeOptionTextActive,
+                      ]}
+                    >
                       Produção
                     </Text>
                   </TouchableOpacity>
@@ -342,7 +387,12 @@ export default function StockScreen() {
                   style={styles.selectInput}
                   onPress={() => setShowCategoryPicker(!showCategoryPicker)}
                 >
-                  <Text style={[styles.selectText, !formData.category && { color: Colors.textTertiary }]}>
+                  <Text
+                    style={[
+                      styles.selectText,
+                      !formData.category && { color: Colors.textTertiary },
+                    ]}
+                  >
                     {formData.category || 'Selecione uma categoria'}
                   </Text>
                   <ChevronDown size={20} color={Colors.textSecondary} />
@@ -352,13 +402,21 @@ export default function StockScreen() {
                     {categories.map((cat) => (
                       <TouchableOpacity
                         key={cat}
-                        style={[styles.pickerOption, formData.category === cat && styles.pickerOptionActive]}
+                        style={[
+                          styles.pickerOption,
+                          formData.category === cat && styles.pickerOptionActive,
+                        ]}
                         onPress={() => {
                           setFormData({ ...formData, category: cat });
                           setShowCategoryPicker(false);
                         }}
                       >
-                        <Text style={[styles.pickerOptionText, formData.category === cat && styles.pickerOptionTextActive]}>
+                        <Text
+                          style={[
+                            styles.pickerOptionText,
+                            formData.category === cat && styles.pickerOptionTextActive,
+                          ]}
+                        >
                           {cat}
                         </Text>
                       </TouchableOpacity>
@@ -374,7 +432,9 @@ export default function StockScreen() {
                   style={styles.selectInput}
                   onPress={() => setShowUnitPicker(!showUnitPicker)}
                 >
-                  <Text style={[styles.selectText, !formData.unit && { color: Colors.textTertiary }]}>
+                  <Text
+                    style={[styles.selectText, !formData.unit && { color: Colors.textTertiary }]}
+                  >
                     {formData.unit || 'Selecione uma unidade'}
                   </Text>
                   <ChevronDown size={20} color={Colors.textSecondary} />
@@ -384,13 +444,21 @@ export default function StockScreen() {
                     {units.map((u) => (
                       <TouchableOpacity
                         key={u}
-                        style={[styles.pickerOption, formData.unit === u && styles.pickerOptionActive]}
+                        style={[
+                          styles.pickerOption,
+                          formData.unit === u && styles.pickerOptionActive,
+                        ]}
                         onPress={() => {
                           setFormData({ ...formData, unit: u });
                           setShowUnitPicker(false);
                         }}
                       >
-                        <Text style={[styles.pickerOptionText, formData.unit === u && styles.pickerOptionTextActive]}>
+                        <Text
+                          style={[
+                            styles.pickerOptionText,
+                            formData.unit === u && styles.pickerOptionTextActive,
+                          ]}
+                        >
                           {u}
                         </Text>
                       </TouchableOpacity>
@@ -453,10 +521,7 @@ export default function StockScreen() {
               >
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={handleSave}
-              >
+              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.saveButtonText}>Salvar</Text>
               </TouchableOpacity>
             </View>

@@ -1,10 +1,35 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, TextInput, Modal, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Plus, Tractor, Package, Building2, Search, Filter, ChevronDown, Edit2, Trash2, X, Calendar, DollarSign, Tag } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+  Modal,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Plus,
+  Tractor,
+  Package,
+  Building2,
+  Search,
+  Filter,
+  ChevronDown,
+  Edit2,
+  Trash2,
+  X,
+  Calendar,
+  DollarSign,
+  Tag,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 type Asset = {
   id: string;
@@ -57,7 +82,7 @@ export default function AssetsScreen() {
     }
   };
 
-  const filteredAssets = assets.filter(asset => {
+  const filteredAssets = assets.filter((asset) => {
     const matchesSearch = asset.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || asset.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -68,19 +93,19 @@ export default function AssetsScreen() {
   const totalDepreciation = totalPurchaseValue - totalValue;
 
   const getCategoryIcon = (category: string) => {
-    const cat = categories.find(c => c.id === category);
+    const cat = categories.find((c) => c.id === category);
     return cat?.icon || Package;
   };
 
   const getCategoryLabel = (category: string) => {
-    const cat = categories.find(c => c.id === category);
+    const cat = categories.find((c) => c.id === category);
     return cat?.label || category;
   };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -114,7 +139,7 @@ export default function AssetsScreen() {
 
     const purchaseValue = parseFloat(formPurchaseValue);
     const depreciationRate = parseFloat(formDepreciationRate) / 100;
-    
+
     // Calculate depreciation based on years since purchase
     const purchaseDate = new Date(formPurchaseDate);
     const now = new Date();
@@ -146,26 +171,22 @@ export default function AssetsScreen() {
   };
 
   const handleDelete = (asset: Asset) => {
-    Alert.alert(
-      'Confirmar Exclusão',
-      `Deseja realmente excluir "${asset.name}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await api.deleteAsset(asset.id);
-              loadAssets();
-            } catch (error) {
-              console.error('Error deleting asset:', error);
-              Alert.alert('Erro', 'Não foi possível excluir o ativo');
-            }
-          },
+    Alert.alert('Confirmar Exclusão', `Deseja realmente excluir "${asset.name}"?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await api.deleteAsset(asset.id);
+            loadAssets();
+          } catch (error) {
+            console.error('Error deleting asset:', error);
+            Alert.alert('Erro', 'Não foi possível excluir o ativo');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (
@@ -186,11 +207,15 @@ export default function AssetsScreen() {
           <View style={styles.statsRow}>
             <View style={[styles.statCard, { backgroundColor: Colors.primary + '15' }]}>
               <Text style={[styles.statLabel, { color: Colors.primary }]}>Valor Total</Text>
-              <Text style={[styles.statValue, { color: Colors.primary }]}>{formatCurrency(totalValue)}</Text>
+              <Text style={[styles.statValue, { color: Colors.primary }]}>
+                {formatCurrency(totalValue)}
+              </Text>
             </View>
             <View style={[styles.statCard, { backgroundColor: Colors.warning + '15' }]}>
               <Text style={[styles.statLabel, { color: Colors.warning }]}>Depreciação</Text>
-              <Text style={[styles.statValue, { color: Colors.warning }]}>{formatCurrency(totalDepreciation)}</Text>
+              <Text style={[styles.statValue, { color: Colors.warning }]}>
+                {formatCurrency(totalDepreciation)}
+              </Text>
             </View>
           </View>
 
@@ -209,12 +234,21 @@ export default function AssetsScreen() {
           </View>
 
           {/* Category Filter */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesScroll}
+          >
             <TouchableOpacity
               style={[styles.categoryChip, !selectedCategory && styles.categoryChipActive]}
               onPress={() => setSelectedCategory(null)}
             >
-              <Text style={[styles.categoryChipText, !selectedCategory && styles.categoryChipTextActive]}>
+              <Text
+                style={[
+                  styles.categoryChipText,
+                  !selectedCategory && styles.categoryChipTextActive,
+                ]}
+              >
                 Todos
               </Text>
             </TouchableOpacity>
@@ -228,7 +262,9 @@ export default function AssetsScreen() {
                   onPress={() => setSelectedCategory(isActive ? null : category.id)}
                 >
                   <Icon size={16} color={isActive ? '#fff' : Colors.textSecondary} />
-                  <Text style={[styles.categoryChipText, isActive && styles.categoryChipTextActive]}>
+                  <Text
+                    style={[styles.categoryChipText, isActive && styles.categoryChipTextActive]}
+                  >
                     {category.label}
                   </Text>
                 </TouchableOpacity>
@@ -251,7 +287,9 @@ export default function AssetsScreen() {
               filteredAssets.map((asset) => {
                 const Icon = getCategoryIcon(asset.category);
                 const depreciation = asset.purchase_value - asset.current_value;
-                const depreciationPercent = ((depreciation / asset.purchase_value) * 100).toFixed(1);
+                const depreciationPercent = ((depreciation / asset.purchase_value) * 100).toFixed(
+                  1
+                );
 
                 return (
                   <View key={asset.id} style={styles.assetCard}>
@@ -264,10 +302,16 @@ export default function AssetsScreen() {
                         <Text style={styles.assetCategory}>{getCategoryLabel(asset.category)}</Text>
                       </View>
                       <View style={styles.assetActions}>
-                        <TouchableOpacity onPress={() => openEditModal(asset)} style={styles.actionButton}>
+                        <TouchableOpacity
+                          onPress={() => openEditModal(asset)}
+                          style={styles.actionButton}
+                        >
                           <Edit2 size={18} color={Colors.textSecondary} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleDelete(asset)} style={styles.actionButton}>
+                        <TouchableOpacity
+                          onPress={() => handleDelete(asset)}
+                          style={styles.actionButton}
+                        >
                           <Trash2 size={18} color={Colors.error} />
                         </TouchableOpacity>
                       </View>
@@ -275,7 +319,9 @@ export default function AssetsScreen() {
                     <View style={styles.assetDetails}>
                       <View style={styles.assetDetailItem}>
                         <Text style={styles.assetDetailLabel}>Valor Compra</Text>
-                        <Text style={styles.assetDetailValue}>{formatCurrency(asset.purchase_value)}</Text>
+                        <Text style={styles.assetDetailValue}>
+                          {formatCurrency(asset.purchase_value)}
+                        </Text>
                       </View>
                       <View style={styles.assetDetailItem}>
                         <Text style={styles.assetDetailLabel}>Valor Atual</Text>
@@ -331,11 +377,19 @@ export default function AssetsScreen() {
                       return (
                         <TouchableOpacity
                           key={cat.id}
-                          style={[styles.categoryOption, isSelected && styles.categoryOptionSelected]}
+                          style={[
+                            styles.categoryOption,
+                            isSelected && styles.categoryOptionSelected,
+                          ]}
                           onPress={() => setFormCategory(cat.id)}
                         >
                           <Icon size={20} color={isSelected ? '#fff' : Colors.textSecondary} />
-                          <Text style={[styles.categoryOptionText, isSelected && styles.categoryOptionTextSelected]}>
+                          <Text
+                            style={[
+                              styles.categoryOptionText,
+                              isSelected && styles.categoryOptionTextSelected,
+                            ]}
+                          >
                             {cat.label}
                           </Text>
                         </TouchableOpacity>

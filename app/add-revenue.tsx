@@ -1,10 +1,18 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { X, Save, DollarSign } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { X, Save, DollarSign } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { useState } from 'react';
 
 export default function AddRevenueScreen() {
   const { addRevenue, operations, clients } = useApp();
@@ -66,16 +74,9 @@ export default function AddRevenueScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>Cliente</Text>
             {clients.length === 0 ? (
-              <TouchableOpacity 
-                style={styles.emptyWarning}
-                onPress={() => router.push('/clients')}
-              >
-                <Text style={styles.emptyWarningText}>
-                  Nenhum cliente cadastrado
-                </Text>
-                <Text style={styles.emptyWarningLink}>
-                  Toque aqui para cadastrar →
-                </Text>
+              <TouchableOpacity style={styles.emptyWarning} onPress={() => router.push('/clients')}>
+                <Text style={styles.emptyWarningText}>Nenhum cliente cadastrado</Text>
+                <Text style={styles.emptyWarningLink}>Toque aqui para cadastrar →</Text>
               </TouchableOpacity>
             ) : (
               <View style={styles.selectContainer}>
@@ -84,14 +85,16 @@ export default function AddRevenueScreen() {
                     key={client.id}
                     style={[
                       styles.selectOption,
-                      selectedClient === client.id && styles.selectOptionActive
+                      selectedClient === client.id && styles.selectOptionActive,
                     ]}
                     onPress={() => setSelectedClient(client.id)}
                   >
-                    <Text style={[
-                      styles.selectOptionText,
-                      selectedClient === client.id && styles.selectOptionTextActive
-                    ]}>
+                    <Text
+                      style={[
+                        styles.selectOptionText,
+                        selectedClient === client.id && styles.selectOptionTextActive,
+                      ]}
+                    >
                       {client.name}
                     </Text>
                   </TouchableOpacity>
@@ -103,16 +106,12 @@ export default function AddRevenueScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>Operação</Text>
             {operations.length === 0 ? (
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.emptyWarning}
                 onPress={() => router.push('/operations')}
               >
-                <Text style={styles.emptyWarningText}>
-                  Nenhuma operação cadastrada
-                </Text>
-                <Text style={styles.emptyWarningLink}>
-                  Toque aqui para cadastrar →
-                </Text>
+                <Text style={styles.emptyWarningText}>Nenhuma operação cadastrada</Text>
+                <Text style={styles.emptyWarningLink}>Toque aqui para cadastrar →</Text>
               </TouchableOpacity>
             ) : (
               <View style={styles.selectContainer}>
@@ -121,15 +120,17 @@ export default function AddRevenueScreen() {
                     key={op.id}
                     style={[
                       styles.selectOption,
-                      selectedOperation === op.id && styles.selectOptionActive
+                      selectedOperation === op.id && styles.selectOptionActive,
                     ]}
                     onPress={() => setSelectedOperation(op.id)}
                   >
                     <View style={[styles.operationDot, { backgroundColor: op.color }]} />
-                    <Text style={[
-                      styles.selectOptionText,
-                      selectedOperation === op.id && styles.selectOptionTextActive
-                    ]}>
+                    <Text
+                      style={[
+                        styles.selectOptionText,
+                        selectedOperation === op.id && styles.selectOptionTextActive,
+                      ]}
+                    >
                       {op.name}
                     </Text>
                   </TouchableOpacity>

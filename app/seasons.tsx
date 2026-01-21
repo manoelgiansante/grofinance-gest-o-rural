@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Calendar, TrendingUp, TrendingDown, Plus, Target, DollarSign } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router, Stack } from "expo-router";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Calendar, TrendingUp, TrendingDown, Plus, Target, DollarSign } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router, Stack } from 'expo-router';
 
 const mockSeasons: {
   id: string;
@@ -40,11 +40,13 @@ export default function SeasonsScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Safras & Orçamento', headerShown: true }} />
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['bottom']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.header}>
             <Text style={styles.title}>Todas as Safras</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.addButton}
               onPress={() => router.push('/add-season' as any)}
             >
@@ -54,13 +56,14 @@ export default function SeasonsScreen() {
           </View>
 
           {mockSeasons.map((season) => {
-            const budgetVariance = season.actualCost > 0 
-              ? ((season.actualCost - season.budgetedCost) / season.budgetedCost * 100)
-              : 0;
+            const budgetVariance =
+              season.actualCost > 0
+                ? ((season.actualCost - season.budgetedCost) / season.budgetedCost) * 100
+                : 0;
             const isOverBudget = budgetVariance > 5;
 
             return (
-              <TouchableOpacity 
+              <TouchableOpacity
                 key={season.id}
                 style={styles.seasonCard}
                 activeOpacity={0.7}
@@ -71,26 +74,34 @@ export default function SeasonsScreen() {
                     <Calendar size={20} color={Colors.primary} />
                     <Text style={styles.seasonName}>{season.name}</Text>
                   </View>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(season.status) + '20' }]}>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      { backgroundColor: getStatusColor(season.status) + '20' },
+                    ]}
+                  >
                     <Text style={[styles.statusText, { color: getStatusColor(season.status) }]}>
                       {getStatusLabel(season.status)}
                     </Text>
                   </View>
                 </View>
 
-                <Text style={styles.areaText}>{season.area} ha • {season.crop}</Text>
+                <Text style={styles.areaText}>
+                  {season.area} ha • {season.crop}
+                </Text>
 
                 <View style={styles.divider} />
 
                 <View style={styles.budgetSection}>
                   <Text style={styles.sectionTitle}>Orçamento vs Realizado</Text>
-                  
+
                   <View style={styles.budgetRow}>
                     <View style={styles.budgetItem}>
                       <Text style={styles.budgetLabel}>Custos</Text>
                       <View style={styles.budgetValues}>
                         <Text style={styles.budgetActual}>
-                          R$ {season.actualCost > 0 ? season.actualCost.toLocaleString('pt-BR') : '-'}
+                          R${' '}
+                          {season.actualCost > 0 ? season.actualCost.toLocaleString('pt-BR') : '-'}
                         </Text>
                         <Text style={styles.budgetPlanned}>
                           / R$ {season.budgetedCost.toLocaleString('pt-BR')}
@@ -103,10 +114,16 @@ export default function SeasonsScreen() {
                           ) : (
                             <TrendingDown size={12} color={Colors.success} />
                           )}
-                          <Text style={[styles.varianceText, { 
-                            color: isOverBudget ? Colors.error : Colors.success 
-                          }]}>
-                            {budgetVariance > 0 ? '+' : ''}{budgetVariance.toFixed(1)}%
+                          <Text
+                            style={[
+                              styles.varianceText,
+                              {
+                                color: isOverBudget ? Colors.error : Colors.success,
+                              },
+                            ]}
+                          >
+                            {budgetVariance > 0 ? '+' : ''}
+                            {budgetVariance.toFixed(1)}%
                           </Text>
                         </View>
                       )}
@@ -116,7 +133,10 @@ export default function SeasonsScreen() {
                       <Text style={styles.budgetLabel}>Receitas</Text>
                       <View style={styles.budgetValues}>
                         <Text style={[styles.budgetActual, { color: Colors.success }]}>
-                          R$ {season.actualRevenue > 0 ? season.actualRevenue.toLocaleString('pt-BR') : '-'}
+                          R${' '}
+                          {season.actualRevenue > 0
+                            ? season.actualRevenue.toLocaleString('pt-BR')
+                            : '-'}
                         </Text>
                         <Text style={styles.budgetPlanned}>
                           / R$ {season.budgetedRevenue.toLocaleString('pt-BR')}

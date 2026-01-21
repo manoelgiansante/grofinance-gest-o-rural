@@ -1,11 +1,27 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { useState } from "react";
-import { ChevronRight, ChevronLeft, Check, Truck, MapPin, FileText, User, Package } from "lucide-react-native";
-import Colors from "@/constants/colors";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import { useState } from 'react';
+import {
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  Truck,
+  MapPin,
+  FileText,
+  User,
+  Package,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
 
-type WizardStep = 'emitente' | 'percurso' | 'veiculo' | 'motorista' | 'documentos' | 'carregamento' | 'revisao';
+type WizardStep =
+  | 'emitente'
+  | 'percurso'
+  | 'veiculo'
+  | 'motorista'
+  | 'documentos'
+  | 'carregamento'
+  | 'revisao';
 
 const steps: { id: WizardStep; title: string; number: number; icon: any }[] = [
   { id: 'emitente', title: 'Emitente', number: 1, icon: User },
@@ -54,7 +70,7 @@ export default function MDFeWizardScreen() {
   });
   const [selectedNFes, setSelectedNFes] = useState<string[]>([]);
 
-  const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+  const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === steps.length - 1;
 
@@ -79,30 +95,32 @@ export default function MDFeWizardScreen() {
   const mockNFes: { id: string; number: string; value: number; destination: string }[] = [];
 
   const toggleNFeSelection = (id: string) => {
-    setSelectedNFes(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setSelectedNFes((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          headerTitle: "Emitir MDF-e",
+          headerTitle: 'Emitir MDF-e',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.textPrimary,
           headerShadowVisible: false,
-        }} 
+        }}
       />
 
       <View style={styles.progressContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.progressSteps}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.progressSteps}
+        >
           {steps.map((step, index) => {
             const isActive = step.id === currentStep;
             const isCompleted = index < currentStepIndex;
             const Icon = step.icon;
-            
+
             return (
               <View key={step.id} style={styles.progressStepWrapper}>
                 <TouchableOpacity
@@ -120,10 +138,9 @@ export default function MDFeWizardScreen() {
                     <Icon size={14} color={isActive ? Colors.white : Colors.textTertiary} />
                   )}
                 </TouchableOpacity>
-                <Text style={[
-                  styles.progressStepLabel,
-                  isActive && styles.progressStepLabelActive,
-                ]}>
+                <Text
+                  style={[styles.progressStepLabel, isActive && styles.progressStepLabelActive]}
+                >
                   {step.title}
                 </Text>
               </View>
@@ -135,7 +152,7 @@ export default function MDFeWizardScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.stepContainer}>
           <Text style={styles.stepTitle}>{steps[currentStepIndex].title}</Text>
-          
+
           {currentStep === 'emitente' && (
             <View style={styles.form}>
               <Text style={styles.formDescription}>
@@ -153,10 +170,8 @@ export default function MDFeWizardScreen() {
 
           {currentStep === 'percurso' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Defina o percurso do transporte
-              </Text>
-              
+              <Text style={styles.formDescription}>Defina o percurso do transporte</Text>
+
               <View style={styles.routeCard}>
                 <View style={styles.routePoint}>
                   <View style={[styles.routeDot, { backgroundColor: Colors.success }]} />
@@ -170,7 +185,7 @@ export default function MDFeWizardScreen() {
                       placeholder="SP"
                       placeholderTextColor={Colors.textTertiary}
                       value={formData.ufInicio}
-                      onChangeText={(text) => setFormData({...formData, ufInicio: text})}
+                      onChangeText={(text) => setFormData({ ...formData, ufInicio: text })}
                       maxLength={2}
                     />
                   </View>
@@ -181,7 +196,7 @@ export default function MDFeWizardScreen() {
                       placeholder="Araraquara"
                       placeholderTextColor={Colors.textTertiary}
                       value={formData.cidadeInicio}
-                      onChangeText={(text) => setFormData({...formData, cidadeInicio: text})}
+                      onChangeText={(text) => setFormData({ ...formData, cidadeInicio: text })}
                     />
                   </View>
                 </View>
@@ -204,7 +219,7 @@ export default function MDFeWizardScreen() {
                       placeholder="SP"
                       placeholderTextColor={Colors.textTertiary}
                       value={formData.ufFim}
-                      onChangeText={(text) => setFormData({...formData, ufFim: text})}
+                      onChangeText={(text) => setFormData({ ...formData, ufFim: text })}
                       maxLength={2}
                     />
                   </View>
@@ -215,7 +230,7 @@ export default function MDFeWizardScreen() {
                       placeholder="São Paulo"
                       placeholderTextColor={Colors.textTertiary}
                       value={formData.cidadeFim}
-                      onChangeText={(text) => setFormData({...formData, cidadeFim: text})}
+                      onChangeText={(text) => setFormData({ ...formData, cidadeFim: text })}
                     />
                   </View>
                 </View>
@@ -229,18 +244,21 @@ export default function MDFeWizardScreen() {
 
           {currentStep === 'veiculo' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Informe os dados do veículo de transporte
-              </Text>
-              
+              <Text style={styles.formDescription}>Informe os dados do veículo de transporte</Text>
+
               <View style={styles.vehicleTypeRow}>
-                <TouchableOpacity style={[styles.vehicleTypeCard, styles.vehicleTypeCardActive]} activeOpacity={0.7}>
+                <TouchableOpacity
+                  style={[styles.vehicleTypeCard, styles.vehicleTypeCardActive]}
+                  activeOpacity={0.7}
+                >
                   <Truck size={24} color={Colors.primary} />
                   <Text style={styles.vehicleTypeLabel}>Próprio</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.vehicleTypeCard} activeOpacity={0.7}>
                   <Truck size={24} color={Colors.textTertiary} />
-                  <Text style={[styles.vehicleTypeLabel, { color: Colors.textTertiary }]}>Terceiro</Text>
+                  <Text style={[styles.vehicleTypeLabel, { color: Colors.textTertiary }]}>
+                    Terceiro
+                  </Text>
                 </TouchableOpacity>
               </View>
 
@@ -251,7 +269,7 @@ export default function MDFeWizardScreen() {
                   placeholder="ABC-1234"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.placa}
-                  onChangeText={(text) => setFormData({...formData, placa: text})}
+                  onChangeText={(text) => setFormData({ ...formData, placa: text })}
                   autoCapitalize="characters"
                 />
               </View>
@@ -263,7 +281,7 @@ export default function MDFeWizardScreen() {
                   placeholder="00000000000"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.renavam}
-                  onChangeText={(text) => setFormData({...formData, renavam: text})}
+                  onChangeText={(text) => setFormData({ ...formData, renavam: text })}
                   keyboardType="numeric"
                 />
               </View>
@@ -276,7 +294,7 @@ export default function MDFeWizardScreen() {
                     placeholder="0"
                     placeholderTextColor={Colors.textTertiary}
                     value={formData.tara}
-                    onChangeText={(text) => setFormData({...formData, tara: text})}
+                    onChangeText={(text) => setFormData({ ...formData, tara: text })}
                     keyboardType="numeric"
                   />
                 </View>
@@ -287,7 +305,7 @@ export default function MDFeWizardScreen() {
                     placeholder="0"
                     placeholderTextColor={Colors.textTertiary}
                     value={formData.capacidadeKg}
-                    onChangeText={(text) => setFormData({...formData, capacidadeKg: text})}
+                    onChangeText={(text) => setFormData({ ...formData, capacidadeKg: text })}
                     keyboardType="numeric"
                   />
                 </View>
@@ -297,10 +315,8 @@ export default function MDFeWizardScreen() {
 
           {currentStep === 'motorista' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Informe os dados do motorista responsável
-              </Text>
-              
+              <Text style={styles.formDescription}>Informe os dados do motorista responsável</Text>
+
               <TouchableOpacity style={styles.selectCard} activeOpacity={0.7}>
                 <Text style={styles.selectCardLabel}>Selecionar Motorista Cadastrado</Text>
                 <ChevronRight size={20} color={Colors.textSecondary} />
@@ -319,7 +335,7 @@ export default function MDFeWizardScreen() {
                   placeholder="Nome do motorista"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.motoristaNome}
-                  onChangeText={(text) => setFormData({...formData, motoristaNome: text})}
+                  onChangeText={(text) => setFormData({ ...formData, motoristaNome: text })}
                 />
               </View>
 
@@ -330,7 +346,7 @@ export default function MDFeWizardScreen() {
                   placeholder="000.000.000-00"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.motoristaCpf}
-                  onChangeText={(text) => setFormData({...formData, motoristaCpf: text})}
+                  onChangeText={(text) => setFormData({ ...formData, motoristaCpf: text })}
                   keyboardType="numeric"
                 />
               </View>
@@ -342,11 +358,11 @@ export default function MDFeWizardScreen() {
               <Text style={styles.formDescription}>
                 Selecione as NF-e que serão vinculadas ao manifesto
               </Text>
-              
+
               {mockNFes.map((nfe) => {
                 const isSelected = selectedNFes.includes(nfe.id);
                 return (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     key={nfe.id}
                     style={[styles.nfeCard, isSelected && styles.nfeCardSelected]}
                     onPress={() => toggleNFeSelection(nfe.id)}
@@ -374,10 +390,8 @@ export default function MDFeWizardScreen() {
 
           {currentStep === 'carregamento' && (
             <View style={styles.form}>
-              <Text style={styles.formDescription}>
-                Informe os dados do carregamento
-              </Text>
-              
+              <Text style={styles.formDescription}>Informe os dados do carregamento</Text>
+
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Data de Emissão</Text>
                 <TextInput
@@ -385,7 +399,7 @@ export default function MDFeWizardScreen() {
                   placeholder="DD/MM/AAAA"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.dataEmissao}
-                  onChangeText={(text) => setFormData({...formData, dataEmissao: text})}
+                  onChangeText={(text) => setFormData({ ...formData, dataEmissao: text })}
                 />
               </View>
 
@@ -396,7 +410,7 @@ export default function MDFeWizardScreen() {
                   placeholder="DD/MM/AAAA"
                   placeholderTextColor={Colors.textTertiary}
                   value={formData.dataViagem}
-                  onChangeText={(text) => setFormData({...formData, dataViagem: text})}
+                  onChangeText={(text) => setFormData({ ...formData, dataViagem: text })}
                 />
               </View>
 
@@ -408,8 +422,9 @@ export default function MDFeWizardScreen() {
                 <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>Valor Total</Text>
                   <Text style={styles.totalValueMoney}>
-                    R$ {mockNFes
-                      .filter(nfe => selectedNFes.includes(nfe.id))
+                    R${' '}
+                    {mockNFes
+                      .filter((nfe) => selectedNFes.includes(nfe.id))
                       .reduce((sum, nfe) => sum + nfe.value, 0)
                       .toLocaleString('pt-BR')}
                   </Text>
@@ -423,37 +438,46 @@ export default function MDFeWizardScreen() {
               <Text style={styles.formDescription}>
                 Revise todas as informações antes de transmitir
               </Text>
-              
+
               <View style={styles.reviewCard}>
                 <Text style={styles.reviewTitle}>Resumo do MDF-e</Text>
-                
+
                 <View style={styles.reviewItem}>
                   <Text style={styles.reviewLabel}>Percurso</Text>
                   <Text style={styles.reviewValue}>
-                    {formData.cidadeInicio || 'Não informado'}/{formData.ufInicio || '-'} → {formData.cidadeFim || 'Não informado'}/{formData.ufFim || '-'}
+                    {formData.cidadeInicio || 'Não informado'}/{formData.ufInicio || '-'} →{' '}
+                    {formData.cidadeFim || 'Não informado'}/{formData.ufFim || '-'}
                   </Text>
                 </View>
-                
+
                 <View style={styles.reviewItem}>
                   <Text style={styles.reviewLabel}>Veículo</Text>
                   <Text style={styles.reviewValue}>{formData.placa || 'Não informado'}</Text>
                 </View>
-                
+
                 <View style={styles.reviewItem}>
                   <Text style={styles.reviewLabel}>Motorista</Text>
-                  <Text style={styles.reviewValue}>{formData.motoristaNome || 'Não informado'}</Text>
+                  <Text style={styles.reviewValue}>
+                    {formData.motoristaNome || 'Não informado'}
+                  </Text>
                 </View>
-                
+
                 <View style={styles.reviewItem}>
                   <Text style={styles.reviewLabel}>Documentos Vinculados</Text>
                   <Text style={styles.reviewValue}>{selectedNFes.length} NF-e</Text>
                 </View>
-                
+
                 <View style={styles.reviewItem}>
                   <Text style={styles.reviewLabel}>Valor Total</Text>
-                  <Text style={[styles.reviewValue, { color: Colors.primary, fontWeight: '700' as const }]}>
-                    R$ {mockNFes
-                      .filter(nfe => selectedNFes.includes(nfe.id))
+                  <Text
+                    style={[
+                      styles.reviewValue,
+                      { color: Colors.primary, fontWeight: '700' as const },
+                    ]}
+                  >
+                    R${' '}
+                    {mockNFes
+                      .filter((nfe) => selectedNFes.includes(nfe.id))
                       .reduce((sum, nfe) => sum + nfe.value, 0)
                       .toLocaleString('pt-BR')}
                   </Text>
@@ -463,8 +487,8 @@ export default function MDFeWizardScreen() {
               <View style={styles.warningCard}>
                 <Text style={styles.warningTitle}>⚠️ Atenção</Text>
                 <Text style={styles.warningText}>
-                  Após a transmissão, o MDF-e só poderá ser cancelado em até 24 horas.
-                  Verifique todos os dados antes de prosseguir.
+                  Após a transmissão, o MDF-e só poderá ser cancelado em até 24 horas. Verifique
+                  todos os dados antes de prosseguir.
                 </Text>
               </View>
             </View>
@@ -474,7 +498,11 @@ export default function MDFeWizardScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.footerButton, styles.footerButtonSecondary, isFirstStep && styles.footerButtonDisabled]}
+          style={[
+            styles.footerButton,
+            styles.footerButtonSecondary,
+            isFirstStep && styles.footerButtonDisabled,
+          ]}
           onPress={handlePrevious}
           disabled={isFirstStep}
           activeOpacity={0.7}

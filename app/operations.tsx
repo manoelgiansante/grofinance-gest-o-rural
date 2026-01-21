@@ -1,11 +1,20 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Search, Plus, Sprout, Edit2, Trash2, DollarSign } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import { ArrowLeft, Search, Plus, Sprout, Edit2, Trash2, DollarSign } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
 interface Operation {
   id: string;
@@ -26,8 +35,16 @@ const OPERATION_TYPES = [
 ] as const;
 
 const PRESET_COLORS = [
-  '#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#14b8a6', '#f97316', '#06b6d4', '#84cc16',
+  '#10b981',
+  '#3b82f6',
+  '#f59e0b',
+  '#ef4444',
+  '#8b5cf6',
+  '#ec4899',
+  '#14b8a6',
+  '#f97316',
+  '#06b6d4',
+  '#84cc16',
 ];
 
 export default function OperationsScreen() {
@@ -39,36 +56,32 @@ export default function OperationsScreen() {
   const { data: operations = [], isLoading } = useQuery<Operation[]>({
     queryKey: ['operations'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('operations')
-        .select('*')
-        .order('name');
-      
+      const { data, error } = await supabase.from('operations').select('*').order('name');
+
       if (error) {
         console.error('Error loading operations:', error);
         throw error;
       }
-      
+
       if (!data) return [];
-      
-      return data.map((op: any): Operation => ({
-        id: op.id,
-        name: op.name,
-        type: op.type as any,
-        color: op.color || '#000',
-        icon: op.icon || 'circle',
-        budget: op.budget || 0,
-        spent: op.spent || 0,
-      }));
+
+      return data.map(
+        (op: any): Operation => ({
+          id: op.id,
+          name: op.name,
+          type: op.type as any,
+          color: op.color || '#000',
+          icon: op.icon || 'circle',
+          budget: op.budget || 0,
+          spent: op.spent || 0,
+        })
+      );
     },
   });
 
   const deleteOperationMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('operations')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('operations').delete().eq('id', id);
 
       if (error) throw error;
     },
@@ -83,18 +96,14 @@ export default function OperationsScreen() {
         deleteOperationMutation.mutate(operation.id);
       }
     } else {
-      Alert.alert(
-        'Excluir Operação',
-        `Deseja excluir ${operation.name}?`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { 
-            text: 'Excluir', 
-            style: 'destructive',
-            onPress: () => deleteOperationMutation.mutate(operation.id)
-          },
-        ]
-      );
+      Alert.alert('Excluir Operação', `Deseja excluir ${operation.name}?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => deleteOperationMutation.mutate(operation.id),
+        },
+      ]);
     }
   };
 
@@ -108,9 +117,10 @@ export default function OperationsScreen() {
     setShowForm(true);
   };
 
-  const filteredOperations = operations.filter(op => 
-    op.name.toLowerCase().includes(search.toLowerCase()) ||
-    op.type.toLowerCase().includes(search.toLowerCase())
+  const filteredOperations = operations.filter(
+    (op) =>
+      op.name.toLowerCase().includes(search.toLowerCase()) ||
+      op.type.toLowerCase().includes(search.toLowerCase())
   );
 
   const totalBudget = operations.reduce((sum, op) => sum + op.budget, 0);
@@ -127,7 +137,7 @@ export default function OperationsScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Operações",
+          title: 'Operações',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -173,9 +183,12 @@ export default function OperationsScreen() {
             />
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {isLoading && <Text style={styles.emptyText}>Carregando...</Text>}
-            
+
             {!isLoading && filteredOperations.length === 0 && (
               <View style={styles.emptyState}>
                 <Sprout size={48} color={Colors.textTertiary} />
@@ -186,13 +199,16 @@ export default function OperationsScreen() {
             )}
 
             {filteredOperations.map((operation) => {
-              const budgetUsage = operation.budget > 0 ? (operation.spent / operation.budget) * 100 : 0;
+              const budgetUsage =
+                operation.budget > 0 ? (operation.spent / operation.budget) * 100 : 0;
               const isOverBudget = budgetUsage > 100;
 
               return (
                 <View key={operation.id} style={styles.operationCard}>
                   <View style={styles.operationHeader}>
-                    <View style={[styles.operationIcon, { backgroundColor: operation.color + '20' }]}>
+                    <View
+                      style={[styles.operationIcon, { backgroundColor: operation.color + '20' }]}
+                    >
                       <Text style={[styles.operationIconText, { color: operation.color }]}>
                         {operation.name.substring(0, 2).toUpperCase()}
                       </Text>
@@ -200,7 +216,8 @@ export default function OperationsScreen() {
                     <View style={styles.operationInfo}>
                       <Text style={styles.operationName}>{operation.name}</Text>
                       <Text style={styles.operationType}>
-                        {OPERATION_TYPES.find(t => t.value === operation.type)?.label || operation.type}
+                        {OPERATION_TYPES.find((t) => t.value === operation.type)?.label ||
+                          operation.type}
                       </Text>
                     </View>
                   </View>
@@ -215,7 +232,12 @@ export default function OperationsScreen() {
                       </View>
                       <View style={styles.budgetItem}>
                         <Text style={styles.budgetLabel}>Realizado</Text>
-                        <Text style={[styles.budgetValue, { color: isOverBudget ? Colors.error : Colors.primary }]}>
+                        <Text
+                          style={[
+                            styles.budgetValue,
+                            { color: isOverBudget ? Colors.error : Colors.primary },
+                          ]}
+                        >
                           R$ {operation.spent.toLocaleString('pt-BR')}
                         </Text>
                       </View>
@@ -224,17 +246,19 @@ export default function OperationsScreen() {
                     {operation.budget > 0 && (
                       <View style={styles.progressSection}>
                         <View style={styles.progressBar}>
-                          <View 
+                          <View
                             style={[
-                              styles.progressFill, 
-                              { 
+                              styles.progressFill,
+                              {
                                 width: `${Math.min(budgetUsage, 100)}%`,
-                                backgroundColor: isOverBudget ? Colors.error : Colors.primary
-                              }
-                            ]} 
+                                backgroundColor: isOverBudget ? Colors.error : Colors.primary,
+                              },
+                            ]}
                           />
                         </View>
-                        <Text style={[styles.progressText, isOverBudget && { color: Colors.error }]}>
+                        <Text
+                          style={[styles.progressText, isOverBudget && { color: Colors.error }]}
+                        >
                           {budgetUsage.toFixed(1)}% do orçamento
                         </Text>
                       </View>
@@ -256,7 +280,9 @@ export default function OperationsScreen() {
                       activeOpacity={0.7}
                     >
                       <Trash2 size={16} color={Colors.error} />
-                      <Text style={[styles.actionButtonText, { color: Colors.error }]}>Excluir</Text>
+                      <Text style={[styles.actionButtonText, { color: Colors.error }]}>
+                        Excluir
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -271,11 +297,17 @@ export default function OperationsScreen() {
   );
 }
 
-function OperationForm({ operation, onClose }: { operation: Operation | null; onClose: () => void }) {
+function OperationForm({
+  operation,
+  onClose,
+}: {
+  operation: Operation | null;
+  onClose: () => void;
+}) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: operation?.name || '',
-    type: operation?.type || 'other' as Operation['type'],
+    type: operation?.type || ('other' as Operation['type']),
     color: operation?.color || PRESET_COLORS[0],
     budget: operation?.budget?.toString() || '0',
   });
@@ -291,7 +323,9 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
       };
 
       if (operation) {
-        const result = await (supabase.from('operations') as any).update(data).eq('id', operation.id);
+        const result = await (supabase.from('operations') as any)
+          .update(data)
+          .eq('id', operation.id);
         if (result.error) throw result.error;
       } else {
         data.spent = 0;
@@ -324,7 +358,7 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: operation ? "Editar Operação" : "Nova Operação",
+          title: operation ? 'Editar Operação' : 'Nova Operação',
           headerLeft: () => (
             <TouchableOpacity onPress={onClose} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -334,7 +368,10 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
       />
 
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formScrollContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.formScrollContent}
+        >
           <View style={styles.formHeader}>
             <Text style={styles.title}>{operation ? 'Editar Operação' : 'Nova Operação'}</Text>
           </View>
@@ -357,10 +394,17 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
                 <TouchableOpacity
                   key={type.value}
                   style={[styles.typeCard, formData.type === type.value && styles.typeCardActive]}
-                  onPress={() => setFormData({ ...formData, type: type.value as Operation['type'] })}
+                  onPress={() =>
+                    setFormData({ ...formData, type: type.value as Operation['type'] })
+                  }
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.typeCardText, formData.type === type.value && styles.typeCardTextActive]}>
+                  <Text
+                    style={[
+                      styles.typeCardText,
+                      formData.type === type.value && styles.typeCardTextActive,
+                    ]}
+                  >
                     {type.label}
                   </Text>
                 </TouchableOpacity>
@@ -377,7 +421,7 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
                   style={[
                     styles.colorOption,
                     { backgroundColor: color },
-                    formData.color === color && styles.colorOptionActive
+                    formData.color === color && styles.colorOptionActive,
                   ]}
                   onPress={() => setFormData({ ...formData, color })}
                   activeOpacity={0.7}
@@ -395,7 +439,9 @@ function OperationForm({ operation, onClose }: { operation: Operation | null; on
                 placeholder="0,00"
                 placeholderTextColor={Colors.textTertiary}
                 value={formData.budget}
-                onChangeText={(text) => setFormData({ ...formData, budget: text.replace(/[^0-9,.]/g, '') })}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, budget: text.replace(/[^0-9,.]/g, '') })
+                }
                 keyboardType="numeric"
               />
             </View>

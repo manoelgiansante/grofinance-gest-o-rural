@@ -80,10 +80,14 @@ export function formatDateBR(date: Date | string): string {
 export function formatDateTimeBR(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
+  return (
+    d.toLocaleDateString('pt-BR') +
+    ' ' +
+    d.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  );
 }
 
 // Formatar data relativa (Hoje, Ontem, etc)
@@ -92,7 +96,7 @@ export function formatRelativeDate(date: Date | string): string {
   const now = new Date();
   const diff = now.getTime() - d.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  
+
   if (days === 0) return 'Hoje';
   if (days === 1) return 'Ontem';
   if (days < 7) return `${days} dias atrás`;
@@ -125,7 +129,7 @@ export function formatPercentage(value: number, decimals: number = 1): string {
 
 // Formatar número com separador de milhar
 export function formatNumber(value: number, decimals: number = 0): string {
-  return value.toLocaleString('pt-BR', { 
+  return value.toLocaleString('pt-BR', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });

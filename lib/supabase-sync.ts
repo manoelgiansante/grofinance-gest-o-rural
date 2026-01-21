@@ -16,23 +16,20 @@ const SUPABASE_PRINCIPAL = {
 // Supabase Rumo Máquinas (Separado)
 const SUPABASE_MAQUINAS = {
   url: 'https://byfgflxlmcdciupjpoaz.supabase.co',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5ZmdmbHhsbWNkY2l1cGpwb2F6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MDEyMjgsImV4cCI6MjA3NzI3NzIyOH0.6XZTCN2LtJYLs9ovXbjk8ljosQjEQVL3IDWq15l4mQg',
+  anonKey:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5ZmdmbHhsbWNkY2l1cGpwb2F6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MDEyMjgsImV4cCI6MjA3NzI3NzIyOH0.6XZTCN2LtJYLs9ovXbjk8ljosQjEQVL3IDWq15l4mQg',
 };
 
 // Cliente Supabase do Rumo Máquinas (somente para sincronização)
-export const supabaseMaquinas = createClient(
-  SUPABASE_MAQUINAS.url,
-  SUPABASE_MAQUINAS.anonKey,
-  {
-    auth: {
-      storage: AsyncStorage,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-      storageKey: 'supabase-maquinas-auth',
-    },
-  }
-);
+export const supabaseMaquinas = createClient(SUPABASE_MAQUINAS.url, SUPABASE_MAQUINAS.anonKey, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+    storageKey: 'supabase-maquinas-auth',
+  },
+});
 
 // =====================================================
 // TIPOS PARA SINCRONIZAÇÃO
@@ -111,7 +108,7 @@ class SupabaseSyncService {
 
       // 3. Buscar assinatura ativa (passando email)
       const subscription = await this.getActiveSubscription(userId, email);
-      
+
       // 4. Sincronizar assinatura com Máquinas
       if (subscription) {
         await this.syncSubscriptionToMaquinas(subscription);
@@ -180,11 +177,7 @@ class SupabaseSyncService {
       if (createError) {
         console.log('[Sync] Erro ao criar perfil (pode já existir):', createError.message);
         // Se falhar, tentar buscar novamente
-        const { data: retry } = await client
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single();
+        const { data: retry } = await client.from('profiles').select('*').eq('id', userId).single();
         if (retry) return { ...retry, source_db: source };
         throw createError;
       }
@@ -225,18 +218,13 @@ class SupabaseSyncService {
 
       if (existing) {
         // Atualizar
-        await this.maquinas
-          .from('profiles')
-          .update(syncData)
-          .eq('id', profile.id);
+        await this.maquinas.from('profiles').update(syncData).eq('id', profile.id);
       } else {
         // Inserir
-        await this.maquinas
-          .from('profiles')
-          .insert({
-            ...syncData,
-            created_at: profile.created_at || new Date().toISOString(),
-          });
+        await this.maquinas.from('profiles').insert({
+          ...syncData,
+          created_at: profile.created_at || new Date().toISOString(),
+        });
       }
 
       console.log('[Sync] Perfil sincronizado com Máquinas');
@@ -249,14 +237,17 @@ class SupabaseSyncService {
   // =====================================================
   // BUSCAR ASSINATURA ATIVA
   // =====================================================
-  private async getActiveSubscription(userId: string, email?: string): Promise<SyncSubscription | null> {
+  private async getActiveSubscription(
+    userId: string,
+    email?: string
+  ): Promise<SyncSubscription | null> {
     try {
       // Buscar por email na tabela user_subscriptions
       if (!email) {
         const { data: userData } = await this.principal.auth.getUser();
         email = userData?.user?.email;
       }
-      
+
       if (!email) return null;
 
       const { data, error } = await this.principal
@@ -266,16 +257,16 @@ class SupabaseSyncService {
         .single();
 
       if (error || !data) return null;
-      
+
       // Converter para formato interno
       const plan = data.custo_operacional_plan || data.gestao_rural_plan || 'free';
       const isExpired = data.expires_at && new Date(data.expires_at) < new Date();
-      
+
       return {
         id: data.id,
         user_id: userId,
         plan: plan,
-        status: isExpired ? 'expired' : (plan === 'free' ? 'trial' : 'active'),
+        status: isExpired ? 'expired' : plan === 'free' ? 'trial' : 'active',
         starts_at: data.created_at,
         expires_at: data.expires_at,
         apps_included: ['operacional', 'finance', 'maquinas'],
@@ -300,14 +291,14 @@ class SupabaseSyncService {
 
       // Mapear plano para o formato do Máquinas
       const planMapping: Record<string, string> = {
-        'free': 'free',
-        'trial': 'free',
-        'premium': 'professional',
-        'enterprise': 'enterprise',
+        free: 'free',
+        trial: 'free',
+        premium: 'professional',
+        enterprise: 'enterprise',
       };
 
       const maquinasPlan = planMapping[subscription.plan] || 'free';
-      
+
       // Buscar o plan_id no Máquinas
       const { data: planData } = await this.maquinas
         .from('subscription_plans')
@@ -337,12 +328,10 @@ class SupabaseSyncService {
           .eq('user_id', subscription.user_id);
       } else {
         // Inserir nova
-        await this.maquinas
-          .from('user_subscriptions')
-          .insert({
-            ...syncData,
-            created_at: new Date().toISOString(),
-          });
+        await this.maquinas.from('user_subscriptions').insert({
+          ...syncData,
+          created_at: new Date().toISOString(),
+        });
       }
 
       console.log('[Sync] Assinatura sincronizada com Máquinas');
@@ -355,7 +344,10 @@ class SupabaseSyncService {
   // =====================================================
   // LOGIN SINCRONIZADO (SSO)
   // =====================================================
-  async signInWithSSO(email: string, password: string): Promise<{
+  async signInWithSSO(
+    email: string,
+    password: string
+  ): Promise<{
     success: boolean;
     user: any | null;
     session: any | null;
@@ -363,10 +355,11 @@ class SupabaseSyncService {
   }> {
     try {
       // 1. Login no banco principal
-      const { data: principalAuth, error: principalError } = await this.principal.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data: principalAuth, error: principalError } =
+        await this.principal.auth.signInWithPassword({
+          email,
+          password,
+        });
 
       if (principalError) {
         return { success: false, user: null, session: null, error: principalError.message };
@@ -406,7 +399,11 @@ class SupabaseSyncService {
   // =====================================================
   // REGISTRO SINCRONIZADO (SSO)
   // =====================================================
-  async signUpWithSSO(email: string, password: string, fullName?: string): Promise<{
+  async signUpWithSSO(
+    email: string,
+    password: string,
+    fullName?: string
+  ): Promise<{
     success: boolean;
     user: any | null;
     session: any | null;
@@ -462,10 +459,7 @@ class SupabaseSyncService {
   // =====================================================
   async signOutAll(): Promise<void> {
     try {
-      await Promise.all([
-        this.principal.auth.signOut(),
-        this.maquinas.auth.signOut(),
-      ]);
+      await Promise.all([this.principal.auth.signOut(), this.maquinas.auth.signOut()]);
       await AsyncStorage.removeItem('lastSsoSync');
       await AsyncStorage.removeItem('ssoUserId');
       console.log('[SSO] Logout de todos os sistemas');
@@ -477,7 +471,10 @@ class SupabaseSyncService {
   // =====================================================
   // VERIFICAR ACESSO A APP ESPECÍFICO
   // =====================================================
-  async checkAppAccess(userId: string, appName: 'operacional' | 'finance' | 'maquinas'): Promise<{
+  async checkAppAccess(
+    userId: string,
+    appName: 'operacional' | 'finance' | 'maquinas'
+  ): Promise<{
     hasAccess: boolean;
     reason?: string;
   }> {
@@ -485,7 +482,7 @@ class SupabaseSyncService {
       // Buscar email do usuário
       const { data: userData } = await this.principal.auth.getUser();
       const email = userData?.user?.email;
-      
+
       if (!email) {
         return { hasAccess: false, reason: 'Usuário não autenticado' };
       }
@@ -507,9 +504,13 @@ class SupabaseSyncService {
 
       // Verificar plano por app
       const plan = subscription.custo_operacional_plan || subscription.gestao_rural_plan || 'free';
-      
+
       // Trial ou plano pago tem acesso a tudo
-      if (plan !== 'free' || !subscription.expires_at || new Date(subscription.expires_at) > new Date()) {
+      if (
+        plan !== 'free' ||
+        !subscription.expires_at ||
+        new Date(subscription.expires_at) > new Date()
+      ) {
         return { hasAccess: true };
       }
 
@@ -544,7 +545,7 @@ class SupabaseSyncService {
 
       // 2. Buscar assinatura atualizada
       const subscription = await this.getActiveSubscription(userId, email);
-      
+
       // 3. Sincronizar com Máquinas
       if (subscription) {
         await this.syncSubscriptionToMaquinas(subscription);
@@ -584,8 +585,8 @@ class SupabaseSyncService {
     lastSync: Date | null;
     needsSync: boolean;
   } {
-    const needsSync = !this.lastSyncTime || 
-      (Date.now() - this.lastSyncTime.getTime()) > this.SYNC_INTERVAL;
+    const needsSync =
+      !this.lastSyncTime || Date.now() - this.lastSyncTime.getTime() > this.SYNC_INTERVAL;
 
     return {
       inProgress: this.syncInProgress,

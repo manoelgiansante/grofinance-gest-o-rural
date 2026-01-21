@@ -5,10 +5,10 @@
 // Validação de CPF
 export function validateCPF(cpf: string): boolean {
   const cleanCPF = cpf.replace(/\D/g, '');
-  
+
   if (cleanCPF.length !== 11) return false;
   if (/^(\d)\1+$/.test(cleanCPF)) return false; // Todos dígitos iguais
-  
+
   // Calcula primeiro dígito verificador
   let sum = 0;
   for (let i = 0; i < 9; i++) {
@@ -17,7 +17,7 @@ export function validateCPF(cpf: string): boolean {
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
   if (remainder !== parseInt(cleanCPF[9])) return false;
-  
+
   // Calcula segundo dígito verificador
   sum = 0;
   for (let i = 0; i < 10; i++) {
@@ -26,17 +26,17 @@ export function validateCPF(cpf: string): boolean {
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
   if (remainder !== parseInt(cleanCPF[10])) return false;
-  
+
   return true;
 }
 
 // Validação de CNPJ
 export function validateCNPJ(cnpj: string): boolean {
   const cleanCNPJ = cnpj.replace(/\D/g, '');
-  
+
   if (cleanCNPJ.length !== 14) return false;
   if (/^(\d)\1+$/.test(cleanCNPJ)) return false;
-  
+
   // Calcula primeiro dígito verificador
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let sum = 0;
@@ -46,7 +46,7 @@ export function validateCNPJ(cnpj: string): boolean {
   let remainder = sum % 11;
   const digit1 = remainder < 2 ? 0 : 11 - remainder;
   if (digit1 !== parseInt(cleanCNPJ[12])) return false;
-  
+
   // Calcula segundo dígito verificador
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   sum = 0;
@@ -56,7 +56,7 @@ export function validateCNPJ(cnpj: string): boolean {
   remainder = sum % 11;
   const digit2 = remainder < 2 ? 0 : 11 - remainder;
   if (digit2 !== parseInt(cleanCNPJ[13])) return false;
-  
+
   return true;
 }
 

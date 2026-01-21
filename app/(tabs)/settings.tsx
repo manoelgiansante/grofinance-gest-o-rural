@@ -1,8 +1,17 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
+  Alert,
+  TextInput,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { 
+import {
   ChevronRight,
   Bell,
   Shield,
@@ -21,7 +30,7 @@ import {
   FileText,
   Settings,
   Palette,
-  Globe
+  Globe,
 } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,7 +39,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { signOut, isAuthenticated, user, signIn, signUp } = useAuth();
   const [notifications, setNotifications] = useState(true);
-  
+
   // Estados para login inline
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,17 +89,21 @@ export default function SettingsScreen() {
 
             <View style={styles.authCard}>
               <View style={styles.authTabs}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.authTab, isLogin && styles.authTabActive]}
                   onPress={() => setIsLogin(true)}
                 >
-                  <Text style={[styles.authTabText, isLogin && styles.authTabTextActive]}>Entrar</Text>
+                  <Text style={[styles.authTabText, isLogin && styles.authTabTextActive]}>
+                    Entrar
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.authTab, !isLogin && styles.authTabActive]}
                   onPress={() => setIsLogin(false)}
                 >
-                  <Text style={[styles.authTabText, !isLogin && styles.authTabTextActive]}>Criar Conta</Text>
+                  <Text style={[styles.authTabText, !isLogin && styles.authTabTextActive]}>
+                    Criar Conta
+                  </Text>
                 </TouchableOpacity>
               </View>
 
@@ -127,13 +140,13 @@ export default function SettingsScreen() {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.authSubmitButton, isLoading && styles.authSubmitButtonDisabled]}
                   onPress={handleAuth}
                   disabled={isLoading}
                 >
                   <Text style={styles.authSubmitButtonText}>
-                    {isLoading ? 'Aguarde...' : (isLogin ? 'Entrar' : 'Criar Conta')}
+                    {isLoading ? 'Aguarde...' : isLogin ? 'Entrar' : 'Criar Conta'}
                   </Text>
                 </TouchableOpacity>
 
@@ -182,28 +195,24 @@ export default function SettingsScreen() {
                   </View>
                 </View>
               </View>
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 style={styles.accountButton}
                 onPress={() => {
-                  Alert.alert(
-                    'Sair da Conta',
-                    'Seus dados locais serão mantidos. Deseja sair?',
-                    [
-                      { text: 'Cancelar', style: 'cancel' },
-                      { 
-                        text: 'Sair', 
-                        style: 'destructive',
-                        onPress: async () => {
-                          try {
-                            await signOut();
-                          } catch (error) {
-                            Alert.alert('Erro', 'Não foi possível sair da conta');
-                          }
+                  Alert.alert('Sair da Conta', 'Seus dados locais serão mantidos. Deseja sair?', [
+                    { text: 'Cancelar', style: 'cancel' },
+                    {
+                      text: 'Sair',
+                      style: 'destructive',
+                      onPress: async () => {
+                        try {
+                          await signOut();
+                        } catch (error) {
+                          Alert.alert('Erro', 'Não foi possível sair da conta');
                         }
                       },
-                    ]
-                  );
+                    },
+                  ]);
                 }}
               >
                 <LogOut size={16} color={Colors.error} strokeWidth={1.5} />
@@ -216,7 +225,7 @@ export default function SettingsScreen() {
         {/* Preferências */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferências</Text>
-          
+
           <View style={styles.settingItem}>
             <View style={styles.settingIcon}>
               <Bell size={18} color={Colors.primary} strokeWidth={1.5} />
@@ -250,8 +259,8 @@ export default function SettingsScreen() {
         {/* Assinatura */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Assinatura</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.subscriptionCard}
             onPress={() => router.push('/subscription')}
           >
@@ -260,9 +269,7 @@ export default function SettingsScreen() {
             </View>
             <View style={styles.subscriptionInfo}>
               <Text style={styles.subscriptionTitle}>Plano Premium</Text>
-              <Text style={styles.subscriptionText}>
-                Todas as funcionalidades liberadas
-              </Text>
+              <Text style={styles.subscriptionText}>Todas as funcionalidades liberadas</Text>
             </View>
             <ChevronRight size={18} color={Colors.textSecondary} strokeWidth={1.5} />
           </TouchableOpacity>
@@ -271,8 +278,8 @@ export default function SettingsScreen() {
         {/* Integração Apps Rumo */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Integração</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.integrationCard}
             onPress={() => router.push('/machines-integration' as any)}
           >
@@ -281,9 +288,7 @@ export default function SettingsScreen() {
             </View>
             <View style={styles.integrationInfo}>
               <Text style={styles.integrationTitle}>Rumo Máquinas</Text>
-              <Text style={styles.integrationText}>
-                Gestão de frota conectada
-              </Text>
+              <Text style={styles.integrationText}>Gestão de frota conectada</Text>
             </View>
             <View style={styles.connectedBadge}>
               <Link size={14} color="#fff" strokeWidth={2} />
@@ -294,7 +299,7 @@ export default function SettingsScreen() {
         {/* Dados */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Dados</Text>
-          
+
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuIcon}>
               <FileText size={18} color={Colors.textSecondary} strokeWidth={1.5} />
@@ -324,7 +329,10 @@ export default function SettingsScreen() {
             <ChevronRight size={18} color={Colors.textSecondary} strokeWidth={1.5} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/privacidade' as any)}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/privacidade' as any)}
+          >
             <View style={styles.menuIcon}>
               <Shield size={18} color={Colors.textSecondary} strokeWidth={1.5} />
             </View>

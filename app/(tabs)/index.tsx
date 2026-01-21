@@ -1,18 +1,36 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Animated } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { 
-  TrendingUp, TrendingDown, DollarSign, CreditCard, 
-  AlertTriangle, Clock, ArrowUpRight, ArrowDownRight,
-  Calendar, FileText, Package, Plus, X
-} from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import { useAuth } from "@/contexts/AuthContext";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { useState, useEffect, useRef } from "react";
-import { SubscriptionBanner } from "@/components/SubscriptionBanner";
-import OnboardingTutorial from "@/components/OnboardingTutorial";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Animated,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  CreditCard,
+  AlertTriangle,
+  Clock,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+  FileText,
+  Package,
+  Plus,
+  X,
+} from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import { useAuth } from '@/contexts/AuthContext';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { useState, useEffect, useRef } from 'react';
+import { SubscriptionBanner } from '@/components/SubscriptionBanner';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function DashboardScreen() {
   const { expenses } = useApp();
@@ -58,8 +76,10 @@ export default function DashboardScreen() {
     cashBalance: 0,
     accountsPayable: 0,
     accountsReceivable: 0,
-    pendingApprovals: expenses.filter(e => e.status === 'pending_approval').length,
-    overduePayments: expenses.filter(e => e.status === 'approved' && new Date(e.dueDate) < new Date()).length,
+    pendingApprovals: expenses.filter((e) => e.status === 'pending_approval').length,
+    overduePayments: expenses.filter(
+      (e) => e.status === 'approved' && new Date(e.dueDate) < new Date()
+    ).length,
     monthRevenue: 0,
     monthExpenses: 0,
     monthResult: 0,
@@ -72,19 +92,16 @@ export default function DashboardScreen() {
   return (
     <View style={styles.container}>
       {/* Onboarding Modal */}
-      <OnboardingTutorial 
-        visible={showOnboarding} 
-        onComplete={handleOnboardingComplete} 
-      />
+      <OnboardingTutorial visible={showOnboarding} onComplete={handleOnboardingComplete} />
 
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           {/* Subscription Banner */}
           {!isPremium && (
-            <SubscriptionBanner 
-              compact 
-              onSubscribe={() => router.push('/subscription')} 
-            />
+            <SubscriptionBanner compact onSubscribe={() => router.push('/subscription')} />
           )}
 
           <View style={styles.header}>
@@ -93,32 +110,47 @@ export default function DashboardScreen() {
               <Text style={styles.subtitle}>Visão consolidada do negócio</Text>
             </View>
             <View style={styles.periodSelector}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.periodChip, selectedPeriod === 'month' && styles.periodChipActive]}
                 onPress={() => setSelectedPeriod('month')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.periodText, selectedPeriod === 'month' && styles.periodTextActive]}>Mês</Text>
+                <Text
+                  style={[styles.periodText, selectedPeriod === 'month' && styles.periodTextActive]}
+                >
+                  Mês
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.periodChip, selectedPeriod === 'quarter' && styles.periodChipActive]}
                 onPress={() => setSelectedPeriod('quarter')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.periodText, selectedPeriod === 'quarter' && styles.periodTextActive]}>Trimestre</Text>
+                <Text
+                  style={[
+                    styles.periodText,
+                    selectedPeriod === 'quarter' && styles.periodTextActive,
+                  ]}
+                >
+                  Trimestre
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.periodChip, selectedPeriod === 'year' && styles.periodChipActive]}
                 onPress={() => setSelectedPeriod('year')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.periodText, selectedPeriod === 'year' && styles.periodTextActive]}>Ano</Text>
+                <Text
+                  style={[styles.periodText, selectedPeriod === 'year' && styles.periodTextActive]}
+                >
+                  Ano
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={[styles.metricsGrid, isWeb && styles.metricsGridWeb]}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.metricCard, styles.metricCardPrimary, isWeb && styles.metricCardWeb]}
               activeOpacity={0.7}
               onPress={() => router.push('/cash-flow')}
@@ -137,7 +169,7 @@ export default function DashboardScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.metricCard, isWeb && styles.metricCardWeb]}
               activeOpacity={0.7}
               onPress={() => router.push('/expenses')}
@@ -150,7 +182,9 @@ export default function DashboardScreen() {
               <Text style={[styles.metricValue, { color: Colors.textPrimary }]}>
                 R$ {stats.accountsPayable.toLocaleString('pt-BR')}
               </Text>
-              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>Contas a Pagar</Text>
+              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>
+                Contas a Pagar
+              </Text>
               {stats.overduePayments > 0 && (
                 <View style={styles.metricAlert}>
                   <AlertTriangle size={12} color={Colors.error} />
@@ -159,7 +193,7 @@ export default function DashboardScreen() {
               )}
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.metricCard, isWeb && styles.metricCardWeb]}
               activeOpacity={0.7}
               onPress={() => router.push('/receivables')}
@@ -172,10 +206,12 @@ export default function DashboardScreen() {
               <Text style={[styles.metricValue, { color: Colors.textPrimary }]}>
                 R$ {stats.accountsReceivable.toLocaleString('pt-BR')}
               </Text>
-              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>Contas a Receber</Text>
+              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>
+                Contas a Receber
+              </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.metricCard, isWeb && styles.metricCardWeb]}
               activeOpacity={0.7}
               onPress={() => router.push('/validations')}
@@ -188,7 +224,9 @@ export default function DashboardScreen() {
               <Text style={[styles.metricValue, { color: Colors.textPrimary }]}>
                 {stats.pendingApprovals}
               </Text>
-              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>Pendentes de Aprovação</Text>
+              <Text style={[styles.metricLabel, { color: Colors.textSecondary }]}>
+                Pendentes de Aprovação
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -196,7 +234,7 @@ export default function DashboardScreen() {
             <View style={[styles.resultCard, isWeb && styles.resultCardWeb]}>
               <Text style={styles.resultTitle}>Resultado do Período</Text>
               <View style={styles.resultDivider} />
-              
+
               <View style={styles.resultRow}>
                 <View style={styles.resultIconContainer}>
                   <ArrowDownRight size={16} color={Colors.success} />
@@ -224,12 +262,16 @@ export default function DashboardScreen() {
               <View style={styles.resultDivider} />
 
               <View style={styles.resultRow}>
-                <View style={[styles.resultIconContainer, { backgroundColor: Colors.primary + '15' }]}>
+                <View
+                  style={[styles.resultIconContainer, { backgroundColor: Colors.primary + '15' }]}
+                >
                   <DollarSign size={16} color={Colors.primary} />
                 </View>
                 <View style={styles.resultInfo}>
                   <Text style={[styles.resultLabel, styles.resultLabelBold]}>Lucro Líquido</Text>
-                  <Text style={[styles.resultValue, styles.resultValueBold, { color: Colors.primary }]}>
+                  <Text
+                    style={[styles.resultValue, styles.resultValueBold, { color: Colors.primary }]}
+                  >
                     R$ {stats.monthResult.toLocaleString('pt-BR')}
                   </Text>
                 </View>
@@ -248,17 +290,23 @@ export default function DashboardScreen() {
                 <View style={styles.emptyActivity}>
                   <Clock size={32} color={Colors.textTertiary} />
                   <Text style={styles.emptyActivityText}>Nenhuma movimentação ainda</Text>
-                  <Text style={styles.emptyActivityHint}>Registre sua primeira receita ou despesa</Text>
+                  <Text style={styles.emptyActivityHint}>
+                    Registre sua primeira receita ou despesa
+                  </Text>
                 </View>
               ) : (
                 recentActivity.map((item, idx) => {
                   const isInflow = item.type === 'in';
                   return (
                     <View key={idx} style={styles.activityItem}>
-                      <View style={[
-                        styles.activityIcon,
-                        { backgroundColor: isInflow ? Colors.success + '15' : Colors.error + '15' }
-                      ]}>
+                      <View
+                        style={[
+                          styles.activityIcon,
+                          {
+                            backgroundColor: isInflow ? Colors.success + '15' : Colors.error + '15',
+                          },
+                        ]}
+                      >
                         {isInflow ? (
                           <ArrowDownRight size={16} color={Colors.success} />
                         ) : (
@@ -269,10 +317,12 @@ export default function DashboardScreen() {
                         <Text style={styles.activityDesc}>{item.desc}</Text>
                         <Text style={styles.activityDate}>{item.date}</Text>
                       </View>
-                      <Text style={[
-                        styles.activityValue,
-                        { color: isInflow ? Colors.success : Colors.error }
-                      ]}>
+                      <Text
+                        style={[
+                          styles.activityValue,
+                          { color: isInflow ? Colors.success : Colors.error },
+                        ]}
+                      >
                         {isInflow ? '+' : '-'} R$ {item.value.toLocaleString('pt-BR')}
                       </Text>
                     </View>
@@ -285,7 +335,7 @@ export default function DashboardScreen() {
           <View style={[styles.quickActions, isWeb && styles.quickActionsWeb]}>
             <Text style={styles.quickActionsTitle}>Acesso Rápido</Text>
             <View style={[styles.quickActionsGrid, isWeb && styles.quickActionsGridWeb]}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quickActionCard}
                 onPress={() => router.push('/add-expense')}
                 activeOpacity={0.7}
@@ -294,7 +344,7 @@ export default function DashboardScreen() {
                 <Text style={styles.quickActionLabel}>Nova Despesa</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quickActionCard}
                 onPress={() => router.push('/fiscal')}
                 activeOpacity={0.7}
@@ -303,7 +353,7 @@ export default function DashboardScreen() {
                 <Text style={styles.quickActionLabel}>Emitir NF-e</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quickActionCard}
                 onPress={() => router.push('/stock')}
                 activeOpacity={0.7}
@@ -312,7 +362,7 @@ export default function DashboardScreen() {
                 <Text style={styles.quickActionLabel}>Estoque</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.quickActionCard}
                 onPress={() => router.push('/reports')}
                 activeOpacity={0.7}
@@ -329,66 +379,96 @@ export default function DashboardScreen() {
 
       {/* FAB - Floating Action Button */}
       {fabOpen && (
-        <TouchableOpacity 
-          style={styles.fabOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.fabOverlay}
+          activeOpacity={1}
           onPress={() => setFabOpen(false)}
         />
       )}
-      
+
       <View style={styles.fabContainer}>
         {/* Opções do FAB */}
-        <Animated.View style={[
-          styles.fabOption,
-          {
-            opacity: fabAnimation,
-            transform: [
-              { translateY: fabAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, -180] }) },
-              { scale: fabAnimation },
-            ],
-          },
-        ]}>
-          <TouchableOpacity 
+        <Animated.View
+          style={[
+            styles.fabOption,
+            {
+              opacity: fabAnimation,
+              transform: [
+                {
+                  translateY: fabAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -180],
+                  }),
+                },
+                { scale: fabAnimation },
+              ],
+            },
+          ]}
+        >
+          <TouchableOpacity
             style={[styles.fabOptionButton, { backgroundColor: Colors.success }]}
-            onPress={() => { setFabOpen(false); router.push('/add-revenue'); }}
+            onPress={() => {
+              setFabOpen(false);
+              router.push('/add-revenue');
+            }}
           >
             <TrendingUp size={22} color={Colors.white} />
           </TouchableOpacity>
           <Text style={styles.fabOptionLabel}>Nova Receita</Text>
         </Animated.View>
 
-        <Animated.View style={[
-          styles.fabOption,
-          {
-            opacity: fabAnimation,
-            transform: [
-              { translateY: fabAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) },
-              { scale: fabAnimation },
-            ],
-          },
-        ]}>
-          <TouchableOpacity 
+        <Animated.View
+          style={[
+            styles.fabOption,
+            {
+              opacity: fabAnimation,
+              transform: [
+                {
+                  translateY: fabAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -120],
+                  }),
+                },
+                { scale: fabAnimation },
+              ],
+            },
+          ]}
+        >
+          <TouchableOpacity
             style={[styles.fabOptionButton, { backgroundColor: Colors.error }]}
-            onPress={() => { setFabOpen(false); router.push('/add-expense'); }}
+            onPress={() => {
+              setFabOpen(false);
+              router.push('/add-expense');
+            }}
           >
             <TrendingDown size={22} color={Colors.white} />
           </TouchableOpacity>
           <Text style={styles.fabOptionLabel}>Nova Despesa</Text>
         </Animated.View>
 
-        <Animated.View style={[
-          styles.fabOption,
-          {
-            opacity: fabAnimation,
-            transform: [
-              { translateY: fabAnimation.interpolate({ inputRange: [0, 1], outputRange: [0, -60] }) },
-              { scale: fabAnimation },
-            ],
-          },
-        ]}>
-          <TouchableOpacity 
+        <Animated.View
+          style={[
+            styles.fabOption,
+            {
+              opacity: fabAnimation,
+              transform: [
+                {
+                  translateY: fabAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -60],
+                  }),
+                },
+                { scale: fabAnimation },
+              ],
+            },
+          ]}
+        >
+          <TouchableOpacity
             style={[styles.fabOptionButton, { backgroundColor: Colors.info }]}
-            onPress={() => { setFabOpen(false); router.push('/fiscal/nfe-wizard'); }}
+            onPress={() => {
+              setFabOpen(false);
+              router.push('/fiscal/nfe-wizard');
+            }}
           >
             <FileText size={22} color={Colors.white} />
           </TouchableOpacity>
@@ -396,16 +476,23 @@ export default function DashboardScreen() {
         </Animated.View>
 
         {/* Botão principal do FAB */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.fab, fabOpen && styles.fabActive]}
           onPress={() => setFabOpen(!fabOpen)}
           activeOpacity={0.8}
         >
-          <Animated.View style={{
-            transform: [{
-              rotate: fabAnimation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '45deg'] }),
-            }],
-          }}>
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotate: fabAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '45deg'],
+                  }),
+                },
+              ],
+            }}
+          >
             <Plus size={28} color={Colors.white} />
           </Animated.View>
         </TouchableOpacity>
@@ -800,6 +887,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    whiteSpace: 'nowrap',
   },
 });

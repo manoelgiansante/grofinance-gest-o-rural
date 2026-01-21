@@ -29,7 +29,7 @@ const PLANS: Plan[] = [
   {
     id: 'basic',
     name: 'Básico',
-    price: 29.90,
+    price: 29.9,
     priceLabel: 'R$ 29,90/mês',
     description: 'Para pequenos produtores',
     features: [
@@ -43,7 +43,7 @@ const PLANS: Plan[] = [
   {
     id: 'intermediate',
     name: 'Intermediário',
-    price: 59.90,
+    price: 59.9,
     priceLabel: 'R$ 59,90/mês',
     description: 'Para produtores em crescimento',
     features: [
@@ -60,7 +60,7 @@ const PLANS: Plan[] = [
   {
     id: 'premium',
     name: 'Premium',
-    price: 99.90,
+    price: 99.9,
     priceLabel: 'R$ 99,90/mês',
     description: 'Gestão completa do agronegócio',
     features: [
@@ -77,20 +77,16 @@ const PLANS: Plan[] = [
 ];
 
 export default function SubscriptionScreen() {
-  const { user, activateSubscription, subscription } = useAuth();
+  const { user, upgradeSubscription, subscription } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<Plan['id']>('intermediate');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubscribe = async () => {
     if (!user?.email) {
-      Alert.alert(
-        'Login necessário',
-        'Faça login para assinar um plano.',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Fazer Login', onPress: () => router.push('/login') },
-        ]
-      );
+      Alert.alert('Login necessário', 'Faça login para assinar um plano.', [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Fazer Login', onPress: () => router.push('/login') },
+      ]);
       return;
     }
 
@@ -99,12 +95,17 @@ export default function SubscriptionScreen() {
     try {
       // Aqui seria integrado com Stripe/RevenueCat
       // Por enquanto, simula a ativação
-      const success = await activateSubscription(selectedPlan);
+      const planMap: Record<string, 'free' | 'starter' | 'professional' | 'enterprise'> = {
+        basic: 'starter',
+        intermediate: 'professional',
+        premium: 'enterprise',
+      };
+      const success = await upgradeSubscription(planMap[selectedPlan] || 'professional');
 
       if (success) {
         Alert.alert(
           '🎉 Assinatura Ativada!',
-          selectedPlan === 'basic' 
+          selectedPlan === 'basic'
             ? 'Bem-vindo ao plano Básico!'
             : `Bem-vindo ao plano ${selectedPlan === 'intermediate' ? 'Intermediário' : 'Premium'}! Você ganhou acesso ao Rumo Operacional grátis!`,
           [{ text: 'Continuar', onPress: () => router.back() }]
@@ -119,7 +120,16 @@ export default function SubscriptionScreen() {
     }
   };
 
-  const currentPlan = subscription?.rumoFinancePlan;
+  const currentPlan = subscription?.plan;
+
+  // Map internal plan to display plan
+  const planToDisplayMap: Record<string, string> = {
+    free: 'basic',
+    starter: 'basic',
+    professional: 'intermediate',
+    enterprise: 'premium',
+  };
+  const currentDisplayPlan = currentPlan ? planToDisplayMap[currentPlan] : undefined;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -131,20 +141,12 @@ export default function SubscriptionScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Hero */}
-        <LinearGradient
-          colors={['#2E7D32', '#4CAF50']}
-          style={styles.hero}
-        >
+        <LinearGradient colors={['#2E7D32', '#4CAF50']} style={styles.hero}>
           <Ionicons name="rocket" size={48} color="#fff" />
           <Text style={styles.heroTitle}>Desbloqueie todo o potencial</Text>
-          <Text style={styles.heroSubtitle}>
-            Escolha o plano ideal para sua fazenda
-          </Text>
+          <Text style={styles.heroSubtitle}>Escolha o plano ideal para sua fazenda</Text>
         </LinearGradient>
 
         {/* Plans */}
@@ -168,26 +170,23 @@ export default function SubscriptionScreen() {
 
               <View style={styles.planHeader}>
                 <View style={styles.planInfo}>
-                  <Text style={[
-                    styles.planName,
-                    selectedPlan === plan.id && styles.planNameSelected
-                  ]}>
+                  <Text
+                    style={[styles.planName, selectedPlan === plan.id && styles.planNameSelected]}
+                  >
                     {plan.name}
                   </Text>
                   <Text style={styles.planDescription}>{plan.description}</Text>
                 </View>
-                <View style={[
-                  styles.radioOuter,
-                  selectedPlan === plan.id && styles.radioOuterSelected
-                ]}>
+                <View
+                  style={[styles.radioOuter, selectedPlan === plan.id && styles.radioOuterSelected]}
+                >
                   {selectedPlan === plan.id && <View style={styles.radioInner} />}
                 </View>
               </View>
 
-              <Text style={[
-                styles.planPrice,
-                selectedPlan === plan.id && styles.planPriceSelected
-              ]}>
+              <Text
+                style={[styles.planPrice, selectedPlan === plan.id && styles.planPriceSelected]}
+              >
                 {plan.priceLabel}
               </Text>
 
@@ -200,17 +199,17 @@ export default function SubscriptionScreen() {
               <View style={styles.featuresList}>
                 {plan.features.map((feature, idx) => (
                   <View key={idx} style={styles.featureItem}>
-                    <Ionicons 
-                      name="checkmark-circle" 
-                      size={18} 
-                      color={selectedPlan === plan.id ? '#2E7D32' : '#10b981'} 
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={18}
+                      color={selectedPlan === plan.id ? '#2E7D32' : '#10b981'}
                     />
                     <Text style={styles.featureText}>{feature}</Text>
                   </View>
                 ))}
               </View>
 
-              {currentPlan === plan.id && (
+              {currentDisplayPlan === plan.id && (
                 <View style={styles.currentPlanBadge}>
                   <Text style={styles.currentPlanText}>PLANO ATUAL</Text>
                 </View>
@@ -224,15 +223,14 @@ export default function SubscriptionScreen() {
           <TouchableOpacity
             style={[styles.ctaButton, isProcessing && styles.ctaButtonDisabled]}
             onPress={handleSubscribe}
-            disabled={isProcessing || currentPlan === selectedPlan}
+            disabled={isProcessing || currentDisplayPlan === selectedPlan}
           >
             <Text style={styles.ctaButtonText}>
-              {currentPlan === selectedPlan 
-                ? 'Plano Atual' 
-                : isProcessing 
-                  ? 'Processando...' 
-                  : `Assinar ${PLANS.find(p => p.id === selectedPlan)?.name}`
-              }
+              {currentDisplayPlan === selectedPlan
+                ? 'Plano Atual'
+                : isProcessing
+                  ? 'Processando...'
+                  : `Assinar ${PLANS.find((p) => p.id === selectedPlan)?.name}`}
             </Text>
           </TouchableOpacity>
 
@@ -244,7 +242,7 @@ export default function SubscriptionScreen() {
         {/* Benefits */}
         <View style={styles.benefitsSection}>
           <Text style={styles.benefitsTitle}>Por que assinar?</Text>
-          
+
           <View style={styles.benefitCard}>
             <View style={styles.benefitIcon}>
               <Ionicons name="gift" size={24} color="#f59e0b" />
@@ -252,7 +250,8 @@ export default function SubscriptionScreen() {
             <View style={styles.benefitContent}>
               <Text style={styles.benefitTitle}>Bônus Exclusivo</Text>
               <Text style={styles.benefitDescription}>
-                Nos planos Intermediário e Premium, você ganha o Rumo Operacional totalmente grátis para gestão de custos!
+                Nos planos Intermediário e Premium, você ganha o Rumo Operacional totalmente grátis
+                para gestão de custos!
               </Text>
             </View>
           </View>

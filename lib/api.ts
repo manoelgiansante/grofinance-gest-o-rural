@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, supabaseRaw } from './supabase';
 
 // =====================================================
 // API SERVICE - Agrofinance
@@ -8,65 +8,60 @@ import { supabase } from './supabase';
 // ==================== FARMS ====================
 export const FarmsAPI = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('farms')
-      .select('*')
-      .order('name');
-    
+    const { data, error } = await supabaseRaw.from('farms').select('*').order('name');
+
     if (error) throw error;
     return data || [];
   },
 
   async getById(id: string) {
-    const { data, error } = await supabase
-      .from('farms')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('farms').select('*').eq('id', id).single();
+
     if (error) throw error;
     return data;
   },
 
   async create(farm: {
     name: string;
-    location?: string;
-    size?: number;
+    cpf_cnpj: string;
+    city: string;
+    state: string;
+    area?: number;
+    state_registration?: string;
     active?: boolean;
   }) {
-    const { data, error } = await supabase
-      .from('farms')
-      .insert(farm)
-      .select()
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('farms').insert(farm).select().single();
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    name: string;
-    location: string;
-    size: number;
-    active: boolean;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      name: string;
+      cpf_cnpj: string;
+      city: string;
+      state: string;
+      area: number;
+      state_registration: string;
+      active: boolean;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('farms')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('farms')
-      .update({ active: false })
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('farms').update({ active: false }).eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -82,11 +77,13 @@ export const ExpensesAPI = {
   }) {
     let query = supabase
       .from('expenses')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(id, name),
         operation:operations(id, name)
-      `)
+      `
+      )
       .order('date', { ascending: false });
 
     if (filters?.status) query = query.eq('status', filters.status);
@@ -101,16 +98,18 @@ export const ExpensesAPI = {
   },
 
   async getById(id: string) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('expenses')
-      .select(`
+      .select(
+        `
         *,
         supplier:suppliers(*),
         operation:operations(*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -131,7 +130,7 @@ export const ExpensesAPI = {
     status?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('expenses')
       .insert({
         ...expense,
@@ -139,43 +138,43 @@ export const ExpensesAPI = {
       })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    description: string;
-    date: string;
-    due_date: string;
-    category: string;
-    subcategory: string;
-    supplier_id: string;
-    operation_id: string;
-    agreed_value: number;
-    invoice_value: number;
-    actual_value: number;
-    payment_method: string;
-    status: string;
-    notes: string;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      description: string;
+      date: string;
+      due_date: string;
+      category: string;
+      subcategory: string;
+      supplier_id: string;
+      operation_id: string;
+      agreed_value: number;
+      invoice_value: number;
+      actual_value: number;
+      payment_method: string;
+      status: string;
+      notes: string;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('expenses')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('expenses')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('expenses').delete().eq('id', id);
+
     if (error) throw error;
   },
 
@@ -209,10 +208,12 @@ export const RevenuesAPI = {
   }) {
     let query = supabase
       .from('revenues')
-      .select(`
+      .select(
+        `
         *,
         client:clients(id, name)
-      `)
+      `
+      )
       .order('date', { ascending: false });
 
     if (filters?.status) query = query.eq('status', filters.status);
@@ -227,6 +228,22 @@ export const RevenuesAPI = {
     return data || [];
   },
 
+  async getById(id: string) {
+    const { data, error } = await supabaseRaw
+      .from('revenues')
+      .select(
+        `
+        *,
+        client:clients(id, name)
+      `
+      )
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
   async create(revenue: {
     description: string;
     date: string;
@@ -237,7 +254,7 @@ export const RevenuesAPI = {
     status?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('revenues')
       .insert({
         ...revenue,
@@ -245,37 +262,37 @@ export const RevenuesAPI = {
       })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    description: string;
-    date: string;
-    category: string;
-    client_id: string;
-    value: number;
-    status: string;
-    notes: string;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      description: string;
+      date: string;
+      category: string;
+      client_id: string;
+      value: number;
+      status: string;
+      notes: string;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('revenues')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('revenues')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('revenues').delete().eq('id', id);
+
     if (error) throw error;
   },
 
@@ -287,12 +304,12 @@ export const RevenuesAPI = {
 // ==================== CLIENTS ====================
 export const ClientsAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('clients')
       .select('*')
       .eq('active', true)
       .order('name');
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -304,40 +321,40 @@ export const ClientsAPI = {
     phone?: string;
     address?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('clients')
       .insert({ ...client, active: true })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    name: string;
-    document: string;
-    email: string;
-    phone: string;
-    address: string;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      name: string;
+      document: string;
+      email: string;
+      phone: string;
+      address: string;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('clients')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('clients')
-      .update({ active: false })
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('clients').update({ active: false }).eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -345,12 +362,12 @@ export const ClientsAPI = {
 // ==================== SUPPLIERS ====================
 export const SuppliersAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('suppliers')
       .select('*')
       .eq('active', true)
       .order('name');
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -362,40 +379,40 @@ export const SuppliersAPI = {
     phone?: string;
     category?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('suppliers')
       .insert({ ...supplier, active: true })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    name: string;
-    document: string;
-    email: string;
-    phone: string;
-    category: string;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      name: string;
+      document: string;
+      email: string;
+      phone: string;
+      category: string;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('suppliers')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('suppliers')
-      .update({ active: false })
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('suppliers').update({ active: false }).eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -403,14 +420,16 @@ export const SuppliersAPI = {
 // ==================== CONTRACTS ====================
 export const ContractsAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('contracts')
-      .select(`
+      .select(
+        `
         *,
         client:clients(id, name)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -426,7 +445,7 @@ export const ContractsAPI = {
     status?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('contracts')
       .insert({
         ...contract,
@@ -434,27 +453,30 @@ export const ContractsAPI = {
       })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    product: string;
-    quantity: number;
-    unit_price: number;
-    total_value: number;
-    end_date: string;
-    status: string;
-    notes: string;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      product: string;
+      quantity: number;
+      unit_price: number;
+      total_value: number;
+      end_date: string;
+      status: string;
+      notes: string;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('contracts')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -463,12 +485,12 @@ export const ContractsAPI = {
 // ==================== BANK ACCOUNTS ====================
 export const BankAccountsAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('bank_accounts')
       .select('*')
       .eq('active', true)
       .order('name');
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -481,7 +503,7 @@ export const BankAccountsAPI = {
     initial_balance?: number;
     current_balance?: number;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('bank_accounts')
       .insert({
         ...account,
@@ -490,22 +512,22 @@ export const BankAccountsAPI = {
       })
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async updateBalance(id: string, newBalance: number) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('bank_accounts')
-      .update({ 
+      .update({
         current_balance: newBalance,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -514,11 +536,8 @@ export const BankAccountsAPI = {
 // ==================== OPERATIONS ====================
 export const OperationsAPI = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('operations')
-      .select('*')
-      .order('name');
-    
+    const { data, error } = await supabaseRaw.from('operations').select('*').order('name');
+
     if (error) throw error;
     return data || [];
   },
@@ -530,31 +549,34 @@ export const OperationsAPI = {
     icon?: string;
     budget?: number;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('operations')
       .insert(operation)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
-  async update(id: string, updates: Partial<{
-    name: string;
-    type: string;
-    color: string;
-    icon: string;
-    budget: number;
-    spent: number;
-  }>) {
-    const { data, error } = await supabase
+  async update(
+    id: string,
+    updates: Partial<{
+      name: string;
+      type: string;
+      color: string;
+      icon: string;
+      budget: number;
+      spent: number;
+    }>
+  ) {
+    const { data, error } = await supabaseRaw
       .from('operations')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -563,7 +585,7 @@ export const OperationsAPI = {
 // ==================== REPORTS ====================
 export const ReportsAPI = {
   async getExpensesByCategory(startDate?: Date, endDate?: Date) {
-    let query = supabase
+    let query = supabaseRaw
       .from('expenses')
       .select('category, actual_value, invoice_value, agreed_value');
 
@@ -573,12 +595,15 @@ export const ReportsAPI = {
     const { data, error } = await query;
     if (error) throw error;
 
-    const grouped = (data || []).reduce((acc, e) => {
-      const cat = e.category || 'Outros';
-      const value = e.actual_value || e.invoice_value || e.agreed_value || 0;
-      acc[cat] = (acc[cat] || 0) + value;
-      return acc;
-    }, {} as Record<string, number>);
+    const grouped = ((data || []) as any[]).reduce(
+      (acc: Record<string, number>, e: any) => {
+        const cat = e.category || 'Outros';
+        const value = e.actual_value || e.invoice_value || e.agreed_value || 0;
+        acc[cat] = (acc[cat] || 0) + value;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return Object.entries(grouped).map(([category, total]) => ({
       category,
@@ -587,9 +612,7 @@ export const ReportsAPI = {
   },
 
   async getRevenuesByCategory(startDate?: Date, endDate?: Date) {
-    let query = supabase
-      .from('revenues')
-      .select('category, value');
+    let query = supabaseRaw.from('revenues').select('category, value');
 
     if (startDate) query = query.gte('date', startDate.toISOString());
     if (endDate) query = query.lte('date', endDate.toISOString());
@@ -597,11 +620,14 @@ export const ReportsAPI = {
     const { data, error } = await query;
     if (error) throw error;
 
-    const grouped = (data || []).reduce((acc, r) => {
-      const cat = r.category || 'Outros';
-      acc[cat] = (acc[cat] || 0) + (r.value || 0);
-      return acc;
-    }, {} as Record<string, number>);
+    const grouped = ((data || []) as any[]).reduce(
+      (acc: Record<string, number>, r: any) => {
+        const cat = r.category || 'Outros';
+        acc[cat] = (acc[cat] || 0) + (r.value || 0);
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return Object.entries(grouped).map(([category, total]) => ({
       category,
@@ -614,25 +640,22 @@ export const ReportsAPI = {
     startDate.setMonth(startDate.getMonth() - months);
 
     const [expenses, revenues] = await Promise.all([
-      supabase
+      supabaseRaw
         .from('expenses')
         .select('date, actual_value, invoice_value, agreed_value')
         .gte('date', startDate.toISOString()),
-      supabase
-        .from('revenues')
-        .select('date, value')
-        .gte('date', startDate.toISOString()),
+      supabaseRaw.from('revenues').select('date, value').gte('date', startDate.toISOString()),
     ]);
 
     const monthlyData: Record<string, { expenses: number; revenues: number }> = {};
 
-    (expenses.data || []).forEach(e => {
+    ((expenses.data || []) as any[]).forEach((e: any) => {
       const month = new Date(e.date).toISOString().slice(0, 7);
       if (!monthlyData[month]) monthlyData[month] = { expenses: 0, revenues: 0 };
       monthlyData[month].expenses += e.actual_value || e.invoice_value || e.agreed_value || 0;
     });
 
-    (revenues.data || []).forEach(r => {
+    ((revenues.data || []) as any[]).forEach((r: any) => {
       const month = new Date(r.date).toISOString().slice(0, 7);
       if (!monthlyData[month]) monthlyData[month] = { expenses: 0, revenues: 0 };
       monthlyData[month].revenues += r.value || 0;
@@ -650,23 +673,30 @@ export const ReportsAPI = {
 
   async getDashboardSummary() {
     const [expenses, revenues, pendingExpenses, pendingRevenues] = await Promise.all([
-      supabase.from('expenses').select('actual_value, invoice_value, agreed_value'),
-      supabase.from('revenues').select('value'),
-      supabase.from('expenses').select('actual_value, invoice_value, agreed_value').eq('status', 'pending'),
-      supabase.from('revenues').select('value').eq('status', 'pending'),
+      supabaseRaw.from('expenses').select('actual_value, invoice_value, agreed_value'),
+      supabaseRaw.from('revenues').select('value'),
+      supabaseRaw
+        .from('expenses')
+        .select('actual_value, invoice_value, agreed_value')
+        .eq('status', 'pending'),
+      supabaseRaw.from('revenues').select('value').eq('status', 'pending'),
     ]);
 
-    const totalExpenses = (expenses.data || []).reduce(
-      (sum, e) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0), 0
+    const totalExpenses = ((expenses.data || []) as any[]).reduce(
+      (sum: number, e: any) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0),
+      0
     );
-    const totalRevenues = (revenues.data || []).reduce(
-      (sum, r) => sum + (r.value || 0), 0
+    const totalRevenues = ((revenues.data || []) as any[]).reduce(
+      (sum: number, r: any) => sum + (r.value || 0),
+      0
     );
-    const totalPendingExpenses = (pendingExpenses.data || []).reduce(
-      (sum, e) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0), 0
+    const totalPendingExpenses = ((pendingExpenses.data || []) as any[]).reduce(
+      (sum: number, e: any) => sum + (e.actual_value || e.invoice_value || e.agreed_value || 0),
+      0
     );
-    const totalPendingRevenues = (pendingRevenues.data || []).reduce(
-      (sum, r) => sum + (r.value || 0), 0
+    const totalPendingRevenues = ((pendingRevenues.data || []) as any[]).reduce(
+      (sum: number, r: any) => sum + (r.value || 0),
+      0
     );
 
     return {
@@ -684,22 +714,15 @@ export const ReportsAPI = {
 // ==================== ASSETS ====================
 export const AssetsAPI = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('assets')
-      .select('*')
-      .order('name');
-    
+    const { data, error } = await supabaseRaw.from('assets').select('*').order('name');
+
     if (error) throw error;
     return data || [];
   },
 
   async getById(id: string) {
-    const { data, error } = await supabase
-      .from('assets')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('assets').select('*').eq('id', id).single();
+
     if (error) throw error;
     return data;
   },
@@ -714,34 +737,27 @@ export const AssetsAPI = {
     farm_id?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
-      .from('assets')
-      .insert(asset)
-      .select()
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('assets').insert(asset).select().single();
+
     if (error) throw error;
     return data;
   },
 
   async update(id: string, updates: any) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('assets')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('assets')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('assets').delete().eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -749,12 +765,12 @@ export const AssetsAPI = {
 // ==================== FORECASTS ====================
 export const ForecastsAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('forecasts')
       .select('*')
       .order('year', { ascending: false })
       .order('month', { ascending: false });
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -769,34 +785,27 @@ export const ForecastsAPI = {
     probability: number;
     notes?: string;
   }) {
-    const { data, error } = await supabase
-      .from('forecasts')
-      .insert(forecast)
-      .select()
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('forecasts').insert(forecast).select().single();
+
     if (error) throw error;
     return data;
   },
 
   async update(id: string, updates: any) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('forecasts')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('forecasts')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('forecasts').delete().eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -804,12 +813,12 @@ export const ForecastsAPI = {
 // ==================== BUDGETS ====================
 export const BudgetsAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('budgets')
       .select('*')
       .order('year', { ascending: false })
       .order('month', { ascending: false });
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -822,34 +831,27 @@ export const BudgetsAPI = {
     year: number;
     type: string;
   }) {
-    const { data, error } = await supabase
-      .from('budgets')
-      .insert(budget)
-      .select()
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('budgets').insert(budget).select().single();
+
     if (error) throw error;
     return data;
   },
 
   async update(id: string, updates: any) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('budgets')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('budgets')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('budgets').delete().eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -857,18 +859,18 @@ export const BudgetsAPI = {
 // ==================== CLOSING PERIODS ====================
 export const ClosingPeriodsAPI = {
   async getByYear(year: number) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('closing_periods')
       .select('*')
       .eq('year', year)
       .order('month');
-    
+
     if (error) throw error;
     return data || [];
   },
 
   async close(id: string) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('closing_periods')
       .update({
         status: 'closed',
@@ -877,13 +879,13 @@ export const ClosingPeriodsAPI = {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async reopen(id: string) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('closing_periods')
       .update({
         status: 'open',
@@ -892,7 +894,7 @@ export const ClosingPeriodsAPI = {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -901,11 +903,11 @@ export const ClosingPeriodsAPI = {
 // ==================== FIELD NOTEBOOK ====================
 export const FieldNotebookAPI = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('field_notebook')
       .select('*')
       .order('date', { ascending: false });
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -922,34 +924,31 @@ export const FieldNotebookAPI = {
     photos?: string[];
     location?: any;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('field_notebook')
       .insert(entry)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async update(id: string, updates: any) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('field_notebook')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('field_notebook')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('field_notebook').delete().eq('id', id);
+
     if (error) throw error;
   },
 };
@@ -957,22 +956,15 @@ export const FieldNotebookAPI = {
 // ==================== MACHINES ====================
 export const MachinesAPI = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('machines')
-      .select('*')
-      .order('name');
-    
+    const { data, error } = await supabaseRaw.from('machines').select('*').order('name');
+
     if (error) throw error;
     return data || [];
   },
 
   async getById(id: string) {
-    const { data, error } = await supabase
-      .from('machines')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('machines').select('*').eq('id', id).single();
+
     if (error) throw error;
     return data;
   },
@@ -990,52 +982,39 @@ export const MachinesAPI = {
     farm_id?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
-      .from('machines')
-      .insert(machine)
-      .select()
-      .single();
-    
+    const { data, error } = await supabaseRaw.from('machines').insert(machine).select().single();
+
     if (error) throw error;
     return data;
   },
 
   async update(id: string, updates: any) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('machines')
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async delete(id: string) {
-    const { error } = await supabase
-      .from('machines')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabaseRaw.from('machines').delete().eq('id', id);
+
     if (error) throw error;
   },
 
   async getStatistics() {
-    const { data: machines } = await supabase
-      .from('machines')
-      .select('*');
-    
-    const { data: operations } = await supabase
-      .from('machine_operations')
-      .select('*');
-    
-    const { data: maintenance } = await supabase
-      .from('machine_maintenance')
-      .select('*');
+    const { data: machines } = await supabaseRaw.from('machines').select('*');
+
+    const { data: operations } = await supabaseRaw.from('machine_operations').select('*');
+
+    const { data: maintenance } = await supabaseRaw.from('machine_maintenance').select('*');
 
     const totalMachines = machines?.length || 0;
-    const activeMachines = machines?.filter(m => m.status === 'active').length || 0;
+    const activeMachines = machines?.filter((m) => m.status === 'active').length || 0;
     const totalHours = operations?.reduce((acc, op) => acc + (op.hours_worked || 0), 0) || 0;
     const totalMaintenanceCost = maintenance?.reduce((acc, m) => acc + (m.cost || 0), 0) || 0;
     const totalFuelUsed = operations?.reduce((acc, op) => acc + (op.fuel_used || 0), 0) || 0;
@@ -1044,7 +1023,7 @@ export const MachinesAPI = {
     return {
       totalMachines,
       activeMachines,
-      inMaintenanceMachines: machines?.filter(m => m.status === 'maintenance').length || 0,
+      inMaintenanceMachines: machines?.filter((m) => m.status === 'maintenance').length || 0,
       totalHours,
       totalMaintenanceCost,
       totalFuelUsed,
@@ -1060,7 +1039,7 @@ export const MachineOperationsAPI = {
       .from('machine_operations')
       .select('*')
       .order('start_time', { ascending: false });
-    
+
     if (machineId) query = query.eq('machine_id', machineId);
 
     const { data, error } = await query;
@@ -1082,24 +1061,24 @@ export const MachineOperationsAPI = {
     sector?: string;
     notes?: string;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('machine_operations')
       .insert(operation)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
 
   async getRecentByMachine(machineId: string, limit = 10) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('machine_operations')
       .select('*')
       .eq('machine_id', machineId)
       .order('start_time', { ascending: false })
       .limit(limit);
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -1112,7 +1091,7 @@ export const MachineMaintenanceAPI = {
       .from('machine_maintenance')
       .select('*')
       .order('date', { ascending: false });
-    
+
     if (machineId) query = query.eq('machine_id', machineId);
 
     const { data, error } = await query;
@@ -1132,12 +1111,12 @@ export const MachineMaintenanceAPI = {
     next_maintenance_date?: string;
     next_maintenance_hours?: number;
   }) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseRaw
       .from('machine_maintenance')
       .insert(maintenance)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -1145,14 +1124,14 @@ export const MachineMaintenanceAPI = {
   async getUpcoming(days = 30) {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
-    
-    const { data, error } = await supabase
+
+    const { data, error } = await supabaseRaw
       .from('machine_maintenance')
       .select('*')
       .gte('next_maintenance_date', new Date().toISOString())
       .lte('next_maintenance_date', futureDate.toISOString())
       .order('next_maintenance_date');
-    
+
     if (error) throw error;
     return data || [];
   },

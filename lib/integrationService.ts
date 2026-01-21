@@ -78,7 +78,7 @@ const CACHE_KEYS = {
 // ==================== INTEGRATION SERVICE ====================
 export const IntegrationService = {
   // ============ RUMO MÁQUINAS INTEGRATION ============
-  
+
   /**
    * Fetch machines from Rumo Máquinas app
    * Uses external API or shared Supabase tables
@@ -86,10 +86,7 @@ export const IntegrationService = {
   async getMachines(): Promise<MachineData[]> {
     try {
       // Try to get from shared Supabase table first
-      const { data, error } = await supabase
-        .from('machines')
-        .select('*')
-        .order('name');
+      const { data, error } = await supabase.from('machines').select('*').order('name');
 
       if (!error && data) {
         // Cache the data
@@ -157,7 +154,9 @@ export const IntegrationService = {
   /**
    * Get machine maintenance costs for expense integration
    */
-  async getMachineMaintenanceCosts(period: 'month' | 'quarter' | 'year' = 'month'): Promise<MachineMaintenanceLog[]> {
+  async getMachineMaintenanceCosts(
+    period: 'month' | 'quarter' | 'year' = 'month'
+  ): Promise<MachineMaintenanceLog[]> {
     try {
       const now = new Date();
       let startDate: Date;
@@ -200,7 +199,8 @@ export const IntegrationService = {
     try {
       const { data, error } = await supabase
         .from('expenses')
-        .select(`
+        .select(
+          `
           id,
           date,
           description,
@@ -208,7 +208,8 @@ export const IntegrationService = {
           status,
           sector:sectors(name),
           operation:operations(name)
-        `)
+        `
+        )
         .order('date', { ascending: false });
 
       if (!error && data) {
@@ -252,8 +253,8 @@ export const IntegrationService = {
       const maintenance = await this.getMachineMaintenanceCosts('year');
 
       // Calculate fuel cost (assuming average R$ 6/L)
-      const fuelCost = operations.reduce((sum, op) => sum + ((op.fuel_used || 0) * 6), 0);
-      
+      const fuelCost = operations.reduce((sum, op) => sum + (op.fuel_used || 0) * 6, 0);
+
       // Calculate maintenance cost
       const maintenanceCost = maintenance.reduce((sum, m) => sum + m.cost, 0);
 
@@ -296,26 +297,26 @@ export const IntegrationService = {
     activeMachines: number;
     inMaintenance: number;
     averageHoursPerDay: number;
-    topMachines: Array<{ name: string; hours: number; efficiency: number }>;
+    topMachines: { name: string; hours: number; efficiency: number }[];
   }> {
     try {
       const machines = await this.getMachines();
       const operations = await this.getMachineOperations();
 
       const totalMachines = machines.length;
-      const activeMachines = machines.filter(m => m.status === 'active').length;
-      const inMaintenance = machines.filter(m => m.status === 'maintenance').length;
+      const activeMachines = machines.filter((m) => m.status === 'active').length;
+      const inMaintenance = machines.filter((m) => m.status === 'maintenance').length;
 
       // Calculate average hours per day (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const recentOps = operations.filter(op => new Date(op.start_time) >= thirtyDaysAgo);
+      const recentOps = operations.filter((op) => new Date(op.start_time) >= thirtyDaysAgo);
       const totalHours = recentOps.reduce((sum, op) => sum + op.hours_worked, 0);
       const averageHoursPerDay = totalHours / 30;
 
       // Top machines by hours worked
       const machineHours: Record<string, { name: string; hours: number }> = {};
-      recentOps.forEach(op => {
+      recentOps.forEach((op) => {
         if (!machineHours[op.machine_id]) {
           machineHours[op.machine_id] = { name: op.machine_name, hours: 0 };
         }
@@ -325,7 +326,7 @@ export const IntegrationService = {
       const topMachines = Object.values(machineHours)
         .sort((a, b) => b.hours - a.hours)
         .slice(0, 5)
-        .map(m => ({
+        .map((m) => ({
           name: m.name,
           hours: m.hours,
           efficiency: (m.hours / (30 * 10)) * 100, // Assuming 10h max per day

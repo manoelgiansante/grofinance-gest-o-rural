@@ -1,10 +1,34 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, RefreshControl, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Tractor, Wrench, Fuel, Clock, TrendingUp, AlertTriangle, RefreshCw, Settings, ChevronRight, Activity, DollarSign, BarChart3, Gauge } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { IntegrationService, MachineData } from "@/lib/integrationService";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  RefreshControl,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Tractor,
+  Wrench,
+  Fuel,
+  Clock,
+  TrendingUp,
+  AlertTriangle,
+  RefreshCw,
+  Settings,
+  ChevronRight,
+  Activity,
+  DollarSign,
+  BarChart3,
+  Gauge,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { IntegrationService, MachineData } from '@/lib/integrationService';
 
 export default function MachinesIntegrationScreen() {
   const isWeb = Platform.OS === 'web';
@@ -25,7 +49,7 @@ export default function MachinesIntegrationScreen() {
     activeMachines: 0,
     inMaintenance: 0,
     averageHoursPerDay: 0,
-    topMachines: [] as Array<{ name: string; hours: number; efficiency: number }>,
+    topMachines: [] as { name: string; hours: number; efficiency: number }[],
   });
 
   useEffect(() => {
@@ -35,7 +59,7 @@ export default function MachinesIntegrationScreen() {
   const loadData = async () => {
     try {
       setIsLoading(true);
-      
+
       const [machinesData, costsData, utilizationData, syncTime] = await Promise.all([
         IntegrationService.getMachines(),
         IntegrationService.getMachineCostPerHectare(),
@@ -119,19 +143,17 @@ export default function MachinesIntegrationScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.content}
-          refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         >
           {/* Sync Status */}
           <View style={styles.syncBanner}>
             <View style={styles.syncInfo}>
               <Activity size={18} color={Colors.primary} />
               <Text style={styles.syncText}>
-                {lastSync 
+                {lastSync
                   ? `Última sincronização: ${lastSync.toLocaleString('pt-BR')}`
                   : 'Nunca sincronizado'}
               </Text>
@@ -162,7 +184,9 @@ export default function MachinesIntegrationScreen() {
               </View>
               <View style={[styles.overviewItem, { backgroundColor: Colors.info + '15' }]}>
                 <Clock size={24} color={Colors.info || Colors.primary} />
-                <Text style={styles.overviewValue}>{utilization.averageHoursPerDay.toFixed(1)}h</Text>
+                <Text style={styles.overviewValue}>
+                  {utilization.averageHoursPerDay.toFixed(1)}h
+                </Text>
                 <Text style={styles.overviewLabel}>Média/Dia</Text>
               </View>
             </View>
@@ -176,7 +200,7 @@ export default function MachinesIntegrationScreen() {
               <Text style={styles.costHeaderText}>Custo Total de Máquinas</Text>
             </View>
             <Text style={styles.costTotal}>{formatCurrency(machineCosts.totalCost)}</Text>
-            
+
             <View style={styles.costBreakdown}>
               <View style={styles.costItem}>
                 <View style={[styles.costIcon, { backgroundColor: Colors.warning + '20' }]}>
@@ -193,7 +217,9 @@ export default function MachinesIntegrationScreen() {
                 </View>
                 <View style={styles.costInfo}>
                   <Text style={styles.costLabel}>Manutenção</Text>
-                  <Text style={styles.costValue}>{formatCurrency(machineCosts.maintenanceCost)}</Text>
+                  <Text style={styles.costValue}>
+                    {formatCurrency(machineCosts.maintenanceCost)}
+                  </Text>
                 </View>
               </View>
               <View style={styles.costItem}>
@@ -210,7 +236,10 @@ export default function MachinesIntegrationScreen() {
             <View style={styles.costPerHa}>
               <BarChart3 size={18} color={Colors.success} />
               <Text style={styles.costPerHaText}>
-                Custo/Hectare: <Text style={styles.costPerHaValue}>{formatCurrency(machineCosts.costPerHectare)}/ha</Text>
+                Custo/Hectare:{' '}
+                <Text style={styles.costPerHaValue}>
+                  {formatCurrency(machineCosts.costPerHectare)}/ha
+                </Text>
               </Text>
             </View>
           </View>
@@ -227,14 +256,21 @@ export default function MachinesIntegrationScreen() {
                     </View>
                     <View style={styles.topMachineInfo}>
                       <Text style={styles.topMachineName}>{machine.name}</Text>
-                      <Text style={styles.topMachineHours}>{machine.hours.toFixed(1)} horas trabalhadas</Text>
+                      <Text style={styles.topMachineHours}>
+                        {machine.hours.toFixed(1)} horas trabalhadas
+                      </Text>
                     </View>
                     <View style={styles.topMachineEfficiency}>
-                      <Gauge size={18} color={machine.efficiency > 70 ? Colors.success : Colors.warning} />
-                      <Text style={[
-                        styles.topMachineEfficiencyText,
-                        { color: machine.efficiency > 70 ? Colors.success : Colors.warning }
-                      ]}>
+                      <Gauge
+                        size={18}
+                        color={machine.efficiency > 70 ? Colors.success : Colors.warning}
+                      />
+                      <Text
+                        style={[
+                          styles.topMachineEfficiencyText,
+                          { color: machine.efficiency > 70 ? Colors.success : Colors.warning },
+                        ]}
+                      >
                         {machine.efficiency.toFixed(0)}%
                       </Text>
                     </View>
@@ -246,7 +282,7 @@ export default function MachinesIntegrationScreen() {
 
           {/* Machines List */}
           <Text style={styles.sectionTitle}>Máquinas Cadastradas</Text>
-          
+
           {machines.length === 0 ? (
             <View style={styles.emptyState}>
               <Tractor size={48} color={Colors.textSecondary} />
@@ -267,7 +303,9 @@ export default function MachinesIntegrationScreen() {
               return (
                 <View key={machine.id} style={styles.machineCard}>
                   <View style={styles.machineHeader}>
-                    <View style={[styles.machineIconContainer, { backgroundColor: statusColor + '20' }]}>
+                    <View
+                      style={[styles.machineIconContainer, { backgroundColor: statusColor + '20' }]}
+                    >
                       <Icon size={24} color={statusColor} />
                     </View>
                     <View style={styles.machineInfo}>
@@ -295,7 +333,9 @@ export default function MachinesIntegrationScreen() {
                     {machine.operationalCost && (
                       <View style={styles.machineStat}>
                         <DollarSign size={14} color={Colors.textSecondary} />
-                        <Text style={styles.machineStatText}>{formatCurrency(machine.operationalCost)}/h</Text>
+                        <Text style={styles.machineStatText}>
+                          {formatCurrency(machine.operationalCost)}/h
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -304,7 +344,8 @@ export default function MachinesIntegrationScreen() {
                     <View style={styles.maintenanceAlert}>
                       <AlertTriangle size={14} color={Colors.warning} />
                       <Text style={styles.maintenanceAlertText}>
-                        Previsão de retorno: {new Date(machine.nextMaintenance).toLocaleDateString('pt-BR')}
+                        Previsão de retorno:{' '}
+                        {new Date(machine.nextMaintenance).toLocaleDateString('pt-BR')}
                       </Text>
                     </View>
                   )}
@@ -319,8 +360,9 @@ export default function MachinesIntegrationScreen() {
             <View style={styles.infoContent}>
               <Text style={styles.infoTitle}>Sobre a Integração</Text>
               <Text style={styles.infoText}>
-                Os dados de máquinas são sincronizados automaticamente com o app Rumo Máquinas. 
-                Custos de combustível, manutenção e operação são integrados aos seus relatórios financeiros.
+                Os dados de máquinas são sincronizados automaticamente com o app Rumo Máquinas.
+                Custos de combustível, manutenção e operação são integrados aos seus relatórios
+                financeiros.
               </Text>
             </View>
           </View>

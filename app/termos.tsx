@@ -14,10 +14,7 @@ export default function TermosScreen() {
           headerShown: true,
           title: 'Termos de Uso',
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.backButton}
-            >
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <ArrowLeft size={24} color="#000" />
             </TouchableOpacity>
           ),
@@ -25,224 +22,179 @@ export default function TermosScreen() {
       />
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.content,
-          { paddingBottom: insets.bottom + 20 }
-        ]}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
       >
         <Text style={styles.lastUpdate}>Última atualização: 17 de janeiro de 2025</Text>
 
         <Section title="1. Aceitação dos Termos">
           <Text style={styles.text}>
-            Bem-vindo ao AgroFinance. Ao acessar ou utilizar nosso aplicativo, você concorda 
-            em cumprir e estar vinculado a estes Termos de Uso (Termos). Se você não 
-            concordar com qualquer parte destes Termos, não deverá utilizar o aplicativo.
+            Bem-vindo ao AgroFinance. Ao acessar ou utilizar nosso aplicativo, você concorda em
+            cumprir e estar vinculado a estes Termos de Uso (Termos). Se você não concordar com
+            qualquer parte destes Termos, não deverá utilizar o aplicativo.
             {'\n\n'}
-            Estes Termos constituem um acordo legal entre você (Usuário) e a AgroFinance 
-            Tecnologia Ltda (AgroFinance, nós, nosso).
+            Estes Termos constituem um acordo legal entre você (Usuário) e a AgroFinance Tecnologia
+            Ltda (AgroFinance, nós, nosso).
           </Text>
         </Section>
 
         <Section title="2. Descrição do Serviço">
           <Text style={styles.text}>
-            O AgroFinance é uma plataforma de gestão financeira e operacional para 
-            propriedades rurais que oferece:{'\n\n'}
-            
-            • Controle financeiro (receitas, despesas, fluxo de caixa){'\n'}
-            • Gestão de operações agrícolas{'\n'}
-            • Controle de estoque e insumos{'\n'}
-            • Gestão de contratos e clientes{'\n'}
-            • Emissão e gerenciamento de notas fiscais{'\n'}
-            • Relatórios gerenciais e análises{'\n'}
-            • DRE (Demonstração do Resultado do Exercício){'\n'}
-            • Gestão de safras e áreas cultivadas
+            O AgroFinance é uma plataforma de gestão financeira e operacional para propriedades
+            rurais que oferece:{'\n\n'}• Controle financeiro (receitas, despesas, fluxo de caixa)
+            {'\n'}• Gestão de operações agrícolas{'\n'}• Controle de estoque e insumos{'\n'}• Gestão
+            de contratos e clientes{'\n'}• Emissão e gerenciamento de notas fiscais{'\n'}•
+            Relatórios gerenciais e análises{'\n'}• DRE (Demonstração do Resultado do Exercício)
+            {'\n'}• Gestão de safras e áreas cultivadas
           </Text>
         </Section>
 
         <Section title="3. Cadastro e Conta">
           <Text style={styles.subsectionTitle}>3.1 Requisitos de Cadastro</Text>
           <Text style={styles.text}>
-            Para utilizar o AgroFinance, você deve:{'\n'}
-            • Ter no mínimo 18 anos de idade{'\n'}
-            • Fornecer informações verdadeiras, precisas e atualizadas{'\n'}
-            • Manter a confidencialidade de suas credenciais de acesso{'\n'}
-            • Notificar-nos imediatamente sobre qualquer uso não autorizado
+            Para utilizar o AgroFinance, você deve:{'\n'}• Ter no mínimo 18 anos de idade{'\n'}•
+            Fornecer informações verdadeiras, precisas e atualizadas{'\n'}• Manter a
+            confidencialidade de suas credenciais de acesso{'\n'}• Notificar-nos imediatamente sobre
+            qualquer uso não autorizado
           </Text>
 
           <Text style={styles.subsectionTitle}>3.2 Responsabilidade pela Conta</Text>
           <Text style={styles.text}>
-            Você é totalmente responsável por todas as atividades realizadas em sua conta. 
-            Não compartilhe suas credenciais de acesso com terceiros.
+            Você é totalmente responsável por todas as atividades realizadas em sua conta. Não
+            compartilhe suas credenciais de acesso com terceiros.
           </Text>
         </Section>
 
         <Section title="4. Uso Aceitável">
           <Text style={styles.text}>
-            Ao utilizar o AgroFinance, você concorda em NÃO:{'\n\n'}
-            
-            • Violar qualquer lei ou regulamento aplicável{'\n'}
-            • Usar o serviço para fins fraudulentos ou ilícitos{'\n'}
-            • Inserir dados falsos ou enganosos{'\n'}
-            • Tentar obter acesso não autorizado ao sistema{'\n'}
-            • Interferir no funcionamento do aplicativo{'\n'}
-            • Fazer engenharia reversa, descompilar ou desmontar o software{'\n'}
-            • Utilizar bots, scrapers ou automação não autorizada{'\n'}
-            • Revender ou sublicenciar o serviço sem autorização{'\n'}
-            • Transmitir vírus, malware ou código malicioso
+            Ao utilizar o AgroFinance, você concorda em NÃO:{'\n\n'}• Violar qualquer lei ou
+            regulamento aplicável{'\n'}• Usar o serviço para fins fraudulentos ou ilícitos{'\n'}•
+            Inserir dados falsos ou enganosos{'\n'}• Tentar obter acesso não autorizado ao sistema
+            {'\n'}• Interferir no funcionamento do aplicativo{'\n'}• Fazer engenharia reversa,
+            descompilar ou desmontar o software{'\n'}• Utilizar bots, scrapers ou automação não
+            autorizada{'\n'}• Revender ou sublicenciar o serviço sem autorização{'\n'}• Transmitir
+            vírus, malware ou código malicioso
           </Text>
         </Section>
 
         <Section title="5. Propriedade Intelectual">
           <Text style={styles.text}>
-            Todo o conteúdo do AgroFinance, incluindo mas não limitado a software, design, 
-            texto, gráficos, logos, ícones e código, é propriedade da AgroFinance ou de 
-            seus licenciadores e está protegido por leis de direitos autorais e propriedade 
-            intelectual.{'\n\n'}
-            
-            Você recebe uma licença limitada, não exclusiva e revogável para usar o 
-            aplicativo conforme estes Termos. Esta licença não inclui direitos de:{'\n'}
-            • Revenda ou uso comercial do serviço{'\n'}
-            • Coleta ou uso de dados do aplicativo{'\n'}
-            • Uso derivado do aplicativo ou seu conteúdo{'\n'}
-            • Download ou cópia de informações para terceiros
+            Todo o conteúdo do AgroFinance, incluindo mas não limitado a software, design, texto,
+            gráficos, logos, ícones e código, é propriedade da AgroFinance ou de seus licenciadores
+            e está protegido por leis de direitos autorais e propriedade intelectual.{'\n\n'}
+            Você recebe uma licença limitada, não exclusiva e revogável para usar o aplicativo
+            conforme estes Termos. Esta licença não inclui direitos de:{'\n'}• Revenda ou uso
+            comercial do serviço{'\n'}• Coleta ou uso de dados do aplicativo{'\n'}• Uso derivado do
+            aplicativo ou seu conteúdo{'\n'}• Download ou cópia de informações para terceiros
           </Text>
         </Section>
 
         <Section title="6. Seus Dados">
           <Text style={styles.text}>
-            Você mantém todos os direitos sobre os dados que insere no AgroFinance 
-            (informações financeiras, operacionais, cadastros, etc.).{'\n\n'}
-            
-            Ao utilizar nosso serviço, você nos concede uma licença limitada para processar, 
-            armazenar e exibir seus dados exclusivamente para fornecer os serviços 
-            contratados.{'\n\n'}
-            
-            Você é responsável pela precisão, legalidade e qualidade dos dados inseridos. 
-            Para mais informações sobre como tratamos seus dados, consulte nossa 
-            Política de Privacidade.
+            Você mantém todos os direitos sobre os dados que insere no AgroFinance (informações
+            financeiras, operacionais, cadastros, etc.).{'\n\n'}
+            Ao utilizar nosso serviço, você nos concede uma licença limitada para processar,
+            armazenar e exibir seus dados exclusivamente para fornecer os serviços contratados.
+            {'\n\n'}
+            Você é responsável pela precisão, legalidade e qualidade dos dados inseridos. Para mais
+            informações sobre como tratamos seus dados, consulte nossa Política de Privacidade.
           </Text>
         </Section>
 
         <Section title="7. Pagamento e Assinatura">
           <Text style={styles.text}>
-            <Text style={styles.bold}>7.1 Planos e Preços:</Text> Os planos e preços estão 
+            <Text style={styles.bold}>7.1 Planos e Preços:</Text> Os planos e preços estão
             disponíveis no aplicativo e podem ser alterados mediante aviso prévio.{'\n\n'}
-            
-            <Text style={styles.bold}>7.2 Renovação Automática:</Text> Assinaturas são 
-            renovadas automaticamente. Você pode cancelar a qualquer momento nas configurações.{'\n\n'}
-            
-            <Text style={styles.bold}>7.3 Reembolsos:</Text> Política de reembolso de acordo 
-            com o Código de Defesa do Consumidor (CDC) e termos da loja de aplicativos.{'\n\n'}
-            
-            <Text style={styles.bold}>7.4 Suspensão:</Text> Podemos suspender o acesso em 
-            caso de inadimplência ou violação destes Termos.
+            <Text style={styles.bold}>7.2 Renovação Automática:</Text> Assinaturas são renovadas
+            automaticamente. Você pode cancelar a qualquer momento nas configurações.{'\n\n'}
+            <Text style={styles.bold}>7.3 Reembolsos:</Text> Política de reembolso de acordo com o
+            Código de Defesa do Consumidor (CDC) e termos da loja de aplicativos.{'\n\n'}
+            <Text style={styles.bold}>7.4 Suspensão:</Text> Podemos suspender o acesso em caso de
+            inadimplência ou violação destes Termos.
           </Text>
         </Section>
 
         <Section title="8. Disponibilidade do Serviço">
           <Text style={styles.text}>
-            Nos esforçamos para manter o AgroFinance disponível 24/7, porém:{'\n\n'}
-            
-            • Podem ocorrer interrupções para manutenção programada{'\n'}
-            • Não garantimos disponibilidade ininterrupta{'\n'}
-            • Não nos responsabilizamos por indisponibilidade causada por terceiros{'\n'}
-            • Reservamos o direito de modificar ou descontinuar recursos{'\n\n'}
-            
+            Nos esforçamos para manter o AgroFinance disponível 24/7, porém:{'\n\n'}• Podem ocorrer
+            interrupções para manutenção programada{'\n'}• Não garantimos disponibilidade
+            ininterrupta{'\n'}• Não nos responsabilizamos por indisponibilidade causada por
+            terceiros{'\n'}• Reservamos o direito de modificar ou descontinuar recursos{'\n\n'}
             Você deve manter backups adequados de seus dados importantes.
           </Text>
         </Section>
 
         <Section title="9. Limitação de Responsabilidade">
           <Text style={styles.text}>
-            O AgroFinance é fornecido como está e conforme disponível. Na extensão 
-            máxima permitida por lei:{'\n\n'}
-            
-            • Não garantimos que o serviço será livre de erros ou interrupções{'\n'}
-            • Não nos responsabilizamos por decisões tomadas com base nos dados do app{'\n'}
-            • Não somos responsáveis por perdas de dados, lucros ou prejuízos indiretos{'\n'}
-            • Nossa responsabilidade total está limitada ao valor pago nos últimos 12 meses{'\n\n'}
-            
-            Você é responsável por verificar a exatidão de cálculos fiscais e contábeis 
-            com seu contador antes de tomar decisões financeiras importantes.
+            O AgroFinance é fornecido como está e conforme disponível. Na extensão máxima permitida
+            por lei:{'\n\n'}• Não garantimos que o serviço será livre de erros ou interrupções{'\n'}
+            • Não nos responsabilizamos por decisões tomadas com base nos dados do app{'\n'}• Não
+            somos responsáveis por perdas de dados, lucros ou prejuízos indiretos{'\n'}• Nossa
+            responsabilidade total está limitada ao valor pago nos últimos 12 meses{'\n\n'}
+            Você é responsável por verificar a exatidão de cálculos fiscais e contábeis com seu
+            contador antes de tomar decisões financeiras importantes.
           </Text>
         </Section>
 
         <Section title="10. Indenização">
           <Text style={styles.text}>
-            Você concorda em indenizar e isentar a AgroFinance, seus diretores, funcionários 
-            e parceiros de quaisquer reivindicações, perdas, danos, responsabilidades e 
-            despesas (incluindo honorários advocatícios) resultantes de:{'\n\n'}
-            
-            • Seu uso do aplicativo{'\n'}
-            • Violação destes Termos{'\n'}
-            • Violação de direitos de terceiros{'\n'}
-            • Informações falsas ou enganosas fornecidas por você
+            Você concorda em indenizar e isentar a AgroFinance, seus diretores, funcionários e
+            parceiros de quaisquer reivindicações, perdas, danos, responsabilidades e despesas
+            (incluindo honorários advocatícios) resultantes de:{'\n\n'}• Seu uso do aplicativo{'\n'}
+            • Violação destes Termos{'\n'}• Violação de direitos de terceiros{'\n'}• Informações
+            falsas ou enganosas fornecidas por você
           </Text>
         </Section>
 
         <Section title="11. Modificações dos Termos">
           <Text style={styles.text}>
-            Reservamos o direito de modificar estes Termos a qualquer momento. Alterações 
-            significativas serão notificadas por e-mail ou no aplicativo com pelo menos 
-            30 dias de antecedência.{'\n\n'}
-            
-            O uso continuado do serviço após as alterações constitui aceitação dos novos 
-            Termos. Se não concordar, você deve descontinuar o uso e cancelar sua conta.
+            Reservamos o direito de modificar estes Termos a qualquer momento. Alterações
+            significativas serão notificadas por e-mail ou no aplicativo com pelo menos 30 dias de
+            antecedência.{'\n\n'}O uso continuado do serviço após as alterações constitui aceitação
+            dos novos Termos. Se não concordar, você deve descontinuar o uso e cancelar sua conta.
           </Text>
         </Section>
 
         <Section title="12. Rescisão">
           <Text style={styles.text}>
-            <Text style={styles.bold}>12.1 Por Você:</Text> Você pode encerrar sua conta a 
-            qualquer momento através das configurações do aplicativo.{'\n\n'}
-            
-            <Text style={styles.bold}>12.2 Por Nós:</Text> Podemos suspender ou encerrar 
-            sua conta se você violar estes Termos, sem reembolso de valores pagos.{'\n\n'}
-            
-            <Text style={styles.bold}>12.3 Efeitos:</Text> Após o encerramento, você perderá 
-            acesso aos dados. Recomendamos exportar seus dados antes de cancelar.
+            <Text style={styles.bold}>12.1 Por Você:</Text> Você pode encerrar sua conta a qualquer
+            momento através das configurações do aplicativo.{'\n\n'}
+            <Text style={styles.bold}>12.2 Por Nós:</Text> Podemos suspender ou encerrar sua conta
+            se você violar estes Termos, sem reembolso de valores pagos.{'\n\n'}
+            <Text style={styles.bold}>12.3 Efeitos:</Text> Após o encerramento, você perderá acesso
+            aos dados. Recomendamos exportar seus dados antes de cancelar.
           </Text>
         </Section>
 
         <Section title="13. Lei Aplicável e Jurisdição">
           <Text style={styles.text}>
-            Estes Termos são regidos pelas leis da República Federativa do Brasil, 
-            especialmente:{'\n\n'}
-            
-            • Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018){'\n'}
-            • Código de Defesa do Consumidor (CDC - Lei 8.078/1990){'\n'}
-            • Marco Civil da Internet (Lei 12.965/2014){'\n\n'}
-            
-            Fica eleito o foro da comarca de [Inserir Cidade], Brasil, para dirimir 
-            quaisquer controvérsias oriundas destes Termos, com renúncia a qualquer outro, 
-            por mais privilegiado que seja.
+            Estes Termos são regidos pelas leis da República Federativa do Brasil, especialmente:
+            {'\n\n'}• Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018){'\n'}• Código de
+            Defesa do Consumidor (CDC - Lei 8.078/1990){'\n'}• Marco Civil da Internet (Lei
+            12.965/2014){'\n\n'}
+            Fica eleito o foro da comarca de [Inserir Cidade], Brasil, para dirimir quaisquer
+            controvérsias oriundas destes Termos, com renúncia a qualquer outro, por mais
+            privilegiado que seja.
           </Text>
         </Section>
 
         <Section title="14. Disposições Gerais">
           <Text style={styles.text}>
-            • <Text style={styles.bold}>Integralidade:</Text> Estes Termos constituem o 
-            acordo integral entre você e a AgroFinance.{'\n\n'}
-            
-            • <Text style={styles.bold}>Renúncia:</Text> A não execução de qualquer 
-            disposição não constitui renúncia.{'\n\n'}
-            
-            • <Text style={styles.bold}>Divisibilidade:</Text> Se alguma disposição for 
-            considerada inválida, as demais permanecerão em vigor.{'\n\n'}
-            
-            • <Text style={styles.bold}>Cessão:</Text> Você não pode transferir seus 
-            direitos sem nosso consentimento.{'\n\n'}
-            
-            • <Text style={styles.bold}>Idioma:</Text> Em caso de conflito entre traduções, 
-            a versão em português prevalece.
+            • <Text style={styles.bold}>Integralidade:</Text> Estes Termos constituem o acordo
+            integral entre você e a AgroFinance.{'\n\n'}• <Text style={styles.bold}>Renúncia:</Text>{' '}
+            A não execução de qualquer disposição não constitui renúncia.{'\n\n'}•{' '}
+            <Text style={styles.bold}>Divisibilidade:</Text> Se alguma disposição for considerada
+            inválida, as demais permanecerão em vigor.{'\n\n'}•{' '}
+            <Text style={styles.bold}>Cessão:</Text> Você não pode transferir seus direitos sem
+            nosso consentimento.{'\n\n'}• <Text style={styles.bold}>Idioma:</Text> Em caso de
+            conflito entre traduções, a versão em português prevalece.
           </Text>
         </Section>
 
         <Section title="15. Contato">
           <Text style={styles.text}>
             Para dúvidas sobre estes Termos de Uso:{'\n\n'}
-            
-            <Text style={styles.bold}>AgroFinance Tecnologia Ltda</Text>{'\n'}
+            <Text style={styles.bold}>AgroFinance Tecnologia Ltda</Text>
+            {'\n'}
             <Text style={styles.bold}>CNPJ:</Text> [Inserir CNPJ]{'\n'}
             <Text style={styles.bold}>Endereço:</Text> [Inserir Endereço Completo]{'\n'}
             <Text style={styles.bold}>E-mail:</Text> contato@agrofinance.app{'\n'}
@@ -253,15 +205,13 @@ export default function TermosScreen() {
 
         <View style={styles.acceptance}>
           <Text style={styles.acceptanceText}>
-            Ao utilizar o AgroFinance, você declara ter lido, compreendido e concordado 
-            com estes Termos de Uso e com nossa Política de Privacidade.
+            Ao utilizar o AgroFinance, você declara ter lido, compreendido e concordado com estes
+            Termos de Uso e com nossa Política de Privacidade.
           </Text>
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => Linking.openURL('https://agrofinance.app/privacidade')}
-          >
+          <TouchableOpacity onPress={() => Linking.openURL('https://agrofinance.app/privacidade')}>
             <Text style={styles.link}>Ver Política de Privacidade</Text>
           </TouchableOpacity>
           <TouchableOpacity

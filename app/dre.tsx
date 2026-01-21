@@ -1,12 +1,28 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Download, TrendingUp, TrendingDown, DollarSign, FileText, Share2 } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import Colors from "@/constants/colors";
-import { useState, useMemo } from "react";
-import { startOfMonth, endOfMonth, startOfYear, endOfYear, format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Download,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  FileText,
+  Share2,
+} from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import Colors from '@/constants/colors';
+import { useState, useMemo } from 'react';
+import { startOfMonth, endOfMonth, startOfYear, endOfYear, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 type Period = 'month' | 'quarter' | 'year' | 'custom';
 
@@ -43,7 +59,10 @@ export default function DREScreen() {
     );
 
     const totalRevenue = filteredRevenues.reduce((sum, r) => sum + r.value, 0);
-    const totalExpense = filteredExpenses.reduce((sum, e) => sum + (e.actualValue || e.invoiceValue || e.negotiatedValue), 0);
+    const totalExpense = filteredExpenses.reduce(
+      (sum, e) => sum + (e.actualValue || e.invoiceValue || e.negotiatedValue),
+      0
+    );
     const netProfit = totalRevenue - totalExpense;
     const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
 
@@ -99,7 +118,7 @@ export default function DREScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "DRE",
+          title: 'DRE',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -109,15 +128,23 @@ export default function DREScreen() {
       />
 
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['top']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>Demonstrativo de Resultado</Text>
               <Text style={styles.subtitle}>
-                {format(startDate, "dd 'de' MMM", { locale: ptBR })} - {format(endDate, "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
+                {format(startDate, "dd 'de' MMM", { locale: ptBR })} -{' '}
+                {format(endDate, "dd 'de' MMM 'de' yyyy", { locale: ptBR })}
               </Text>
             </View>
-            <TouchableOpacity style={styles.exportButton} onPress={() => setShowExportModal(true)} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={styles.exportButton}
+              onPress={() => setShowExportModal(true)}
+              activeOpacity={0.7}
+            >
               <Download size={18} color={Colors.primary} />
               <Text style={styles.exportText}>Exportar</Text>
             </TouchableOpacity>
@@ -129,21 +156,33 @@ export default function DREScreen() {
               onPress={() => setSelectedPeriod('month')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.periodText, selectedPeriod === 'month' && styles.periodTextActive]}>Mês</Text>
+              <Text
+                style={[styles.periodText, selectedPeriod === 'month' && styles.periodTextActive]}
+              >
+                Mês
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.periodChip, selectedPeriod === 'quarter' && styles.periodChipActive]}
               onPress={() => setSelectedPeriod('quarter')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.periodText, selectedPeriod === 'quarter' && styles.periodTextActive]}>Trimestre</Text>
+              <Text
+                style={[styles.periodText, selectedPeriod === 'quarter' && styles.periodTextActive]}
+              >
+                Trimestre
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.periodChip, selectedPeriod === 'year' && styles.periodChipActive]}
               onPress={() => setSelectedPeriod('year')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.periodText, selectedPeriod === 'year' && styles.periodTextActive]}>Ano</Text>
+              <Text
+                style={[styles.periodText, selectedPeriod === 'year' && styles.periodTextActive]}
+              >
+                Ano
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -182,7 +221,12 @@ export default function DREScreen() {
               </View>
               <View style={styles.profitInfo}>
                 <Text style={styles.profitLabel}>Lucro Líquido</Text>
-                <Text style={[styles.profitValue, { color: dreData.netProfit >= 0 ? Colors.success : Colors.error }]}>
+                <Text
+                  style={[
+                    styles.profitValue,
+                    { color: dreData.netProfit >= 0 ? Colors.success : Colors.error },
+                  ]}
+                >
                   R$ {dreData.netProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </Text>
               </View>
@@ -279,7 +323,12 @@ export default function DREScreen() {
                     </View>
                     <View style={[styles.operationLine, styles.operationLineTotal]}>
                       <Text style={styles.operationLineLabelBold}>Resultado</Text>
-                      <Text style={[styles.operationLineValueBold, { color: result >= 0 ? Colors.success : Colors.error }]}>
+                      <Text
+                        style={[
+                          styles.operationLineValueBold,
+                          { color: result >= 0 ? Colors.success : Colors.error },
+                        ]}
+                      >
                         R$ {result.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </Text>
                     </View>
@@ -303,12 +352,10 @@ export default function DREScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Exportar DRE</Text>
-            <Text style={styles.modalDescription}>
-              Escolha o formato de exportação
-            </Text>
+            <Text style={styles.modalDescription}>Escolha o formato de exportação</Text>
 
-            <TouchableOpacity 
-              style={styles.exportOption} 
+            <TouchableOpacity
+              style={styles.exportOption}
               onPress={() => handleExport('Excel')}
               activeOpacity={0.7}
             >
@@ -321,8 +368,8 @@ export default function DREScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={styles.exportOption} 
+            <TouchableOpacity
+              style={styles.exportOption}
               onPress={() => handleExport('PDF')}
               activeOpacity={0.7}
             >
@@ -335,8 +382,8 @@ export default function DREScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={styles.exportOption} 
+            <TouchableOpacity
+              style={styles.exportOption}
               onPress={() => handleExport('Contador')}
               activeOpacity={0.7}
             >
@@ -349,7 +396,7 @@ export default function DREScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setShowExportModal(false)}
               activeOpacity={0.7}

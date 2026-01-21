@@ -1,15 +1,40 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Modal, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { 
-  ArrowLeft, Upload, Download, FileText, CheckCircle2, AlertCircle, 
-  RefreshCw, Link2, Link2Off, Calendar, TrendingUp, TrendingDown,
-  Search, Filter, X, Check, HelpCircle, CreditCard, Plus
-} from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Upload,
+  Download,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Link2,
+  Link2Off,
+  Calendar,
+  TrendingUp,
+  TrendingDown,
+  Search,
+  Filter,
+  X,
+  Check,
+  HelpCircle,
+  CreditCard,
+  Plus,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 type TransactionStatus = 'matched' | 'unmatched' | 'divergent' | 'ignored';
 
@@ -59,20 +84,24 @@ export default function BankReconciliationScreen() {
 
   const isWeb = Platform.OS === 'web';
 
-  const matchedCount = bankTransactions.filter(t => t.status === 'matched').length;
-  const unmatchedCount = bankTransactions.filter(t => t.status === 'unmatched').length;
-  const divergentCount = bankTransactions.filter(t => t.status === 'divergent').length;
+  const matchedCount = bankTransactions.filter((t) => t.status === 'matched').length;
+  const unmatchedCount = bankTransactions.filter((t) => t.status === 'unmatched').length;
+  const divergentCount = bankTransactions.filter((t) => t.status === 'divergent').length;
 
-  const totalCredits = bankTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.value, 0);
-  const totalDebits = bankTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.value, 0);
+  const totalCredits = bankTransactions
+    .filter((t) => t.type === 'credit')
+    .reduce((sum, t) => sum + t.value, 0);
+  const totalDebits = bankTransactions
+    .filter((t) => t.type === 'debit')
+    .reduce((sum, t) => sum + t.value, 0);
 
-  const filteredTransactions = bankTransactions.filter(t => {
+  const filteredTransactions = bankTransactions.filter((t) => {
     if (filterStatus !== 'all' && t.status !== filterStatus) return false;
     if (search && !t.description.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
-  const unmatchedSystemEntries = systemEntries.filter(e => !e.isMatched);
+  const unmatchedSystemEntries = systemEntries.filter((e) => !e.isMatched);
 
   const handleImportOFX = () => {
     // Simular importação de arquivo OFX
@@ -84,28 +113,28 @@ export default function BankReconciliationScreen() {
 
   const handleAutoReconcile = () => {
     // Simular conciliação automática
-    alert('Conciliação automática realizada!\n\n4 transações conciliadas automaticamente\n2 transações com divergência detectada\n1 transação sem vínculo');
+    alert(
+      'Conciliação automática realizada!\n\n4 transações conciliadas automaticamente\n2 transações com divergência detectada\n1 transação sem vínculo'
+    );
   };
 
   const handleMatchTransaction = (transaction: BankTransaction, entryId: string) => {
-    setBankTransactions(prev => 
-      prev.map(t => t.id === transaction.id 
-        ? { ...t, status: 'matched' as TransactionStatus, matchedEntryId: entryId }
-        : t
+    setBankTransactions((prev) =>
+      prev.map((t) =>
+        t.id === transaction.id
+          ? { ...t, status: 'matched' as TransactionStatus, matchedEntryId: entryId }
+          : t
       )
     );
-    setSystemEntries(prev =>
-      prev.map(e => e.id === entryId ? { ...e, isMatched: true } : e)
-    );
+    setSystemEntries((prev) => prev.map((e) => (e.id === entryId ? { ...e, isMatched: true } : e)));
     setShowMatchModal(false);
     setSelectedTransaction(null);
   };
 
   const handleIgnoreTransaction = (transactionId: string) => {
-    setBankTransactions(prev =>
-      prev.map(t => t.id === transactionId 
-        ? { ...t, status: 'ignored' as TransactionStatus }
-        : t
+    setBankTransactions((prev) =>
+      prev.map((t) =>
+        t.id === transactionId ? { ...t, status: 'ignored' as TransactionStatus } : t
       )
     );
   };
@@ -115,7 +144,7 @@ export default function BankReconciliationScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Conciliação Bancária",
+          title: 'Conciliação Bancária',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -141,7 +170,10 @@ export default function BankReconciliationScreen() {
               onPress={() => setActiveTab('import')}
               activeOpacity={0.7}
             >
-              <Upload size={18} color={activeTab === 'import' ? Colors.primary : Colors.textSecondary} />
+              <Upload
+                size={18}
+                color={activeTab === 'import' ? Colors.primary : Colors.textSecondary}
+              />
               <Text style={[styles.tabText, activeTab === 'import' && styles.tabTextActive]}>
                 Importar
               </Text>
@@ -151,7 +183,10 @@ export default function BankReconciliationScreen() {
               onPress={() => setActiveTab('reconcile')}
               activeOpacity={0.7}
             >
-              <Link2 size={18} color={activeTab === 'reconcile' ? Colors.primary : Colors.textSecondary} />
+              <Link2
+                size={18}
+                color={activeTab === 'reconcile' ? Colors.primary : Colors.textSecondary}
+              />
               <Text style={[styles.tabText, activeTab === 'reconcile' && styles.tabTextActive]}>
                 Conciliar
               </Text>
@@ -161,7 +196,10 @@ export default function BankReconciliationScreen() {
               onPress={() => setActiveTab('review')}
               activeOpacity={0.7}
             >
-              <CheckCircle2 size={18} color={activeTab === 'review' ? Colors.primary : Colors.textSecondary} />
+              <CheckCircle2
+                size={18}
+                color={activeTab === 'review' ? Colors.primary : Colors.textSecondary}
+              />
               <Text style={[styles.tabText, activeTab === 'review' && styles.tabTextActive]}>
                 Revisar
               </Text>
@@ -181,7 +219,7 @@ export default function BankReconciliationScreen() {
                     Importe seu extrato bancário no formato OFX para fazer a conciliação automática
                     com os lançamentos do sistema.
                   </Text>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.importButton}
                     onPress={handleImportOFX}
                     activeOpacity={0.7}
@@ -209,16 +247,14 @@ export default function BankReconciliationScreen() {
                     <View style={styles.helpStepNumber}>
                       <Text style={styles.helpStepNumberText}>1</Text>
                     </View>
-                    <Text style={styles.helpStepText}>
-                      Acesse o Internet Banking do seu banco
-                    </Text>
+                    <Text style={styles.helpStepText}>Acesse o Internet Banking do seu banco</Text>
                   </View>
                   <View style={styles.helpStep}>
                     <View style={styles.helpStepNumber}>
                       <Text style={styles.helpStepNumberText}>2</Text>
                     </View>
                     <Text style={styles.helpStepText}>
-                      Vá em "Extrato" ou "Movimentações"
+                      Vá em &quot;Extrato&quot; ou &quot;Movimentações&quot;
                     </Text>
                   </View>
                   <View style={styles.helpStep}>
@@ -240,8 +276,8 @@ export default function BankReconciliationScreen() {
                     </View>
                   </View>
                   <Text style={styles.openFinanceDescription}>
-                    Conecte sua conta bancária via Open Finance para sincronização automática
-                    de transações em tempo real.
+                    Conecte sua conta bancária via Open Finance para sincronização automática de
+                    transações em tempo real.
                   </Text>
                 </View>
               </View>
@@ -288,7 +324,7 @@ export default function BankReconciliationScreen() {
                 </View>
 
                 {/* Auto Reconcile Button */}
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.autoReconcileButton}
                   onPress={handleAutoReconcile}
                   activeOpacity={0.7}
@@ -304,31 +340,60 @@ export default function BankReconciliationScreen() {
                       style={[styles.filterChip, filterStatus === 'all' && styles.filterChipActive]}
                       onPress={() => setFilterStatus('all')}
                     >
-                      <Text style={[styles.filterText, filterStatus === 'all' && styles.filterTextActive]}>
+                      <Text
+                        style={[
+                          styles.filterText,
+                          filterStatus === 'all' && styles.filterTextActive,
+                        ]}
+                      >
                         Todos ({bankTransactions.length})
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.filterChip, filterStatus === 'unmatched' && styles.filterChipActive]}
+                      style={[
+                        styles.filterChip,
+                        filterStatus === 'unmatched' && styles.filterChipActive,
+                      ]}
                       onPress={() => setFilterStatus('unmatched')}
                     >
-                      <Text style={[styles.filterText, filterStatus === 'unmatched' && styles.filterTextActive]}>
+                      <Text
+                        style={[
+                          styles.filterText,
+                          filterStatus === 'unmatched' && styles.filterTextActive,
+                        ]}
+                      >
                         Sem Vínculo ({unmatchedCount})
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.filterChip, filterStatus === 'divergent' && styles.filterChipActive]}
+                      style={[
+                        styles.filterChip,
+                        filterStatus === 'divergent' && styles.filterChipActive,
+                      ]}
                       onPress={() => setFilterStatus('divergent')}
                     >
-                      <Text style={[styles.filterText, filterStatus === 'divergent' && styles.filterTextActive]}>
+                      <Text
+                        style={[
+                          styles.filterText,
+                          filterStatus === 'divergent' && styles.filterTextActive,
+                        ]}
+                      >
                         Divergentes ({divergentCount})
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.filterChip, filterStatus === 'matched' && styles.filterChipActive]}
+                      style={[
+                        styles.filterChip,
+                        filterStatus === 'matched' && styles.filterChipActive,
+                      ]}
                       onPress={() => setFilterStatus('matched')}
                     >
-                      <Text style={[styles.filterText, filterStatus === 'matched' && styles.filterTextActive]}>
+                      <Text
+                        style={[
+                          styles.filterText,
+                          filterStatus === 'matched' && styles.filterTextActive,
+                        ]}
+                      >
                         Conciliados ({matchedCount})
                       </Text>
                     </TouchableOpacity>
@@ -337,7 +402,7 @@ export default function BankReconciliationScreen() {
 
                 {/* Transactions List */}
                 <Text style={styles.sectionTitle}>Transações Bancárias</Text>
-                
+
                 {filteredTransactions.map((transaction) => {
                   const statusConfig = STATUS_CONFIG[transaction.status];
                   const StatusIcon = statusConfig.icon;
@@ -349,7 +414,10 @@ export default function BankReconciliationScreen() {
                       style={styles.transactionCard}
                       activeOpacity={0.7}
                       onPress={() => {
-                        if (transaction.status === 'unmatched' || transaction.status === 'divergent') {
+                        if (
+                          transaction.status === 'unmatched' ||
+                          transaction.status === 'divergent'
+                        ) {
                           setSelectedTransaction(transaction);
                           setShowMatchModal(true);
                         }
@@ -362,7 +430,12 @@ export default function BankReconciliationScreen() {
                             {format(transaction.date, 'dd/MM/yyyy')}
                           </Text>
                         </View>
-                        <View style={[styles.statusBadge, { backgroundColor: statusConfig.color + '15' }]}>
+                        <View
+                          style={[
+                            styles.statusBadge,
+                            { backgroundColor: statusConfig.color + '15' },
+                          ]}
+                        >
                           <StatusIcon size={12} color={statusConfig.color} />
                           <Text style={[styles.statusText, { color: statusConfig.color }]}>
                             {statusConfig.label}
@@ -377,20 +450,28 @@ export default function BankReconciliationScreen() {
                           </Text>
                         </View>
                         <View style={styles.transactionValueContainer}>
-                          <View style={[
-                            styles.typeIcon,
-                            { backgroundColor: isCredit ? Colors.success + '18' : Colors.error + '18' }
-                          ]}>
+                          <View
+                            style={[
+                              styles.typeIcon,
+                              {
+                                backgroundColor: isCredit
+                                  ? Colors.success + '18'
+                                  : Colors.error + '18',
+                              },
+                            ]}
+                          >
                             {isCredit ? (
                               <TrendingUp size={16} color={Colors.success} />
                             ) : (
                               <TrendingDown size={16} color={Colors.error} />
                             )}
                           </View>
-                          <Text style={[
-                            styles.transactionValue,
-                            { color: isCredit ? Colors.success : Colors.error }
-                          ]}>
+                          <Text
+                            style={[
+                              styles.transactionValue,
+                              { color: isCredit ? Colors.success : Colors.error },
+                            ]}
+                          >
                             {isCredit ? '+' : '-'} R$ {transaction.value.toLocaleString('pt-BR')}
                           </Text>
                         </View>
@@ -407,7 +488,7 @@ export default function BankReconciliationScreen() {
 
                       {transaction.status === 'unmatched' && (
                         <View style={styles.actionRow}>
-                          <TouchableOpacity 
+                          <TouchableOpacity
                             style={styles.matchButton}
                             onPress={() => {
                               setSelectedTransaction(transaction);
@@ -417,7 +498,7 @@ export default function BankReconciliationScreen() {
                             <Link2 size={14} color={Colors.primary} />
                             <Text style={styles.matchButtonText}>Vincular</Text>
                           </TouchableOpacity>
-                          <TouchableOpacity 
+                          <TouchableOpacity
                             style={styles.ignoreButton}
                             onPress={() => handleIgnoreTransaction(transaction.id)}
                           >
@@ -440,7 +521,7 @@ export default function BankReconciliationScreen() {
                     <CheckCircle2 size={48} color={Colors.success} />
                   </View>
                   <Text style={styles.reviewTitle}>Resumo da Conciliação</Text>
-                  
+
                   <View style={styles.reviewStats}>
                     <View style={styles.reviewStatItem}>
                       <Text style={styles.reviewStatValue}>{bankTransactions.length}</Text>
@@ -448,12 +529,16 @@ export default function BankReconciliationScreen() {
                     </View>
                     <View style={styles.reviewStatDivider} />
                     <View style={styles.reviewStatItem}>
-                      <Text style={[styles.reviewStatValue, { color: Colors.success }]}>{matchedCount}</Text>
+                      <Text style={[styles.reviewStatValue, { color: Colors.success }]}>
+                        {matchedCount}
+                      </Text>
                       <Text style={styles.reviewStatLabel}>Conciliadas</Text>
                     </View>
                     <View style={styles.reviewStatDivider} />
                     <View style={styles.reviewStatItem}>
-                      <Text style={[styles.reviewStatValue, { color: Colors.error }]}>{unmatchedCount + divergentCount}</Text>
+                      <Text style={[styles.reviewStatValue, { color: Colors.error }]}>
+                        {unmatchedCount + divergentCount}
+                      </Text>
                       <Text style={styles.reviewStatLabel}>Pendentes</Text>
                     </View>
                   </View>
@@ -469,14 +554,22 @@ export default function BankReconciliationScreen() {
                         <Text style={styles.unmatchedEntryDate}>
                           {format(entry.date, 'dd/MM/yyyy')}
                         </Text>
-                        <View style={[
-                          styles.typeBadge,
-                          { backgroundColor: isReceita ? Colors.success + '15' : Colors.error + '15' }
-                        ]}>
-                          <Text style={[
-                            styles.typeBadgeText,
-                            { color: isReceita ? Colors.success : Colors.error }
-                          ]}>
+                        <View
+                          style={[
+                            styles.typeBadge,
+                            {
+                              backgroundColor: isReceita
+                                ? Colors.success + '15'
+                                : Colors.error + '15',
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.typeBadgeText,
+                              { color: isReceita ? Colors.success : Colors.error },
+                            ]}
+                          >
                             {isReceita ? 'Receita' : 'Despesa'}
                           </Text>
                         </View>
@@ -484,10 +577,12 @@ export default function BankReconciliationScreen() {
                       <Text style={styles.unmatchedEntryDescription}>{entry.description}</Text>
                       <View style={styles.unmatchedEntryFooter}>
                         <Text style={styles.unmatchedEntryCategory}>{entry.category}</Text>
-                        <Text style={[
-                          styles.unmatchedEntryValue,
-                          { color: isReceita ? Colors.success : Colors.error }
-                        ]}>
+                        <Text
+                          style={[
+                            styles.unmatchedEntryValue,
+                            { color: isReceita ? Colors.success : Colors.error },
+                          ]}
+                        >
                           R$ {entry.value.toLocaleString('pt-BR')}
                         </Text>
                       </View>
@@ -529,11 +624,16 @@ export default function BankReconciliationScreen() {
                 <Text style={styles.selectedTransactionDescription}>
                   {selectedTransaction.description}
                 </Text>
-                <Text style={[
-                  styles.selectedTransactionValue,
-                  { color: selectedTransaction.type === 'credit' ? Colors.success : Colors.error }
-                ]}>
-                  {selectedTransaction.type === 'credit' ? '+' : '-'} R$ {selectedTransaction.value.toLocaleString('pt-BR')}
+                <Text
+                  style={[
+                    styles.selectedTransactionValue,
+                    {
+                      color: selectedTransaction.type === 'credit' ? Colors.success : Colors.error,
+                    },
+                  ]}
+                >
+                  {selectedTransaction.type === 'credit' ? '+' : '-'} R${' '}
+                  {selectedTransaction.value.toLocaleString('pt-BR')}
                 </Text>
               </View>
             )}
@@ -542,14 +642,16 @@ export default function BankReconciliationScreen() {
 
             <ScrollView style={styles.matchList} showsVerticalScrollIndicator={false}>
               {systemEntries
-                .filter(e => !e.isMatched)
+                .filter((e) => !e.isMatched)
                 .map((entry) => {
                   const isReceita = entry.type === 'receita';
                   return (
                     <TouchableOpacity
                       key={entry.id}
                       style={styles.matchOption}
-                      onPress={() => selectedTransaction && handleMatchTransaction(selectedTransaction, entry.id)}
+                      onPress={() =>
+                        selectedTransaction && handleMatchTransaction(selectedTransaction, entry.id)
+                      }
                       activeOpacity={0.7}
                     >
                       <View style={styles.matchOptionInfo}>
@@ -561,10 +663,12 @@ export default function BankReconciliationScreen() {
                           {entry.supplier || entry.client}
                         </Text>
                       </View>
-                      <Text style={[
-                        styles.matchOptionValue,
-                        { color: isReceita ? Colors.success : Colors.error }
-                      ]}>
+                      <Text
+                        style={[
+                          styles.matchOptionValue,
+                          { color: isReceita ? Colors.success : Colors.error },
+                        ]}
+                      >
                         R$ {entry.value.toLocaleString('pt-BR')}
                       </Text>
                     </TouchableOpacity>

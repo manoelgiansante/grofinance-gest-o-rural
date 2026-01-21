@@ -1,21 +1,28 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { User, LogOut, Settings, HelpCircle, Shield } from "lucide-react-native";
-import { useApp } from "@/providers/AppProvider";
-import Colors from "@/constants/colors";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { User, LogOut, Settings, HelpCircle, Shield } from 'lucide-react-native';
+import { useApp } from '@/providers/AppProvider';
+import Colors from '@/constants/colors';
 
 export default function ProfileScreen() {
   const { user } = useApp();
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'admin': return 'Administrador';
-      case 'field': return 'Campo';
-      case 'approver': return 'Aprovador';
-      case 'financial': return 'Financeiro';
-      case 'accountant': return 'Contador';
-      case 'auditor': return 'Auditor';
-      default: return role;
+      case 'admin':
+        return 'Administrador';
+      case 'field':
+        return 'Campo';
+      case 'approver':
+        return 'Aprovador';
+      case 'financial':
+        return 'Financeiro';
+      case 'accountant':
+        return 'Contador';
+      case 'auditor':
+        return 'Auditor';
+      default:
+        return role;
     }
   };
 
@@ -42,7 +49,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Configurações</Text>
-          
+
           <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
             <View style={styles.menuIconContainer}>
               <Settings size={20} color={Colors.textPrimary} />

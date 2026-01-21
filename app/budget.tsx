@@ -1,10 +1,33 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, TextInput, Modal, Alert, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Plus, Target, TrendingUp, TrendingDown, Edit2, Trash2, X, Calendar, PieChart, AlertCircle } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  TextInput,
+  Modal,
+  Alert,
+  Dimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Plus,
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Edit2,
+  Trash2,
+  X,
+  Calendar,
+  PieChart,
+  AlertCircle,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 type BudgetCategory = {
   id: string;
@@ -17,8 +40,18 @@ type BudgetCategory = {
 };
 
 const months = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 const defaultCategories = {
@@ -58,18 +91,18 @@ export default function BudgetScreen() {
   };
 
   const monthBudgets = budgets.filter(
-    b => b.year === selectedYear && b.month === selectedMonth && b.type === selectedType
+    (b) => b.year === selectedYear && b.month === selectedMonth && b.type === selectedType
   );
 
   const totalPlanned = monthBudgets.reduce((sum, b) => sum + b.planned_amount, 0);
   const totalActual = monthBudgets.reduce((sum, b) => sum + b.actual_amount, 0);
   const variance = totalPlanned - totalActual;
-  const variancePercent = totalPlanned > 0 ? ((variance / totalPlanned) * 100) : 0;
+  const variancePercent = totalPlanned > 0 ? (variance / totalPlanned) * 100 : 0;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -189,7 +222,12 @@ export default function BudgetScreen() {
                 style={[styles.monthTab, selectedMonth === index && styles.monthTabActive]}
                 onPress={() => setSelectedMonth(index)}
               >
-                <Text style={[styles.monthTabText, selectedMonth === index && styles.monthTabTextActive]}>
+                <Text
+                  style={[
+                    styles.monthTabText,
+                    selectedMonth === index && styles.monthTabTextActive,
+                  ]}
+                >
                   {month.slice(0, 3)}
                 </Text>
               </TouchableOpacity>
@@ -199,20 +237,36 @@ export default function BudgetScreen() {
           {/* Type Toggle */}
           <View style={styles.typeToggle}>
             <TouchableOpacity
-              style={[styles.typeButton, selectedType === 'expense' && styles.typeButtonActiveExpense]}
+              style={[
+                styles.typeButton,
+                selectedType === 'expense' && styles.typeButtonActiveExpense,
+              ]}
               onPress={() => setSelectedType('expense')}
             >
               <TrendingDown size={18} color={selectedType === 'expense' ? '#fff' : Colors.error} />
-              <Text style={[styles.typeButtonText, selectedType === 'expense' && styles.typeButtonTextActive]}>
+              <Text
+                style={[
+                  styles.typeButtonText,
+                  selectedType === 'expense' && styles.typeButtonTextActive,
+                ]}
+              >
                 Despesas
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.typeButton, selectedType === 'revenue' && styles.typeButtonActiveRevenue]}
+              style={[
+                styles.typeButton,
+                selectedType === 'revenue' && styles.typeButtonActiveRevenue,
+              ]}
               onPress={() => setSelectedType('revenue')}
             >
               <TrendingUp size={18} color={selectedType === 'revenue' ? '#fff' : Colors.success} />
-              <Text style={[styles.typeButtonText, selectedType === 'revenue' && styles.typeButtonTextActive]}>
+              <Text
+                style={[
+                  styles.typeButtonText,
+                  selectedType === 'revenue' && styles.typeButtonTextActive,
+                ]}
+              >
                 Receitas
               </Text>
             </TouchableOpacity>
@@ -231,11 +285,14 @@ export default function BudgetScreen() {
               </View>
               <View style={styles.summaryItem}>
                 <Text style={styles.summaryLabel}>Variação</Text>
-                <Text style={[
-                  styles.summaryValue,
-                  { color: variance >= 0 ? Colors.success : Colors.error }
-                ]}>
-                  {variancePercent >= 0 ? '+' : ''}{variancePercent.toFixed(1)}%
+                <Text
+                  style={[
+                    styles.summaryValue,
+                    { color: variance >= 0 ? Colors.success : Colors.error },
+                  ]}
+                >
+                  {variancePercent >= 0 ? '+' : ''}
+                  {variancePercent.toFixed(1)}%
                 </Text>
               </View>
             </View>
@@ -247,7 +304,7 @@ export default function BudgetScreen() {
                     {
                       width: `${Math.min(100, (totalActual / totalPlanned) * 100 || 0)}%`,
                       backgroundColor: getProgressColor(totalPlanned, totalActual, selectedType),
-                    }
+                    },
                   ]}
                 />
               </View>
@@ -277,7 +334,11 @@ export default function BudgetScreen() {
           ) : (
             monthBudgets.map((budget) => {
               const percent = (budget.actual_amount / budget.planned_amount) * 100;
-              const progressColor = getProgressColor(budget.planned_amount, budget.actual_amount, selectedType);
+              const progressColor = getProgressColor(
+                budget.planned_amount,
+                budget.actual_amount,
+                selectedType
+              );
               const isOverBudget = selectedType === 'expense' && percent > 100;
 
               return (
@@ -291,14 +352,21 @@ export default function BudgetScreen() {
                         )}
                       </View>
                       <Text style={styles.budgetValues}>
-                        {formatCurrency(budget.actual_amount)} / {formatCurrency(budget.planned_amount)}
+                        {formatCurrency(budget.actual_amount)} /{' '}
+                        {formatCurrency(budget.planned_amount)}
                       </Text>
                     </View>
                     <View style={styles.budgetActions}>
-                      <TouchableOpacity onPress={() => openEditModal(budget)} style={styles.actionButton}>
+                      <TouchableOpacity
+                        onPress={() => openEditModal(budget)}
+                        style={styles.actionButton}
+                      >
                         <Edit2 size={16} color={Colors.textSecondary} />
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(budget)} style={styles.actionButton}>
+                      <TouchableOpacity
+                        onPress={() => handleDelete(budget)}
+                        style={styles.actionButton}
+                      >
                         <Trash2 size={16} color={Colors.error} />
                       </TouchableOpacity>
                     </View>
@@ -308,7 +376,7 @@ export default function BudgetScreen() {
                       <View
                         style={[
                           styles.progressFill,
-                          { width: `${Math.min(100, percent)}%`, backgroundColor: progressColor }
+                          { width: `${Math.min(100, percent)}%`, backgroundColor: progressColor },
                         ]}
                       />
                     </View>
@@ -327,7 +395,7 @@ export default function BudgetScreen() {
               <Text style={styles.suggestionsTitle}>Sugestões de categorias:</Text>
               <View style={styles.suggestionsList}>
                 {defaultCategories[selectedType]
-                  .filter(cat => !monthBudgets.find(b => b.category === cat))
+                  .filter((cat) => !monthBudgets.find((b) => b.category === cat))
                   .slice(0, 3)
                   .map((cat, index) => (
                     <TouchableOpacity
@@ -366,7 +434,8 @@ export default function BudgetScreen() {
               <ScrollView style={styles.modalBody}>
                 <View style={styles.modalInfo}>
                   <Text style={styles.modalInfoText}>
-                    {months[selectedMonth]} {selectedYear} • {selectedType === 'expense' ? 'Despesa' : 'Receita'}
+                    {months[selectedMonth]} {selectedYear} •{' '}
+                    {selectedType === 'expense' ? 'Despesa' : 'Receita'}
                   </Text>
                 </View>
 
@@ -383,10 +452,18 @@ export default function BudgetScreen() {
                     {defaultCategories[selectedType].slice(0, 4).map((cat, index) => (
                       <TouchableOpacity
                         key={index}
-                        style={[styles.catSuggestion, formCategory === cat && styles.catSuggestionActive]}
+                        style={[
+                          styles.catSuggestion,
+                          formCategory === cat && styles.catSuggestionActive,
+                        ]}
                         onPress={() => setFormCategory(cat)}
                       >
-                        <Text style={[styles.catSuggestionText, formCategory === cat && styles.catSuggestionTextActive]}>
+                        <Text
+                          style={[
+                            styles.catSuggestionText,
+                            formCategory === cat && styles.catSuggestionTextActive,
+                          ]}
+                        >
                           {cat}
                         </Text>
                       </TouchableOpacity>

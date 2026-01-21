@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Linking,
-  Platform,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,11 +11,14 @@ interface SubscriptionBannerProps {
 }
 
 export function SubscriptionBanner({ onSubscribe, compact = false }: SubscriptionBannerProps) {
-  const { isPremium, hasOperacionalBonus, subscription } = useAuth();
+  const { isPremium, subscription } = useAuth();
+
+  // Check if has operacional bonus from subscription
+  const hasOperacionalBonus = subscription?.custo_op_bonus ?? false;
 
   const openRumoOperacional = async () => {
     const deepLink = CrossAppService.getOperacionalDeepLink();
-    
+
     try {
       const canOpen = await Linking.canOpenURL(deepLink);
       if (canOpen) {
@@ -59,10 +55,7 @@ export function SubscriptionBanner({ onSubscribe, compact = false }: Subscriptio
                 Você tem acesso ao Agrofinance Operacional grátis!
               </Text>
             </View>
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={openRumoOperacional}
-            >
+            <TouchableOpacity style={styles.actionButton} onPress={openRumoOperacional}>
               <Text style={styles.actionButtonText}>Abrir</Text>
               <Ionicons name="arrow-forward" size={16} color="#10b981" />
             </TouchableOpacity>
@@ -86,22 +79,17 @@ export function SubscriptionBanner({ onSubscribe, compact = false }: Subscriptio
             <Ionicons name="gift" size={compact ? 24 : 32} color="#fff" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={[styles.title, compact && styles.titleCompact]}>
-              Assine Premium
-            </Text>
+            <Text style={[styles.title, compact && styles.titleCompact]}>Assine Premium</Text>
             <Text style={[styles.subtitle, compact && styles.subtitleCompact]}>
               Ganhe Agrofinance Operacional grátis!
             </Text>
           </View>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={onSubscribe}
-          >
+          <TouchableOpacity style={styles.actionButton} onPress={onSubscribe}>
             <Text style={styles.actionButtonText}>Assinar</Text>
             <Ionicons name="arrow-forward" size={16} color="#6366f1" />
           </TouchableOpacity>
         </View>
-        
+
         {!compact && (
           <View style={styles.benefitsContainer}>
             <View style={styles.benefit}>
@@ -134,9 +122,7 @@ export function BonusBanner() {
         style={styles.bonusGradient}
       >
         <Ionicons name="star" size={20} color="#fff" />
-        <Text style={styles.bonusText}>
-          Premium ativo via Rumo Finance!
-        </Text>
+        <Text style={styles.bonusText}>Premium ativo via Rumo Finance!</Text>
       </LinearGradient>
     </View>
   );

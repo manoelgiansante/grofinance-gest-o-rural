@@ -1,10 +1,31 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform, Modal, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Lock, Unlock, CheckCircle, AlertTriangle, Calendar, DollarSign, TrendingUp, TrendingDown, FileText, Download } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router } from "expo-router";
-import { api } from "@/lib/api";
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Modal,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Lock,
+  Unlock,
+  CheckCircle,
+  AlertTriangle,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  FileText,
+  Download,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router } from 'expo-router';
+import { api } from '@/lib/api';
 
 type ClosingPeriod = {
   id: string;
@@ -20,8 +41,18 @@ type ClosingPeriod = {
 };
 
 const months = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 export default function ClosingScreen() {
@@ -40,7 +71,7 @@ export default function ClosingScreen() {
     try {
       setIsLoading(true);
       const data = await api.getClosingPeriods(selectedYear);
-      
+
       // If no data, generate empty periods for the year
       if (!data || data.length === 0) {
         const emptyPeriods = months.map((_, index) => ({
@@ -66,7 +97,7 @@ export default function ClosingScreen() {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -129,15 +160,11 @@ export default function ClosingScreen() {
   };
 
   const handleExportReport = (period: ClosingPeriod) => {
-    Alert.alert(
-      'Exportar Relatório',
-      'Escolha o formato de exportação:',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'PDF', onPress: () => exportReport(period, 'pdf') },
-        { text: 'Excel', onPress: () => exportReport(period, 'excel') },
-      ]
-    );
+    Alert.alert('Exportar Relatório', 'Escolha o formato de exportação:', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'PDF', onPress: () => exportReport(period, 'pdf') },
+      { text: 'Excel', onPress: () => exportReport(period, 'excel') },
+    ]);
   };
 
   const exportReport = async (period: ClosingPeriod, format: string) => {
@@ -163,7 +190,7 @@ export default function ClosingScreen() {
     { revenue: 0, expense: 0, balance: 0 }
   );
 
-  const closedCount = periods.filter(p => p.status === 'closed').length;
+  const closedCount = periods.filter((p) => p.status === 'closed').length;
 
   return (
     <View style={styles.container}>
@@ -207,9 +234,17 @@ export default function ClosingScreen() {
                 </Text>
               </View>
               <View style={styles.summaryItem}>
-                <DollarSign size={20} color={yearTotals.balance >= 0 ? Colors.primary : Colors.warning} />
+                <DollarSign
+                  size={20}
+                  color={yearTotals.balance >= 0 ? Colors.primary : Colors.warning}
+                />
                 <Text style={styles.summaryLabel}>Saldo</Text>
-                <Text style={[styles.summaryValue, { color: yearTotals.balance >= 0 ? Colors.primary : Colors.warning }]}>
+                <Text
+                  style={[
+                    styles.summaryValue,
+                    { color: yearTotals.balance >= 0 ? Colors.primary : Colors.warning },
+                  ]}
+                >
                   {formatCurrency(yearTotals.balance)}
                 </Text>
               </View>
@@ -227,7 +262,7 @@ export default function ClosingScreen() {
 
           {/* Periods List */}
           <Text style={styles.sectionTitle}>Períodos Mensais</Text>
-          
+
           {periods.map((period) => {
             const statusConfig = getStatusConfig(period.status);
             const StatusIcon = statusConfig.icon;
@@ -242,17 +277,21 @@ export default function ClosingScreen() {
                 <View style={styles.periodHeader}>
                   <View style={styles.periodInfo}>
                     <Text style={styles.periodMonth}>{months[period.month]}</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: statusConfig.color + '20' }]}>
+                    <View
+                      style={[styles.statusBadge, { backgroundColor: statusConfig.color + '20' }]}
+                    >
                       <StatusIcon size={14} color={statusConfig.color} />
                       <Text style={[styles.statusText, { color: statusConfig.color }]}>
                         {statusConfig.label}
                       </Text>
                     </View>
                   </View>
-                  <Text style={[
-                    styles.periodBalance,
-                    { color: period.balance >= 0 ? Colors.success : Colors.error }
-                  ]}>
+                  <Text
+                    style={[
+                      styles.periodBalance,
+                      { color: period.balance >= 0 ? Colors.success : Colors.error },
+                    ]}
+                  >
                     {formatCurrency(period.balance)}
                   </Text>
                 </View>
@@ -307,9 +346,19 @@ export default function ClosingScreen() {
                         </Text>
                       </View>
                       <View style={styles.detailItem}>
-                        <DollarSign size={24} color={selectedPeriod.balance >= 0 ? Colors.primary : Colors.warning} />
+                        <DollarSign
+                          size={24}
+                          color={selectedPeriod.balance >= 0 ? Colors.primary : Colors.warning}
+                        />
                         <Text style={styles.detailLabel}>Saldo</Text>
-                        <Text style={[styles.detailValue, { color: selectedPeriod.balance >= 0 ? Colors.primary : Colors.warning }]}>
+                        <Text
+                          style={[
+                            styles.detailValue,
+                            {
+                              color: selectedPeriod.balance >= 0 ? Colors.primary : Colors.warning,
+                            },
+                          ]}
+                        >
                           {formatCurrency(selectedPeriod.balance)}
                         </Text>
                       </View>
@@ -319,7 +368,8 @@ export default function ClosingScreen() {
                       <View style={styles.closedInfo}>
                         <CheckCircle size={16} color={Colors.success} />
                         <Text style={styles.closedInfoText}>
-                          Fechado em {new Date(selectedPeriod.closed_at).toLocaleDateString('pt-BR')}
+                          Fechado em{' '}
+                          {new Date(selectedPeriod.closed_at).toLocaleDateString('pt-BR')}
                         </Text>
                       </View>
                     )}
@@ -331,7 +381,9 @@ export default function ClosingScreen() {
                       onPress={() => handleExportReport(selectedPeriod)}
                     >
                       <Download size={20} color={Colors.primary} />
-                      <Text style={[styles.actionButtonText, { color: Colors.primary }]}>Exportar</Text>
+                      <Text style={[styles.actionButtonText, { color: Colors.primary }]}>
+                        Exportar
+                      </Text>
                     </TouchableOpacity>
 
                     {selectedPeriod.status !== 'closed' ? (
@@ -343,7 +395,9 @@ export default function ClosingScreen() {
                         }}
                       >
                         <Lock size={20} color="#fff" />
-                        <Text style={[styles.actionButtonText, { color: '#fff' }]}>Fechar Período</Text>
+                        <Text style={[styles.actionButtonText, { color: '#fff' }]}>
+                          Fechar Período
+                        </Text>
                       </TouchableOpacity>
                     ) : (
                       <TouchableOpacity

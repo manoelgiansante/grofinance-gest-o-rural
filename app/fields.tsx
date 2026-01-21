@@ -1,15 +1,15 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { MapPin, TrendingUp, Sprout, Plus, ChevronRight } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { router, Stack } from "expo-router";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MapPin, TrendingUp, Sprout, Plus, ChevronRight } from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { router, Stack } from 'expo-router';
 
-const mockFields: { 
-  id: string; 
-  name: string; 
-  area: number; 
-  crop: string; 
-  grossMargin: number; 
+const mockFields: {
+  id: string;
+  name: string;
+  area: number;
+  crop: string;
+  grossMargin: number;
   marginPerHa: number;
   status: 'active' | 'planning' | 'inactive';
   roi: number;
@@ -38,8 +38,10 @@ export default function FieldsScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Talhões & Rentabilidade', headerShown: true }} />
       <SafeAreaView style={styles.safeArea} edges={isWeb ? [] : ['bottom']}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.summaryCard}>
             <Text style={styles.summaryTitle}>Resumo de Rentabilidade</Text>
             <View style={styles.summaryGrid}>
@@ -64,7 +66,7 @@ export default function FieldsScreen() {
 
           <View style={styles.header}>
             <Text style={styles.title}>Todos os Talhões</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.addButton}
               onPress={() => router.push('/add-field' as any)}
             >
@@ -74,7 +76,7 @@ export default function FieldsScreen() {
           </View>
 
           {mockFields.map((field) => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={field.id}
               style={styles.fieldCard}
               activeOpacity={0.7}
@@ -84,7 +86,12 @@ export default function FieldsScreen() {
                 <View style={styles.fieldTitle}>
                   <MapPin size={20} color={Colors.primary} />
                   <Text style={styles.fieldName}>{field.name}</Text>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(field.status) + '20' }]}>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      { backgroundColor: getStatusColor(field.status) + '20' },
+                    ]}
+                  >
                     <Text style={[styles.statusText, { color: getStatusColor(field.status) }]}>
                       {getStatusLabel(field.status)}
                     </Text>

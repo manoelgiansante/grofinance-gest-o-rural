@@ -35,7 +35,7 @@ export default function LoginScreen() {
 
     setError('');
     const result = await loginWithEmail(email.trim());
-    
+
     if (result.success) {
       router.replace('/(tabs)');
     } else {
@@ -49,10 +49,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#1a5f2a', '#2E7D32', '#4CAF50']}
-      style={styles.gradient}
-    >
+    <LinearGradient colors={['#1a5f2a', '#2E7D32', '#4CAF50']} style={styles.gradient}>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -125,16 +122,13 @@ export default function LoginScreen() {
                 <View style={styles.dividerLine} />
               </View>
 
-              <TouchableOpacity
-                style={styles.skipButton}
-                onPress={handleSkip}
-                disabled={isLoading}
-              >
+              <TouchableOpacity style={styles.skipButton} onPress={handleSkip} disabled={isLoading}>
                 <Text style={styles.skipButtonText}>Continuar sem login</Text>
               </TouchableOpacity>
 
               <Text style={styles.disclaimer}>
-                Sem login você pode usar o app normalmente, mas seus dados ficarão apenas neste dispositivo.
+                Sem login você pode usar o app normalmente, mas seus dados ficarão apenas neste
+                dispositivo.
               </Text>
             </View>
 

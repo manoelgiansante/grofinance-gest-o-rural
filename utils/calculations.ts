@@ -32,7 +32,11 @@ export function calculateROI(profit: number, investment: number): number {
 }
 
 // Calcular break-even (ponto de equilíbrio)
-export function calculateBreakEven(fixedCosts: number, pricePerUnit: number, variableCostPerUnit: number): number {
+export function calculateBreakEven(
+  fixedCosts: number,
+  pricePerUnit: number,
+  variableCostPerUnit: number
+): number {
   const contribution = pricePerUnit - variableCostPerUnit;
   if (contribution <= 0) return Infinity;
   return fixedCosts / contribution;
@@ -53,7 +57,7 @@ export function calculateVariation(current: number, previous: number): number {
 // Calcular média móvel
 export function calculateMovingAverage(values: number[], period: number): number[] {
   if (period > values.length) return [];
-  
+
   const result: number[] = [];
   for (let i = period - 1; i < values.length; i++) {
     const sum = values.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0);
@@ -83,15 +87,13 @@ export function calculateCompoundInterest(
 }
 
 // Calcular parcela de financiamento (Price)
-export function calculatePMT(
-  principal: number,
-  annualRate: number,
-  months: number
-): number {
+export function calculatePMT(principal: number, annualRate: number, months: number): number {
   if (annualRate === 0) return principal / months;
   const monthlyRate = annualRate / 100 / 12;
-  return principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) / 
-         (Math.pow(1 + monthlyRate, months) - 1);
+  return (
+    (principal * (monthlyRate * Math.pow(1 + monthlyRate, months))) /
+    (Math.pow(1 + monthlyRate, months) - 1)
+  );
 }
 
 // Calcular dias até vencimento
@@ -131,7 +133,7 @@ export function calculateWeightedAverageCost(
 ): number {
   const totalQuantity = batches.reduce((sum, b) => sum + b.quantity, 0);
   if (totalQuantity === 0) return 0;
-  
+
   const totalCost = batches.reduce((sum, b) => sum + b.quantity * b.unitCost, 0);
   return totalCost / totalQuantity;
 }

@@ -1,13 +1,13 @@
 export type UserRole = 'admin' | 'field' | 'approver' | 'financial' | 'accountant' | 'auditor';
 
-export type ExpenseStatus = 
-  | 'draft' 
-  | 'pending_validation' 
-  | 'pending_approval' 
-  | 'approved' 
-  | 'disputed' 
-  | 'scheduled' 
-  | 'paid' 
+export type ExpenseStatus =
+  | 'draft'
+  | 'pending_validation'
+  | 'pending_approval'
+  | 'approved'
+  | 'disputed'
+  | 'scheduled'
+  | 'paid'
   | 'reconciled';
 
 export type PaymentMethod = 'pix' | 'transfer' | 'boleto' | 'check' | 'card' | 'cash';
@@ -433,7 +433,19 @@ export interface NFeFunrural {
 }
 
 export interface NFePayment {
-  method: 'dinheiro' | 'cheque' | 'cartao_credito' | 'cartao_debito' | 'credito_loja' | 'vale_alimentacao' | 'vale_refeicao' | 'vale_presente' | 'vale_combustivel' | 'boleto' | 'sem_pagamento' | 'outros';
+  method:
+    | 'dinheiro'
+    | 'cheque'
+    | 'cartao_credito'
+    | 'cartao_debito'
+    | 'credito_loja'
+    | 'vale_alimentacao'
+    | 'vale_refeicao'
+    | 'vale_presente'
+    | 'vale_combustivel'
+    | 'boleto'
+    | 'sem_pagamento'
+    | 'outros';
   type: 'a_vista' | 'a_prazo';
   installments?: number;
   installmentValues?: number[];

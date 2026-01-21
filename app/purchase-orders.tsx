@@ -1,13 +1,36 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Platform, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, router } from "expo-router";
-import { ArrowLeft, Search, Plus, Package, Clock, CheckCircle, XCircle, Truck, MapPin, Sprout, X, ChevronRight, Calendar } from "lucide-react-native";
-import Colors from "@/constants/colors";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack, router } from 'expo-router';
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  Package,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Truck,
+  MapPin,
+  Sprout,
+  X,
+  ChevronRight,
+  Calendar,
+} from 'lucide-react-native';
+import Colors from '@/constants/colors';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface PurchaseOrder {
   id: string;
@@ -50,7 +73,7 @@ export default function PurchaseOrdersScreen() {
   const purchaseOrders = mockOrders;
   const isLoading = false;
 
-  const filteredOrders = purchaseOrders.filter(po => {
+  const filteredOrders = purchaseOrders.filter((po) => {
     if (statusFilter !== 'all' && po.status !== statusFilter) return false;
     if (search && !po.id.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
@@ -58,11 +81,11 @@ export default function PurchaseOrdersScreen() {
 
   const statusCounts = {
     all: purchaseOrders.length,
-    draft: purchaseOrders.filter(po => po.status === 'draft').length,
-    sent: purchaseOrders.filter(po => po.status === 'sent').length,
-    confirmed: purchaseOrders.filter(po => po.status === 'confirmed').length,
-    received: purchaseOrders.filter(po => po.status === 'received').length,
-    cancelled: purchaseOrders.filter(po => po.status === 'cancelled').length,
+    draft: purchaseOrders.filter((po) => po.status === 'draft').length,
+    sent: purchaseOrders.filter((po) => po.status === 'sent').length,
+    confirmed: purchaseOrders.filter((po) => po.status === 'confirmed').length,
+    received: purchaseOrders.filter((po) => po.status === 'received').length,
+    cancelled: purchaseOrders.filter((po) => po.status === 'cancelled').length,
   };
 
   const totalValue = filteredOrders.reduce((sum, po) => sum + po.totalValue, 0);
@@ -74,7 +97,7 @@ export default function PurchaseOrdersScreen() {
       <Stack.Screen
         options={{
           headerShown: !isWeb,
-          title: "Pedidos de Compra",
+          title: 'Pedidos de Compra',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
               <ArrowLeft size={24} color={Colors.textPrimary} />
@@ -90,7 +113,11 @@ export default function PurchaseOrdersScreen() {
               <Text style={styles.title}>Pedidos de Compra</Text>
               <Text style={styles.subtitle}>{purchaseOrders.length} pedidos</Text>
             </View>
-            <TouchableOpacity style={styles.addButton} onPress={() => setShowNewOrderModal(true)} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => setShowNewOrderModal(true)}
+              activeOpacity={0.7}
+            >
               <Plus size={20} color={Colors.white} />
               <Text style={styles.addButtonText}>Novo Pedido</Text>
             </TouchableOpacity>
@@ -110,13 +137,19 @@ export default function PurchaseOrdersScreen() {
           </View>
 
           <View style={styles.filterRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
               <TouchableOpacity
                 style={[styles.filterChip, statusFilter === 'all' && styles.filterChipActive]}
                 onPress={() => setStatusFilter('all')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}>
+                <Text
+                  style={[styles.filterText, statusFilter === 'all' && styles.filterTextActive]}
+                >
                   Todos ({statusCounts.all})
                 </Text>
               </TouchableOpacity>
@@ -127,7 +160,9 @@ export default function PurchaseOrdersScreen() {
                   onPress={() => setStatusFilter(status as PurchaseOrder['status'])}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.filterText, statusFilter === status && styles.filterTextActive]}>
+                  <Text
+                    style={[styles.filterText, statusFilter === status && styles.filterTextActive]}
+                  >
                     {config.label} ({statusCounts[status as keyof typeof statusCounts]})
                   </Text>
                 </TouchableOpacity>
@@ -146,9 +181,12 @@ export default function PurchaseOrdersScreen() {
             />
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {isLoading && <Text style={styles.emptyText}>Carregando...</Text>}
-            
+
             {!isLoading && filteredOrders.length === 0 && (
               <View style={styles.emptyState}>
                 <Package size={48} color={Colors.textTertiary} />
@@ -180,7 +218,9 @@ export default function PurchaseOrdersScreen() {
                       </Text>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: config.color + '15' }]}>
-                      <Text style={[styles.statusText, { color: config.color }]}>{config.label}</Text>
+                      <Text style={[styles.statusText, { color: config.color }]}>
+                        {config.label}
+                      </Text>
                     </View>
                   </View>
 
@@ -198,18 +238,24 @@ export default function PurchaseOrdersScreen() {
                       {order.seasonName && (
                         <View style={[styles.tagBadge, { backgroundColor: Colors.success + '15' }]}>
                           <Sprout size={12} color={Colors.success} />
-                          <Text style={[styles.tagText, { color: Colors.success }]}>{order.seasonName}</Text>
+                          <Text style={[styles.tagText, { color: Colors.success }]}>
+                            {order.seasonName}
+                          </Text>
                         </View>
                       )}
                       {order.fieldName && (
                         <View style={[styles.tagBadge, { backgroundColor: Colors.info + '15' }]}>
                           <MapPin size={12} color={Colors.info} />
-                          <Text style={[styles.tagText, { color: Colors.info }]}>{order.fieldName}</Text>
+                          <Text style={[styles.tagText, { color: Colors.info }]}>
+                            {order.fieldName}
+                          </Text>
                         </View>
                       )}
                       {order.operationName && (
                         <View style={[styles.tagBadge, { backgroundColor: Colors.primary + '15' }]}>
-                          <Text style={[styles.tagText, { color: Colors.primary }]}>{order.operationName}</Text>
+                          <Text style={[styles.tagText, { color: Colors.primary }]}>
+                            {order.operationName}
+                          </Text>
                         </View>
                       )}
                     </View>
@@ -222,12 +268,12 @@ export default function PurchaseOrdersScreen() {
                         R$ {order.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </Text>
                     </View>
-                    
+
                     {order.expectedDeliveryDate && (
                       <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Previsão de Entrega</Text>
                         <Text style={styles.detailValue}>
-                          {format(order.expectedDeliveryDate, "dd/MM/yyyy")}
+                          {format(order.expectedDeliveryDate, 'dd/MM/yyyy')}
                         </Text>
                       </View>
                     )}
@@ -236,7 +282,7 @@ export default function PurchaseOrdersScreen() {
                       <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Data de Recebimento</Text>
                         <Text style={[styles.detailValue, { color: Colors.success }]}>
-                          {format(order.actualDeliveryDate, "dd/MM/yyyy")}
+                          {format(order.actualDeliveryDate, 'dd/MM/yyyy')}
                         </Text>
                       </View>
                     )}
@@ -244,7 +290,9 @@ export default function PurchaseOrdersScreen() {
                     {order.notes && (
                       <View style={styles.notesRow}>
                         <Text style={styles.notesLabel}>Observações:</Text>
-                        <Text style={styles.notesText} numberOfLines={2}>{order.notes}</Text>
+                        <Text style={styles.notesText} numberOfLines={2}>
+                          {order.notes}
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -306,7 +354,9 @@ export default function PurchaseOrdersScreen() {
                 <View style={styles.formGroup}>
                   <Text style={styles.formLabel}>Operação</Text>
                   <TouchableOpacity style={styles.formSelect} activeOpacity={0.7}>
-                    <Text style={styles.formSelectPlaceholder}>Vincular a uma operação (opcional)</Text>
+                    <Text style={styles.formSelectPlaceholder}>
+                      Vincular a uma operação (opcional)
+                    </Text>
                     <ChevronRight size={20} color={Colors.textTertiary} />
                   </TouchableOpacity>
                 </View>
