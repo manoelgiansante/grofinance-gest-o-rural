@@ -133,8 +133,8 @@ export default function SuporteScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>Como podemos ajudar?</Text>
           <Text style={styles.subtitle}>
-            Estamos aqui para resolver suas dúvidas e garantir a melhor experiência com o
-            Agrofinance.
+            Estamos aqui para resolver suas dúvidas e garantir a melhor experiência com o Rumo
+            Finance.
           </Text>
         </View>
 
@@ -247,7 +247,7 @@ export default function SuporteScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Agrofinance © 2024 - Gestão Agrícola Inteligente</Text>
+          <Text style={styles.footerText}>Rumo Finance © 2026 - Gestão Rural Inteligente</Text>
           <Text style={styles.footerText}>Versão 1.0.0</Text>
         </View>
       </ScrollView>

@@ -24,7 +24,7 @@ export default function PrivacidadeScreen() {
         style={styles.scrollView}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
       >
-        <Text style={styles.lastUpdate}>Última atualização: 17 de janeiro de 2025</Text>
+        <Text style={styles.lastUpdate}>Última atualização: 25 de janeiro de 2026</Text>
 
         <Section title="1. Introdução">
           <Text style={styles.text}>
@@ -124,11 +124,27 @@ export default function PrivacidadeScreen() {
             de dados{'\n\n'}
             Para exercer seus direitos, entre em contato conosco através de:{'\n'}
             <Text style={styles.bold}>E-mail:</Text> dpo@rumofinance.app{'\n'}
-            <Text style={styles.bold}>Formulário:</Text> https://rumofinance.app/suporte
+            <Text style={styles.bold}>Formulário:</Text> https://finance.agrorumo.com/suporte
           </Text>
         </Section>
 
-        <Section title="8. Cookies e Tecnologias Similares">
+        <Section title="8. Exclusão de Conta e Dados">
+          <Text style={styles.text}>
+            Você pode solicitar a exclusão completa da sua conta e dados pessoais a qualquer
+            momento:{'\n\n'}
+            <Text style={styles.bold}>• No aplicativo:</Text> Acesse Perfil {'>'} Excluir Conta
+            {'\n'}
+            <Text style={styles.bold}>• Via web:</Text> https://finance.agrorumo.com/excluir-conta
+            {'\n'}
+            <Text style={styles.bold}>• Por e-mail:</Text> dpo@rumofinance.app{'\n\n'}
+            <Text style={styles.bold}>Prazo:</Text> Sua solicitação será processada em até 30 dias
+            corridos, conforme a LGPD.{'\n\n'}
+            <Text style={styles.bold}>Dados retidos por obrigação legal:</Text> Documentos fiscais e
+            registros contábeis podem ser mantidos por 5 anos conforme legislação brasileira.
+          </Text>
+        </Section>
+
+        <Section title="9. Cookies e Tecnologias Similares">
           <Text style={styles.text}>
             Utilizamos cookies e tecnologias similares para melhorar sua experiência, analisar o uso
             do aplicativo e personalizar conteúdo. Você pode gerenciar suas preferências de cookies
@@ -136,7 +152,7 @@ export default function PrivacidadeScreen() {
           </Text>
         </Section>
 
-        <Section title="9. Transferência Internacional de Dados">
+        <Section title="10. Transferência Internacional de Dados">
           <Text style={styles.text}>
             Alguns de nossos prestadores de serviço podem estar localizados fora do Brasil. Nestes
             casos, garantimos que a transferência internacional de dados é realizada de acordo com a
@@ -144,7 +160,7 @@ export default function PrivacidadeScreen() {
           </Text>
         </Section>
 
-        <Section title="10. Alterações nesta Política">
+        <Section title="11. Alterações nesta Política">
           <Text style={styles.text}>
             Podemos atualizar esta Política de Privacidade periodicamente. A versão mais recente
             estará sempre disponível no aplicativo e em nosso site. Alterações significativas serão
@@ -152,31 +168,37 @@ export default function PrivacidadeScreen() {
           </Text>
         </Section>
 
-        <Section title="11. Crianças e Adolescentes">
+        <Section title="12. Crianças e Adolescentes">
           <Text style={styles.text}>
             Nosso serviço não é direcionado a menores de 18 anos. Não coletamos intencionalmente
             dados de crianças e adolescentes sem o consentimento dos responsáveis legais.
           </Text>
         </Section>
 
-        <Section title="12. Contato">
+        <Section title="13. Contato">
           <Text style={styles.text}>
             Para dúvidas, solicitações ou reclamações sobre esta Política de Privacidade ou o
             tratamento de seus dados pessoais:{'\n\n'}
             <Text style={styles.bold}>E-mail:</Text> contato@rumofinance.app{'\n'}
             <Text style={styles.bold}>DPO:</Text> dpo@rumofinance.app{'\n'}
-            <Text style={styles.bold}>Suporte:</Text> https://rumofinance.app/suporte{'\n\n'}
+            <Text style={styles.bold}>Suporte:</Text> https://finance.agrorumo.com/suporte{'\n\n'}
             Você também pode entrar em contato com a Autoridade Nacional de Proteção de Dados (ANPD)
             em: https://www.gov.br/anpd
           </Text>
         </Section>
 
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => Linking.openURL('https://rumofinance.app/termos')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://finance.agrorumo.com/termos')}>
             <Text style={styles.link}>Ver Termos de Uso</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://rumofinance.app/suporte')}
+            onPress={() => Linking.openURL('https://finance.agrorumo.com/excluir-conta')}
+            style={styles.footerButton}
+          >
+            <Text style={styles.link}>Excluir Minha Conta</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://finance.agrorumo.com/suporte')}
             style={styles.footerButton}
           >
             <Text style={styles.link}>Central de Suporte</Text>

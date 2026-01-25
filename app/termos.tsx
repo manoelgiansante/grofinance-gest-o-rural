@@ -24,7 +24,7 @@ export default function TermosScreen() {
         style={styles.scrollView}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
       >
-        <Text style={styles.lastUpdate}>Última atualização: 17 de janeiro de 2025</Text>
+        <Text style={styles.lastUpdate}>Última atualização: 25 de janeiro de 2026</Text>
 
         <Section title="1. Aceitação dos Termos">
           <Text style={styles.text}>
@@ -113,7 +113,32 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="8. Disponibilidade do Serviço">
+        <Section title="8. Assinaturas Auto-Renováveis (Apple/Google)">
+          <Text style={styles.text}>
+            <Text style={styles.bold}>IMPORTANTE - LEIA COM ATENÇÃO:</Text>
+            {'\n\n'}
+            <Text style={styles.bold}>8.1 Cobrança:</Text> O pagamento será cobrado na sua conta da
+            App Store ou Google Play no momento da confirmação da compra.{'\n\n'}
+            <Text style={styles.bold}>8.2 Renovação Automática:</Text> A assinatura é renovada
+            automaticamente, a menos que seja cancelada pelo menos 24 horas antes do término do
+            período atual. A renovação será cobrada nas 24 horas anteriores ao término do período
+            vigente.{'\n\n'}
+            <Text style={styles.bold}>8.3 Gerenciamento:</Text> Você pode gerenciar e cancelar suas
+            assinaturas acessando as configurações da sua conta na App Store ou Google Play após a
+            compra.{'\n\n'}
+            <Text style={styles.bold}>8.4 Período Gratuito:</Text> Qualquer parte não utilizada de
+            um período de avaliação gratuita será perdida quando você adquirir uma assinatura.
+            {'\n\n'}
+            <Text style={styles.bold}>8.5 Cancelamento:</Text> O cancelamento da assinatura atual
+            não é permitido durante o período de assinatura ativo. O acesso continua até o final do
+            período pago.{'\n\n'}
+            <Text style={styles.bold}>8.6 Alteração de Preço:</Text> Os preços podem ser alterados.
+            Você será notificado com antecedência e poderá cancelar antes da alteração entrar em
+            vigor.
+          </Text>
+        </Section>
+
+        <Section title="9. Disponibilidade do Serviço">
           <Text style={styles.text}>
             Nos esforçamos para manter o Rumo Finance disponível 24/7, porém:{'\n\n'}• Podem ocorrer
             interrupções para manutenção programada{'\n'}• Não garantimos disponibilidade
@@ -123,7 +148,7 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="9. Limitação de Responsabilidade">
+        <Section title="10. Limitação de Responsabilidade">
           <Text style={styles.text}>
             O Rumo Finance é fornecido como está e conforme disponível. Na extensão máxima permitida
             por lei:{'\n\n'}• Não garantimos que o serviço será livre de erros ou interrupções{'\n'}
@@ -135,7 +160,7 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="10. Indenização">
+        <Section title="11. Indenização">
           <Text style={styles.text}>
             Você concorda em indenizar e isentar a Rumo Finance, seus diretores, funcionários e
             parceiros de quaisquer reivindicações, perdas, danos, responsabilidades e despesas
@@ -145,7 +170,7 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="11. Modificações dos Termos">
+        <Section title="12. Modificações dos Termos">
           <Text style={styles.text}>
             Reservamos o direito de modificar estes Termos a qualquer momento. Alterações
             significativas serão notificadas por e-mail ou no aplicativo com pelo menos 30 dias de
@@ -154,18 +179,18 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="12. Rescisão">
+        <Section title="13. Rescisão">
           <Text style={styles.text}>
-            <Text style={styles.bold}>12.1 Por Você:</Text> Você pode encerrar sua conta a qualquer
+            <Text style={styles.bold}>13.1 Por Você:</Text> Você pode encerrar sua conta a qualquer
             momento através das configurações do aplicativo.{'\n\n'}
-            <Text style={styles.bold}>12.2 Por Nós:</Text> Podemos suspender ou encerrar sua conta
+            <Text style={styles.bold}>13.2 Por Nós:</Text> Podemos suspender ou encerrar sua conta
             se você violar estes Termos, sem reembolso de valores pagos.{'\n\n'}
-            <Text style={styles.bold}>12.3 Efeitos:</Text> Após o encerramento, você perderá acesso
+            <Text style={styles.bold}>13.3 Efeitos:</Text> Após o encerramento, você perderá acesso
             aos dados. Recomendamos exportar seus dados antes de cancelar.
           </Text>
         </Section>
 
-        <Section title="13. Lei Aplicável e Jurisdição">
+        <Section title="14. Lei Aplicável e Jurisdição">
           <Text style={styles.text}>
             Estes Termos são regidos pelas leis da República Federativa do Brasil, especialmente:
             {'\n\n'}• Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018){'\n'}• Código de
@@ -177,7 +202,7 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="14. Disposições Gerais">
+        <Section title="15. Disposições Gerais">
           <Text style={styles.text}>
             • <Text style={styles.bold}>Integralidade:</Text> Estes Termos constituem o acordo
             integral entre você e a Rumo Finance.{'\n\n'}•{' '}
@@ -190,7 +215,7 @@ export default function TermosScreen() {
           </Text>
         </Section>
 
-        <Section title="15. Contato">
+        <Section title="16. Contato">
           <Text style={styles.text}>
             Para dúvidas sobre estes Termos de Uso:{'\n\n'}
             <Text style={styles.bold}>Rumo Finance Tecnologia Ltda</Text>
@@ -198,7 +223,7 @@ export default function TermosScreen() {
             <Text style={styles.bold}>CNPJ:</Text> [Inserir CNPJ]{'\n'}
             <Text style={styles.bold}>Endereço:</Text> [Inserir Endereço Completo]{'\n'}
             <Text style={styles.bold}>E-mail:</Text> contato@rumofinance.app{'\n'}
-            <Text style={styles.bold}>Suporte:</Text> https://rumofinance.app/suporte{'\n'}
+            <Text style={styles.bold}>Suporte:</Text> https://finance.agrorumo.com/suporte{'\n'}
             <Text style={styles.bold}>Telefone:</Text> [Inserir Telefone]
           </Text>
         </Section>
@@ -211,11 +236,13 @@ export default function TermosScreen() {
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => Linking.openURL('https://rumofinance.app/privacidade')}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://finance.agrorumo.com/privacidade')}
+          >
             <Text style={styles.link}>Ver Política de Privacidade</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://rumofinance.app/suporte')}
+            onPress={() => Linking.openURL('https://finance.agrorumo.com/suporte')}
             style={styles.footerButton}
           >
             <Text style={styles.link}>Central de Suporte</Text>

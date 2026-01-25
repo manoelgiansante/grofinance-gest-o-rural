@@ -354,7 +354,7 @@ agro, fazenda, gestão rural, finanças, agricultura, pecuária, nfe, controle, 
 
 ## 🔄 Atualizações
 
-**Última atualização**: 22 de janeiro de 2026
+**Última atualização**: 25 de janeiro de 2026
 
 Sempre que houver mudanças significativas na coleta de dados ou práticas de privacidade, atualizar:
 
