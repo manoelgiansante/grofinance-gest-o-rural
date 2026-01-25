@@ -3,9 +3,19 @@ import { LayoutDashboard, FileText, CheckSquare, BarChart3, Menu } from 'lucide-
 import React from 'react';
 import { Platform } from 'react-native';
 import Colors from '@/constants/colors';
+import { useApp } from '@/providers/AppProvider';
 
 export default function TabLayout() {
   const isWeb = Platform.OS === 'web';
+  const { expenses } = useApp();
+
+  // Calcular pendências reais para o badge
+  const pendingCount = expenses.filter(
+    (e) =>
+      e.status === 'pending_approval' ||
+      e.status === 'pending_validation' ||
+      e.status === 'disputed'
+  ).length;
 
   // Se for web, esconde as tabs (a navegação é feita pela sidebar no _layout.tsx principal)
   if (isWeb) {
@@ -74,7 +84,7 @@ export default function TabLayout() {
         options={{
           title: 'Validações',
           tabBarIcon: ({ color, size }) => <CheckSquare color={color} size={size} />,
-          tabBarBadge: 3,
+          tabBarBadge: pendingCount > 0 ? pendingCount : undefined,
         }}
       />
       <Tabs.Screen

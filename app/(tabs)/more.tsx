@@ -25,6 +25,7 @@ import {
   CreditCard,
   Download,
   Upload,
+  Cog,
 } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { router } from 'expo-router';
@@ -46,6 +47,7 @@ export default function MoreScreen() {
         { icon: User, label: 'Clientes', route: '/clients', color: Colors.info },
         { icon: Users, label: 'Fornecedores', route: '/suppliers', color: Colors.primary },
         { icon: Building2, label: 'Fazendas', route: '/farms', color: Colors.success },
+        { icon: Cog, label: 'Operações', route: '/operations', color: '#6366F1' },
       ],
     },
     {

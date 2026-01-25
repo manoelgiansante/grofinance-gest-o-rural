@@ -288,7 +288,11 @@ export default function FarmsScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButton}
-                  onPress={() => setShowModal(false)}
+                  onPress={() => {
+                    setFormData({ name: '', cpfCnpj: '', city: '', state: 'SP', area: '' });
+                    setShowModal(false);
+                  }}
+                  activeOpacity={0.7}
                 >
                   <Text style={styles.secondaryButtonText}>Cancelar</Text>
                 </TouchableOpacity>

@@ -357,7 +357,19 @@ export default function ClientsScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButton}
-                  onPress={() => setShowModal(false)}
+                  onPress={() => {
+                    setFormData({
+                      name: '',
+                      cpfCnpj: '',
+                      type: 'physical',
+                      email: '',
+                      phone: '',
+                      city: '',
+                      state: 'SP',
+                    });
+                    setShowModal(false);
+                  }}
+                  activeOpacity={0.7}
                 >
                   <Text style={styles.secondaryButtonText}>Cancelar</Text>
                 </TouchableOpacity>

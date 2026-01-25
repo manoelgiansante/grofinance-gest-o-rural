@@ -163,10 +163,12 @@ export default function DashboardScreen() {
               </View>
               <Text style={styles.metricValue}>R$ {stats.cashBalance.toLocaleString('pt-BR')}</Text>
               <Text style={styles.metricLabel}>Saldo em Caixa</Text>
-              <View style={styles.metricTrend}>
-                <TrendingUp size={14} color={Colors.white} opacity={0.8} />
-                <Text style={styles.metricTrendText}>+12.5% vs mês anterior</Text>
-              </View>
+              {stats.cashBalance > 0 && (
+                <View style={styles.metricTrend}>
+                  <TrendingUp size={14} color={Colors.white} opacity={0.8} />
+                  <Text style={styles.metricTrendText}>+12.5% vs mês anterior</Text>
+                </View>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
